@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,16 +34,8 @@
       scroll-margin-top: 100px;
       padding: 1rem;
     }
-    #cart {
-      background-color: #f3fdf6;
-      border: 2px solid #76c893;
-      padding: 1rem;
-      margin: 3rem auto;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 90%;
-      font-family: 'Quicksand', sans-serif;
-      text-align: center;
+    .hidden {
+      display: none;
     }
     .sticky-cart-btn {
       position: fixed;
@@ -116,9 +109,11 @@
       justify-content: center;
       align-items: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, background-color 0.3s ease;
     }
     .quantity-input button:hover {
       background-color: #5ab07e;
+      transform: scale(1.1);
     }
     button {
       background-color: #76c893;
@@ -160,22 +155,7 @@
     🌭 Healthy White Hotdog
   </header>
 
-  <button class="sticky-cart-btn" onclick="scrollToCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
-
-  <section id="cart">
-    <strong>🛒 Cart</strong>
-    <ul id="cart-items"></ul>
-    <div id="voucher-section">
-      <input id="voucher-input" type="text" placeholder="Enter voucher code" oninput="applyVoucher()">
-      <div id="voucher-message"></div>
-    </div>
-    <div id="total">Total: ₱0</div>
-    <button onclick="checkout()">Checkout</button>
-    <div class="nav-buttons">
-      <button onclick="goToMain()">🏠 Back to Main</button>
-      <button onclick="scrollToCart()">🛒 View Cart</button>
-    </div>
-  </section>
+  <button class="sticky-cart-btn" onclick="openCartWindow()">🛒 Cart (<span id="cart-count">0</span>)</button>
 
   <section id="main">
     <div class="card">
@@ -228,26 +208,21 @@
     let discount = 0;
     let discountMessage = '';
 
-    function renderCart() {
-      const cartItems = document.getElementById('cart-items');
-      cartItems.innerHTML = '';
+    function renderCartContent() {
+      let content = `<h2>Your Cart</h2><ul>`;
       let subtotal = 0;
-
       cart.forEach((item, index) => {
         subtotal += item.price * item.quantity;
-        const li = document.createElement('li');
-        li.innerHTML = `
-          ${item.name} x${item.quantity} - ₱${item.price * item.quantity}
-          <button class="remove-item" onclick="removeFromCart(${index})">✕</button>`;
-        cartItems.appendChild(li);
+        content += `<li>${item.name} x${item.quantity} - ₱${item.price * item.quantity} <button onclick="removeFromCart(${index})">✕</button></li>`;
       });
+      const total = subtotal - discount;
+      content += `</ul><p>Voucher discount: ₱${discount.toFixed(2)}</p><p><strong>Total: ₱${total < 0 ? 0 : total}</strong></p>`;
+      content += `<button onclick="checkout()">Checkout</button>`;
+      return content;
+    }
 
-      let finalTotal = subtotal - discount;
-      if (finalTotal < 0) finalTotal = 0;
-
+    function renderCart() {
       document.getElementById('cart-count').textContent = cart.reduce((sum, i) => sum + i.quantity, 0);
-      document.getElementById('total').textContent = 'Total: ₱' + finalTotal;
-      document.getElementById('voucher-message').textContent = discountMessage;
     }
 
     function addToCart(name, price, quantity = 1) {
@@ -266,26 +241,6 @@
       renderCart();
     }
 
-    function applyVoucher() {
-      const code = document.getElementById('voucher-input').value.trim().toUpperCase();
-      const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-      if (code === "HOTDOG10") {
-        discount = 10;
-        discountMessage = "Voucher 'HOTDOG10' applied: ₱10 off!";
-      } else if (code === "PARTY20") {
-        discount = 20;
-        discountMessage = "Voucher 'PARTY20' applied: ₱20 off!";
-      } else if (code === "SAVE10%") {
-        discount = subtotal * 0.10;
-        discountMessage = "Voucher 'SAVE10%' applied: 10% off!";
-      } else {
-        discount = 0;
-        discountMessage = "";
-      }
-      renderCart();
-    }
-
     function checkout() {
       if (cart.length === 0) {
         alert("Your cart is empty!");
@@ -296,17 +251,19 @@
       window.open(fbLink, '_blank');
     }
 
+    function openCartWindow() {
+      const cartWin = window.open('', 'cartWindow', 'width=400,height=600');
+      cartWin.document.write(`
+        <html><head><title>Cart</title></head><body>
+        ${renderCartContent()}
+        </body></html>
+      `);
+    }
+
     function goToMain() {
       const main = document.getElementById('main');
       if (main) {
         main.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function scrollToCart() {
-      const cart = document.getElementById('cart');
-      if (cart) {
-        cart.scrollIntoView({ behavior: 'smooth' });
       }
     }
   </script>
