@@ -1,35 +1,189 @@
-<main id="main">
-  <div class="card" style="animation: fadeIn 0.5s ease;">
-    <h3>Solo Pack</h3>
-    <img src="https://via.placeholder.com/300x200.png?text=Solo+Pack" alt="Solo Pack" class="product-image" />
-    <p class="price">₱50</p>
-    <div class="quantity-input">
-      <button class="qty-btn">-</button>
-      <input type="number" value="1" min="1" />
-      <button class="qty-btn">+</button>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthy White Hotdogs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden { display: none !important; }
+  </style>
+</head>
+
+<body class="font-inter bg-gray-50 text-gray-800">
+  <div class="min-h-screen flex flex-col relative">
+    <!-- Header -->
+    <header class="bg-white shadow p-4 flex justify-between items-center z-10">
+      <img src="/mnt/data/517039856_747785660952752_1896212018083625161_n.jpg" alt="Mommy Sam's White Hotdog Logo" class="h-10 md:h-14">
+      <button id="cartToggle" class="relative">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8M17 13l1.6 8M6 21h12" />
+        </svg>
+        <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 rounded-full hidden">0</span>
+      </button>
+    </header>
+
+    <!-- Promotion Carousel -->
+    <div class="w-full overflow-hidden relative mt-4">
+      <div id="promoCarousel" class="flex transition-transform duration-700" style="width: 400%;">
+        <img src="https://via.placeholder.com/1200x300?text=Promo+1" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+        <img src="https://via.placeholder.com/1200x300?text=Promo+2" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+        <img src="https://via.placeholder.com/1200x300?text=Promo+3" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+        <img src="https://via.placeholder.com/1200x300?text=Limited+Offer" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+      </div>
     </div>
-    <button class="btn-primary">Add to Cart</button>
-  </div>
-  <div class="card" style="animation: fadeIn 0.5s ease 0.1s;">
-    <h3>Family Pack</h3>
-    <img src="https://via.placeholder.com/300x200.png?text=Family+Pack" alt="Family Pack" class="product-image" />
-    <p class="price">₱120</p>
-    <div class="quantity-input">
-      <button class="qty-btn">-</button>
-      <input type="number" value="1" min="1" />
-      <button class="qty-btn">+</button>
+
+    <!-- Product List -->
+    <main class="flex-1 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6" id="productList">
+      <!-- Products rendered by JS -->
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="fixed top-0 right-0 w-full sm:w-80 bg-white h-full shadow-lg p-6 z-50 overflow-y-auto hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Your Cart</h2>
+        <button id="cartClose" class="text-gray-500 hover:text-red-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="cartItems"></div>
+      <div class="mt-4 border-t pt-4">
+        <p class="font-semibold">Total: ₱<span id="cartTotal">0</span></p>
+        <a id="checkoutLink" target="_blank" class="block text-center mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Checkout</a>
+      </div>
     </div>
-    <button class="btn-primary">Add to Cart</button>
   </div>
-  <div class="card" style="animation: fadeIn 0.5s ease 0.2s;">
-    <h3>Barkada Pack</h3>
-    <img src="https://via.placeholder.com/300x200.png?text=Barkada+Pack" alt="Barkada Pack" class="product-image" />
-    <p class="price">₱200</p>
-    <div class="quantity-input">
-      <button class="qty-btn">-</button>
-      <input type="number" value="1" min="1" />
-      <button class="qty-btn">+</button>
-    </div>
-    <button class="btn-primary">Add to Cart</button>
-  </div>
-</main>
+
+  <script>
+    const products = [
+      { name: 'Solo Pack', price: 120, image: 'https://via.placeholder.com/400x200?text=Solo+Pack' },
+      { name: 'Family Pack', price: 300, image: 'https://via.placeholder.com/400x200?text=Family+Pack' },
+      { name: 'Party Pack', price: 500, image: 'https://via.placeholder.com/400x200?text=Party+Pack' },
+      { name: 'Mega Feast Pack', price: 800, image: 'https://via.placeholder.com/400x200?text=Mega+Feast+Pack' }
+    ];
+
+    const productList = document.getElementById('productList');
+    const cartItems = document.getElementById('cartItems');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartToggle = document.getElementById('cartToggle');
+    const cartClose = document.getElementById('cartClose');
+    const cartCount = document.getElementById('cartCount');
+    const cartTotal = document.getElementById('cartTotal');
+    const promoCarousel = document.getElementById('promoCarousel');
+    const checkoutLink = document.getElementById('checkoutLink');
+
+    let cart = [];
+    let promoIndex = 0;
+
+    function renderProducts() {
+      productList.innerHTML = '';
+      products.forEach((product) => {
+        const el = document.createElement('div');
+        el.className = 'bg-white shadow rounded-2xl p-4 transition hover:shadow-lg';
+        el.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" class="rounded-xl mb-3 w-full h-40 object-cover">
+          <h2 class="text-lg font-semibold mb-2">${product.name}</h2>
+          <p class="mb-2">₱${product.price}</p>
+          <div class="flex items-center gap-2 mb-2">
+            <button class="decrement bg-gray-200 px-3 py-1 rounded">-</button>
+            <span class="quantity-display">1</span>
+            <button class="increment bg-gray-200 px-3 py-1 rounded">+</button>
+          </div>
+          <button class="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Add to Cart</button>
+        `;
+
+        let quantity = 1;
+        const quantityDisplay = el.querySelector('.quantity-display');
+        el.querySelector('.increment').addEventListener('click', () => {
+          quantity++;
+          quantityDisplay.textContent = quantity;
+        });
+        el.querySelector('.decrement').addEventListener('click', () => {
+          if (quantity > 1) {
+            quantity--;
+            quantityDisplay.textContent = quantity;
+          }
+        });
+
+        el.querySelector('button.w-full').addEventListener('click', () => {
+          addToCart(product, quantity);
+        });
+
+        productList.appendChild(el);
+      });
+    }
+
+    function addToCart(product, quantity) {
+      for (let i = 0; i < quantity; i++) {
+        cart.push(product);
+      }
+      updateCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function updateCart() {
+      cartItems.innerHTML = '';
+      cart.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center mb-3';
+        div.innerHTML = `
+          <div>
+            <p class="font-medium">${item.name}</p>
+            <p class="text-sm text-gray-500">₱${item.price}</p>
+          </div>
+          <button class="text-red-500">Remove</button>
+        `;
+        div.querySelector('button').addEventListener('click', () => removeFromCart(index));
+        cartItems.appendChild(div);
+      });
+
+      cartCount.textContent = cart.length;
+      cartTotal.textContent = cart.reduce((sum, item) => sum + item.price, 0);
+      cartCount.classList.toggle('hidden', cart.length === 0);
+
+      const itemSummary = cart.reduce((summary, item) => {
+        summary[item.name] = (summary[item.name] || 0) + 1;
+        return summary;
+      }, {});
+
+      let message = 'Hi! I would like to order the following:%0A';
+      for (const [item, qty] of Object.entries(itemSummary)) {
+        message += `- ${qty} x ${item}%0A`;
+      }
+
+      checkoutLink.href = `https://www.facebook.com/MommySamWhiteHotdog?message=${encodeURIComponent(message)}`;
+    }
+
+    cartToggle.addEventListener('click', () => {
+      cartSidebar.classList.remove('hidden');
+    });
+
+    cartClose.addEventListener('click', () => {
+      cartSidebar.classList.add('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!cartSidebar.contains(e.target) && !cartToggle.contains(e.target)) {
+        cartSidebar.classList.add('hidden');
+      }
+    });
+
+    setInterval(() => {
+      promoIndex = (promoIndex + 1) % 4;
+      promoCarousel.style.transform = `translateX(-${promoIndex * 100}%)`;
+    }, 5000);
+
+    renderProducts();
+  </script>
+</body>
+
+</html>
+
