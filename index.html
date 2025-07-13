@@ -1,193 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Healthy White Hotdog</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f0faf3; }
-    header, footer { background: #58c28e; color: white; padding: 1rem; text-align: center; }
-    .card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin: 1rem auto; width: 90%; max-width: 400px; text-align: center; transition: transform 0.3s ease; }
-    .card:hover { transform: scale(1.02); }
-    img { width: 100%; height: auto; border-radius: 8px; }
-    .quantity-input { display: flex; justify-content: center; align-items: center; margin: 0.5rem 0; }
-    .quantity-input input { width: 40px; text-align: center; }
-    .quantity-input button { padding: 0.3rem 0.6rem; margin: 0 0.3rem; background: #58c28e; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    .btn-primary { background: #58c28e; color: white; border: none; padding: 0.5rem 1rem; margin-top: 0.5rem; border-radius: 6px; cursor: pointer; }
-    #main, #cart-section { padding: 1rem; }
-    #cart-toggle-btn { display: none; margin: 1rem auto; background: #58c28e; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
-    #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 1rem 1.5rem; border-radius: 8px; opacity: 0; transition: opacity 0.5s ease; z-index: 1000; }
-    #toast.show { opacity: 1; }
-    @media (max-width: 600px) {
-      .card { width: 95%; }
-      #cart-toggle-btn { display: block; }
-      #cart-section.collapsed { display: none; }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Healthy White Hotdog</h1>
-  </header>
-
-  <main id="main"></main>
-
-  <button id="cart-toggle-btn" onclick="toggleCart()">Toggle Cart</button>
-
-  <section id="cart-section">
-    <h2>Your Cart</h2>
-    <div id="cart-content"></div>
-    <input id="voucher" placeholder="Enter Voucher Code" />
-    <button onclick="applyVoucher()">Apply Voucher</button>
-    <br /><br />
-    <label>Messenger Page Username:</label>
-    <input id="fb-user" placeholder="e.g. yourpageusername" onchange="updateFbUsername(this.value)" />
-    <br /><br />
-    <button onclick="checkout()">Checkout</button>
-  </section>
-
-  <footer>
-    &copy; 2025 Healthy White Hotdog
-  </footer>
-
-  <div id="toast"></div>
-
-  <script>
-    const products = [
-      { name: 'Solo Pack', price: 50, img: 'https://via.placeholder.com/300x200.png?text=Solo+Pack' },
-      { name: 'Family Pack', price: 230, img: 'https://via.placeholder.com/300x200.png?text=Family+Pack' },
-      { name: 'Party Pack', price: 450, img: 'https://via.placeholder.com/300x200.png?text=Party+Pack' }
-    ];
-
-    const vouchers = {
-      'HOTDOG10': { discount: 0.10, expires: '2025-12-31' },
-      'FAMILY20': { discount: 0.20, expires: '2025-09-30' },
-      'PARTY25': { discount: 0.25, expires: '2025-10-15' }
-    };
-
-    const cart = {};
-    let discount = 0;
-    let fbUsername = localStorage.getItem('fbUsername') || 'yourpageusername';
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('fb-user').value = fbUsername;
-    });
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = 'show';
-      setTimeout(() => toast.className = '', 3000);
-    }
-
-    function updateFbUsername(value) {
-      fbUsername = value.trim();
-      localStorage.setItem('fbUsername', fbUsername);
-    }
-
-    function toggleCart() {
-      const cartSec = document.getElementById('cart-section');
-      cartSec.classList.toggle('collapsed');
-    }
-
-    function renderProducts() {
-      const main = document.getElementById('main');
-      main.innerHTML = '';
-      products.forEach((product, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h3>${product.name}</h3>
-          <img src="${product.img}" alt="${product.name}" />
-          <p>₱${product.price}</p>
-          <div class="quantity-input">
-            <button onclick="changeQuantity(${index}, -1)">-</button>
-            <input type="number" id="qty-${index}" value="1" min="1" />
-            <button onclick="changeQuantity(${index}, 1)">+</button>
-          </div>
-          <button class="btn-primary" onclick="addToCart(${index})">Add to Cart</button>
-        `;
-        main.appendChild(card);
-      });
-    }
-
-    function changeQuantity(index, delta) {
-      const input = document.getElementById(`qty-${index}`);
-      let qty = parseInt(input.value) + delta;
-      input.value = qty > 0 ? qty : 1;
-    }
-
-    function addToCart(index) {
-      const qty = parseInt(document.getElementById(`qty-${index}`).value);
-      const product = products[index];
-      if (!cart[product.name]) cart[product.name] = { qty: 0, price: product.price };
-      cart[product.name].qty += qty;
-      renderCartContent();
-    }
-
-    function removeFromCart(name) {
-      delete cart[name];
-      renderCartContent();
-    }
-
-    function applyVoucher() {
-      const code = document.getElementById('voucher').value.trim().toUpperCase();
-      const voucher = vouchers[code];
-      const today = new Date().toISOString().split('T')[0];
-      if (voucher && today <= voucher.expires) {
-        discount = voucher.discount;
-        showToast(`${Math.floor(discount * 100)}% discount applied!`);
-      } else {
-        discount = 0;
-        showToast('Invalid or expired voucher.');
-      }
-      renderCartContent();
-    }
-
-    function renderCartContent() {
-      const cartContent = document.getElementById('cart-content');
-      if (Object.keys(cart).length === 0) {
-        cartContent.innerHTML = '<p>Your cart is empty.</p>';
-        return;
-      }
-      const list = document.createElement('ul');
-      let total = 0;
-      Object.entries(cart).forEach(([name, item]) => {
-        const product = products.find(p => p.name === name);
-        const subtotal = item.price * item.qty;
-        total += subtotal;
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <img src="${product.img}" style="width:40px; height:40px; object-fit:cover; border-radius:6px; margin-right:10px;"/>
-          ${name} x ${item.qty} = ₱${subtotal}
-          <button onclick="removeFromCart('${name}')">Remove</button>
-        `;
-        li.style.marginBottom = '10px';
-        list.appendChild(li);
-      });
-      const discountedTotal = total * (1 - discount);
-      cartContent.innerHTML = '';
-      cartContent.appendChild(list);
-      cartContent.innerHTML += `<p><strong>Total: ₱${discountedTotal.toFixed(2)}</strong></p>`;
-    }
-
-    function checkout() {
-      let message = 'Order Summary:%0A';
-      Object.entries(cart).forEach(([name, item]) => {
-        message += `${name} x ${item.qty} = ₱${item.qty * item.price}%0A`;
-      });
-      const total = Object.values(cart).reduce((sum, item) => sum + item.qty * item.price, 0);
-      const finalTotal = total * (1 - discount);
-      message += `Total: ₱${finalTotal.toFixed(2)}`;
-      const fbLink = `https://m.me/${fbUsername}?ref=${encodeURIComponent(message)}`;
-      window.open(fbLink, '_blank');
-    }
-
-    renderProducts();
-  </script>
-</body>
-</html>
-
-
-
-
-
+<main id="main">
+  <div class="card" style="animation: fadeIn 0.5s ease;">
+    <h3>Solo Pack</h3>
+    <img src="https://via.placeholder.com/300x200.png?text=Solo+Pack" alt="Solo Pack" class="product-image" />
+    <p class="price">₱50</p>
+    <div class="quantity-input">
+      <button class="qty-btn">-</button>
+      <input type="number" value="1" min="1" />
+      <button class="qty-btn">+</button>
+    </div>
+    <button class="btn-primary">Add to Cart</button>
+  </div>
+  <div class="card" style="animation: fadeIn 0.5s ease 0.1s;">
+    <h3>Family Pack</h3>
+    <img src="https://via.placeholder.com/300x200.png?text=Family+Pack" alt="Family Pack" class="product-image" />
+    <p class="price">₱120</p>
+    <div class="quantity-input">
+      <button class="qty-btn">-</button>
+      <input type="number" value="1" min="1" />
+      <button class="qty-btn">+</button>
+    </div>
+    <button class="btn-primary">Add to Cart</button>
+  </div>
+  <div class="card" style="animation: fadeIn 0.5s ease 0.2s;">
+    <h3>Barkada Pack</h3>
+    <img src="https://via.placeholder.com/300x200.png?text=Barkada+Pack" alt="Barkada Pack" class="product-image" />
+    <p class="price">₱200</p>
+    <div class="quantity-input">
+      <button class="qty-btn">-</button>
+      <input type="number" value="1" min="1" />
+      <button class="qty-btn">+</button>
+    </div>
+    <button class="btn-primary">Add to Cart</button>
+  </div>
+</main>
