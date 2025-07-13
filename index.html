@@ -4,185 +4,204 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Healthy White Hotdog</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    html {
-      scroll-behavior: smooth;
+    :root {
+      --primary: #58c28e;
+      --accent: #f8fdf9;
+      --bg-light: #eafaf1;
+      --text-dark: #2e3e2e;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(to right, #dbecc1, #b6e2d3);
-      color: #2d3e2e;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
       margin: 0;
-      padding: 0;
+      color: var(--text-dark);
     }
+
     header {
-      background-color: #76c893;
+      background: var(--primary);
       color: white;
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 1.8rem;
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       position: sticky;
       top: 0;
-      z-index: 999;
+      z-index: 1000;
+      box-shadow: var(--shadow);
     }
-    section {
-      scroll-margin-top: 100px;
-      padding: 1rem;
+
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0;
     }
-    .hidden {
-      display: none;
+
+    .btn-cart-header {
+      background: white;
+      color: var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
     }
+
+    #homepage {
+      padding: 3rem 1rem;
+      text-align: center;
+      background-color: white;
+    }
+
+    #homepage h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
     .sticky-cart-btn {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background-color: #76c893;
+      background: var(--primary);
       color: white;
       border: none;
       padding: 0.8rem 1.2rem;
       border-radius: 50px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: var(--shadow);
       z-index: 1000;
       font-weight: bold;
       cursor: pointer;
     }
-    @media (max-width: 768px) {
-      .card {
-        display: block;
-        width: 90%;
-        margin: 1rem auto;
-      }
+
+    section {
+      padding: 2rem 1rem;
     }
+
     .card {
-      background-color: #f3fdf6;
-      border: 2px solid #b6e2d3;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 16px;
       padding: 1rem;
-      margin: 1rem;
+      box-shadow: var(--shadow);
       max-width: 300px;
-      text-align: center;
+      margin: 1rem;
       display: inline-block;
       vertical-align: top;
+      text-align: center;
       transition: transform 0.3s ease;
     }
+
     .card:hover {
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
+
+    .card img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
     .quantity-input {
       display: flex;
       justify-content: center;
       align-items: center;
       margin-top: 0.5rem;
     }
+
     .quantity-input input {
-      width: 60px;
+      width: 50px;
       padding: 0.3rem;
-      margin: 0 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #76c893;
       text-align: center;
-      background-color: #ffffff;
-      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+      margin: 0 0.5rem;
     }
+
     .quantity-input button {
-      background-color: #76c893;
-      border: none;
+      background: var(--primary);
       color: white;
-      font-weight: bold;
-      font-size: 1.2rem;
       width: 30px;
       height: 30px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      transition: transform 0.2s ease, background-color 0.3s ease;
-    }
-    .quantity-input button:hover {
-      background-color: #5ab07e;
-      transform: scale(1.1);
-    }
-    button {
-      background-color: #76c893;
-      color: white;
       border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
+      border-radius: 50%;
       font-weight: bold;
+      font-size: 1.2rem;
       cursor: pointer;
-      margin-top: 0.5rem;
+      transition: background 0.3s ease;
     }
-    button:hover {
-      background-color: #5ab07e;
+
+    .quantity-input button:hover {
+      background: #49a974;
     }
+
     #cart-section {
       display: none;
-      background: linear-gradient(to right, #e8f5e9, #d0f0ea);
+      background: white;
       padding: 2rem;
     }
+
     #cart-section h2 {
-      color: #76c893;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    #cart-content p {
       text-align: center;
     }
-    #cart-section ul {
-      list-style: none;
-      padding: 0;
-    }
-    #cart-section li {
-      margin: 0.5rem 0;
-      background-color: #f3fdf6;
-      padding: 0.5rem;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    #cart-section p {
-      text-align: center;
-    }
+
     footer {
       text-align: center;
       padding: 1rem;
+      background: #f0fdf6;
       font-size: 0.9rem;
       color: #555;
     }
-    input[type="text"] {
-      padding: 0.5rem;
-      width: 80%;
-      max-width: 250px;
-      margin-top: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #76c893;
+
+    @media (max-width: 768px) {
+      .card {
+        width: 90%;
+        display: block;
+        margin: 1rem auto;
+      }
     }
   </style>
 </head>
 <body>
-  <section id="homepage" style="padding: 2rem; text-align: center;">
-    <h1>Welcome to Healthy White Hotdog!</h1>
-    <p>Delicious and guilt-free hotdog packs for every occasion 🍴</p>
-    <button onclick="goToMain()">Explore Packs</button>
-  </section>
-
-  <header id="top">
-    🌭 Healthy White Hotdog
-    <button style="float: right; background-color: #5ab07e; padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-top: -0.4rem; cursor: pointer;" onclick="openCartPanelWithAnimation()">
+  <header>
+    <h1>🌭 Healthy White Hotdog</h1>
+    <button class="btn-cart-header" onclick="openCartPanelWithAnimation()">
       🛒 Cart (<span id="cart-count">0</span>)
     </button>
   </header>
 
+  <section id="homepage">
+    <h1>Welcome to Healthy White Hotdog!</h1>
+    <p>Delicious and guilt-free hotdog packs for every occasion 🍴</p>
+    <button class="btn-primary" onclick="goToMain()">Explore Packs</button>
+  </section>
+
   <button class="sticky-cart-btn" onclick="openCartPanelWithAnimation()">🛒 Cart (<span id="cart-count">0</span>)</button>
 
-  <section id="main">
+  <section id="main" style="display: block; opacity: 1;">
     <div class="card">
       <h3>Solo Pack</h3>
-      <img src="solo.jpg" alt="Solo Pack" style="width:100%; border-radius: 10px;" />
+      <img src="solo.jpg" alt="Solo Pack" />
       <p>1 Healthy White Hotdog</p>
       <p><strong>₱50</strong></p>
       <div class="quantity-input">
@@ -190,12 +209,12 @@
         <input type="number" id="soloQty" value="1" min="1" />
         <button onclick="changeQuantity('soloQty', 1)">+</button>
       </div>
-      <button onclick="addToCart('Solo Pack', 50, parseInt(document.getElementById('soloQty').value))">Add to Cart</button>
+      <button class="btn-primary" onclick="addToCart('Solo Pack', 50, parseInt(document.getElementById('soloQty').value))">Add to Cart</button>
     </div>
 
     <div class="card">
       <h3>Family Pack</h3>
-      <img src="family.jpg" alt="Family Pack" style="width:100%; border-radius: 10px;" />
+      <img src="family.jpg" alt="Family Pack" />
       <p>5 Healthy White Hotdogs</p>
       <p><strong>₱230</strong></p>
       <div class="quantity-input">
@@ -203,12 +222,12 @@
         <input type="number" id="familyQty" value="1" min="1" />
         <button onclick="changeQuantity('familyQty', 1)">+</button>
       </div>
-      <button onclick="addToCart('Family Pack', 230, parseInt(document.getElementById('familyQty').value))">Add to Cart</button>
+      <button class="btn-primary" onclick="addToCart('Family Pack', 230, parseInt(document.getElementById('familyQty').value))">Add to Cart</button>
     </div>
 
     <div class="card">
       <h3>Party Pack</h3>
-      <img src="party.jpg" alt="Party Pack" style="width:100%; border-radius: 10px;" />
+      <img src="party.jpg" alt="Party Pack" />
       <p>10 Healthy White Hotdogs</p>
       <p><strong>₱450</strong></p>
       <div class="quantity-input">
@@ -216,14 +235,15 @@
         <input type="number" id="partyQty" value="1" min="1" />
         <button onclick="changeQuantity('partyQty', 1)">+</button>
       </div>
-      <button onclick="addToCart('Party Pack', 450, parseInt(document.getElementById('partyQty').value))">Add to Cart</button>
+      <button class="btn-primary" onclick="addToCart('Party Pack', 450, parseInt(document.getElementById('partyQty').value))">Add to Cart</button>
     </div>
   </section>
 
   <section id="cart-section">
+    <h2>Your Cart</h2>
     <div id="cart-content"></div>
-    <div style="text-align: center;">
-      <button onclick="goToMain()">Back to Main</button>
+    <div style="text-align: center; margin-top: 1rem;">
+      <button class="btn-primary" onclick="goToMain()">Home</button>
     </div>
   </section>
 
@@ -250,9 +270,19 @@
     }
 
     function goToMain() {
-      document.getElementById('cart-section').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
-      document.getElementById('main').scrollIntoView({ behavior: 'smooth' });
+      const main = document.getElementById('main');
+      const cart = document.getElementById('cart-section');
+      cart.style.transition = 'opacity 0.3s ease';
+      main.style.transition = 'opacity 0.3s ease';
+      cart.style.opacity = '0';
+      setTimeout(() => {
+        cart.style.display = 'none';
+        main.style.display = 'block';
+        main.style.opacity = '0';
+        setTimeout(() => {
+          main.style.opacity = '1';
+        }, 10);
+      }, 300);
     }
 
     function renderCartContent() {
@@ -262,6 +292,7 @@
   </script>
 </body>
 </html>
+
 
 
 
