@@ -1,149 +1,197 @@
-<script>
-  const products = [
-    { name: 'Solo Pack', price: 120, label: 'New' },
-    { name: 'Family Pack', price: 300, label: 'Best Seller' },
-    { name: 'Party Pack', price: 500, label: '' }
-  ];
+<!DOCTYPE html>
+<html lang="en">
 
-  const productList = document.getElementById('productList');
-  const cartItems = document.getElementById('cartItems');
-  const cartSidebar = document.getElementById('cartSidebar');
-  const cartToggle = document.getElementById('cartToggle');
-  const cartClose = document.getElementById('cartClose');
-  const cartCount = document.getElementById('cartCount');
-  const cartTotal = document.getElementById('cartTotal');
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  const popupNotification = document.getElementById('popupNotification');
-  const popupBottom = document.getElementById('popupBottom');
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthy White Hotdogs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden { display: none !important; }
+  </style>
+</head>
 
-  let cart = [];
+<body class="font-inter bg-gray-50 text-gray-800">
+  <div class="min-h-screen flex flex-col relative">
+    <!-- Header -->
+    <header class="bg-white shadow p-4 flex justify-between items-center z-10">
+      <img src="/mnt/data/517039856_747785660952752_1896212018083625161_n.jpg" alt="Mommy Sam's White Hotdog Logo" class="h-10 md:h-14">
+      <button id="cartToggle" class="relative">
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8M17 13l1.6 8M6 21h12" />
+        </svg>
+        <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 rounded-full hidden">0</span>
+      </button>
+    </header>
 
-  function renderProducts() {
-    productList.innerHTML = '';
-    products.forEach(product => {
-      const card = document.createElement('div');
-      card.className = 'bg-white p-4 rounded-xl shadow-md';
-      card.innerHTML = `
-        <div class="mb-2">
-          ${product.label ? `<span class="text-xs text-white bg-red-500 rounded-full px-2 py-0.5">${product.label}</span>` : ''}
-        </div>
-        <h3 class="text-lg font-semibold mb-1">${product.name}</h3>
-        <p class="mb-2 text-sm text-gray-600">₱${product.price}</p>
-        <div class="flex items-center gap-1">
-          <button class="qty-minus bg-gray-200 rounded-full w-8 h-8">-</button>
-          <span class="qty-display">1</span>
-          <button class="qty-plus bg-gray-200 rounded-full w-8 h-8">+</button>
-          <button class="add-to-cart ml-2 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition" data-name="${product.name}" data-price="${product.price}">Add to Cart</button>
-        </div>
-      `;
-      const qtyDisplay = card.querySelector('.qty-display');
-      let quantity = 1;
+    <!-- Notification -->
+    <div id="notification" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-xl shadow z-50 transition-all">Added to cart!</div>
 
-      card.querySelector('.qty-minus').addEventListener('click', () => {
-        if (quantity > 1) qtyDisplay.textContent = --quantity;
-      });
+    <!-- Promotion Carousel -->
+    <div class="w-full overflow-hidden relative mt-4">
+      <div id="promoCarousel" class="flex transition-transform duration-700" style="width: 400%;">
+        <img src="/mnt/data/517039856_747785660952752_1896212018083625161_n.jpg" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+        <img src="/mnt/data/517039856_747785660952752_1896212018083625161_n.jpg" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+        <img src="/mnt/data/517039856_747785660952752_1896212018083625161_n.jpg" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+        <img src="/mnt/data/517039856_747785660952752_1896212018083625161_n.jpg" class="w-full object-cover h-48 sm:h-64 flex-shrink-0">
+      </div>
+    </div>
 
-      card.querySelector('.qty-plus').addEventListener('click', () => {
-        qtyDisplay.textContent = ++quantity;
-      });
+    <!-- Product List -->
+    <main class="flex-1 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6" id="productList"></main>
 
-      card.querySelector('.add-to-cart').addEventListener('click', () => {
-        const name = product.name;
-        const price = product.price;
-        const existing = cart.find(item => item.name === name);
-        if (existing) {
-          existing.quantity += quantity;
-        } else {
-          cart.push({ name, price, quantity });
-        }
-        updateCart();
-        showNotification();
-      });
+    <!-- Cart Sidebar -->
+    <aside id="cartSidebar" class="hidden fixed top-0 right-0 w-80 max-w-full h-full bg-white shadow-xl p-4 rounded-l-xl z-40 overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Your Cart</h2>
+        <button id="closeCart" class="text-gray-500 hover:text-gray-800">✕</button>
+      </div>
+      <ul id="cartItems" class="space-y-2"></ul>
+      <button id="removeAll" class="mt-4 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 w-full">Remove All</button>
+      <a id="checkoutBtn" href="#" target="_blank" class="mt-2 block text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Checkout via Messenger</a>
+    </aside>
 
-      productList.appendChild(card);
-    });
-  }
+    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-40 z-30"></div>
+  </div>
 
-  function updateCart() {
-    cartItems.innerHTML = '';
-    let total = 0;
-    cart.forEach((item, index) => {
-      total += item.price * item.quantity;
-      const row = document.createElement('div');
-      row.className = 'flex justify-between items-center mb-2';
-      row.innerHTML = `
-        <div>
-          <p class="font-semibold">${item.name}</p>
-          <p class="text-sm text-gray-500">₱${item.price} x ${item.quantity}</p>
-        </div>
-        <div class="flex items-center gap-1">
-          <button class="decrease bg-gray-200 rounded-full w-6 h-6">-</button>
-          <span>${item.quantity}</span>
-          <button class="increase bg-gray-200 rounded-full w-6 h-6">+</button>
-        </div>
-      `;
-      row.querySelector('.decrease').addEventListener('click', () => {
-        if (item.quantity > 1) {
-          item.quantity--;
-        } else {
-          cart.splice(index, 1);
-        }
-        updateCart();
-      });
-      row.querySelector('.increase').addEventListener('click', () => {
-        item.quantity++;
-        updateCart();
-      });
-      cartItems.appendChild(row);
-    });
+  <script>
+    const products = [
+      { name: 'Solo Pack', price: 120, label: 'New', image: '/mnt/data/solo.jpg', description: 'A solo serving perfect for one.' },
+      { name: 'Family Pack', price: 300, label: 'Best Seller', image: '/mnt/data/family.jpg', description: 'Ideal for family meals.' },
+      { name: 'Party Pack', price: 500, label: '', image: '/mnt/data/party.jpg', description: 'Great for parties and gatherings.' }
+    ];
 
-    cartTotal.textContent = total;
-    cartCount.textContent = cart.length;
-    cartCount.classList.toggle('hidden', cart.length === 0);
-  }
+    const cart = [];
+    const cartCount = document.getElementById('cartCount');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartItems = document.getElementById('cartItems');
+    const cartToggle = document.getElementById('cartToggle');
+    const closeCart = document.getElementById('closeCart');
+    const overlay = document.getElementById('overlay');
+    const removeAllBtn = document.getElementById('removeAll');
+    const notification = document.getElementById('notification');
+    const checkoutBtn = document.getElementById('checkoutBtn');
 
-  function showNotification() {
-    popupNotification.classList.remove('hidden');
-    popupBottom.classList.remove('hidden');
-    setTimeout(() => {
-      popupNotification.classList.add('hidden');
-      popupBottom.classList.add('hidden');
-    }, 2000);
-  }
-
-  cartToggle.addEventListener('click', () => {
-    cartSidebar.classList.remove('hidden');
-  });
-
-  cartClose.addEventListener('click', () => {
-    cartSidebar.classList.add('hidden');
-  });
-
-  document.addEventListener('click', (e) => {
-    if (!cartSidebar.contains(e.target) && !cartToggle.contains(e.target)) {
-      cartSidebar.classList.add('hidden');
+    function showNotification() {
+      notification.classList.remove('hidden');
+      setTimeout(() => notification.classList.add('hidden'), 2000);
     }
-  });
 
-  checkoutBtn.addEventListener('click', () => {
-    const name = document.getElementById('customerName').value;
-    const address = document.getElementById('customerAddress').value;
-    let orderDetails = cart.map(item => `${item.quantity} x ${item.name}`).join(', ');
-    const message = `Hi! I'd like to order: ${orderDetails}. Name: ${name}, Address: ${address}`;
-    const encoded = encodeURIComponent(message);
-    window.open(`https://www.facebook.com/MommySamWhiteHotdog/messages?t=${encoded}`, '_blank');
-  });
+    function updateCart() {
+      cartItems.innerHTML = '';
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        const li = document.createElement('li');
+        li.className = 'flex justify-between items-center border-b py-2';
+        li.innerHTML = `
+          <div>
+            <p class="font-medium">${item.name}</p>
+            <p class="text-sm text-gray-500">₱${item.price} × ${item.quantity}</p>
+          </div>
+          <div class="flex items-center gap-1">
+            <button class="bg-gray-200 rounded-full w-6 h-6" onclick="changeQty(${index}, -1)">-</button>
+            <span class="text-sm">${item.quantity}</span>
+            <button class="bg-gray-200 rounded-full w-6 h-6" onclick="changeQty(${index}, 1)">+</button>
+          </div>
+        `;
+        cartItems.appendChild(li);
+      });
+      cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.classList.toggle('hidden', cart.length === 0);
+      const query = cart.map(i => `${i.quantity}x ${i.name}`).join(', ');
+      checkoutBtn.href = `https://www.facebook.com/MommySamWhiteHotdog?text=I want to order: ${encodeURIComponent(query)}`;
+    }
 
-  // Auto-carousel
-  let promoIndex = 0;
-  setInterval(() => {
-    promoIndex = (promoIndex + 1) % 4;
-    document.getElementById('promoCarousel').style.transform = `translateX(-${promoIndex * 100}%)`;
-  }, 4000);
+    function changeQty(index, delta) {
+      cart[index].quantity += delta;
+      if (cart[index].quantity <= 0) cart.splice(index, 1);
+      updateCart();
+    }
 
-  // ✅ Call this on load
-  renderProducts();
-</script>
+    function renderProducts() {
+      const productList = document.getElementById('productList');
+      productList.innerHTML = '';
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-xl shadow-md';
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" class="w-full h-40 object-cover rounded-lg mb-2">
+          ${product.label ? `<div class="mb-2"><span class="text-xs text-white bg-red-500 rounded-full px-2 py-0.5">${product.label}</span></div>` : ''}
+          <h3 class="text-lg font-semibold mb-1">${product.name}</h3>
+          <p class="text-sm text-gray-500 mb-1">${product.description}</p>
+          <p class="mb-2 text-lg text-gray-700 font-bold">₱${product.price}</p>
+          <div class="flex flex-wrap items-center justify-center gap-2">
+            <div class="flex items-center gap-1">
+              <button class="qty-minus bg-gray-200 rounded-full w-8 h-8">-</button>
+              <span class="qty-display">1</span>
+              <button class="qty-plus bg-gray-200 rounded-full w-8 h-8">+</button>
+            </div>
+            <button class="add-to-cart bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition" data-name="${product.name}" data-price="${product.price}">Add to Cart</button>
+          </div>
+        `;
+
+        const qtyDisplay = card.querySelector('.qty-display');
+        let quantity = 1;
+
+        card.querySelector('.qty-minus').addEventListener('click', () => {
+          if (quantity > 1) qtyDisplay.textContent = --quantity;
+        });
+
+        card.querySelector('.qty-plus').addEventListener('click', () => {
+          qtyDisplay.textContent = ++quantity;
+        });
+
+        card.querySelector('.add-to-cart').addEventListener('click', () => {
+          const name = product.name;
+          const price = product.price;
+          const existing = cart.find(item => item.name === name);
+          if (existing) {
+            existing.quantity += quantity;
+          } else {
+            cart.push({ name, price, quantity });
+          }
+          updateCart();
+          showNotification();
+        });
+
+        productList.appendChild(card);
+      });
+    }
+
+    renderProducts();
+
+    cartToggle.addEventListener('click', () => {
+      cartSidebar.classList.remove('hidden');
+      overlay.classList.remove('hidden');
+    });
+
+    closeCart.addEventListener('click', () => {
+      cartSidebar.classList.add('hidden');
+      overlay.classList.add('hidden');
+    });
+
+    overlay.addEventListener('click', () => {
+      cartSidebar.classList.add('hidden');
+      overlay.classList.add('hidden');
+    });
+
+    removeAllBtn.addEventListener('click', () => {
+      cart.length = 0;
+      updateCart();
+    });
+
+    let carouselIndex = 0;
+    setInterval(() => {
+      carouselIndex = (carouselIndex + 1) % 4;
+      document.getElementById('promoCarousel').style.transform = `translateX(-${carouselIndex * 100}%)`;
+    }, 4000);
+  </script>
+</body>
+
+</html>
+
 
 
 
