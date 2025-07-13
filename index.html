@@ -172,9 +172,12 @@
 
   <header id="top">
     🌭 Healthy White Hotdog
+    <button style="float: right; background-color: #5ab07e; padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-top: -0.4rem; cursor: pointer;" onclick="openCartPanelWithAnimation()">
+      🛒 Cart (<span id="cart-count">0</span>)
+    </button>
   </header>
 
-  <button class="sticky-cart-btn" onclick="openCartPanel()">🛒 Cart (<span id="cart-count">0</span>)</button>
+  <button class="sticky-cart-btn" onclick="openCartPanelWithAnimation()">🛒 Cart (<span id="cart-count">0</span>)</button>
 
   <section id="main">
     <div class="card">
@@ -229,66 +232,21 @@
   </footer>
 
   <script>
-    function changeQuantity(id, change) {
-      const input = document.getElementById(id);
-      let current = parseInt(input.value);
-      if (isNaN(current)) current = 1;
-      current += change;
-      if (current < 1) current = 1;
-      input.value = current;
-    }
-
-    let cart = [];
-    let discount = 0;
-
-    function renderCartContent() {
-      let content = `<h2>Your Cart</h2><ul>`;
-      let subtotal = 0;
-      cart.forEach((item, index) => {
-        subtotal += item.price * item.quantity;
-        content += `<li>${item.name} x${item.quantity} - ₱${item.price * item.quantity} <button onclick="removeFromCart(${index})">✕</button></li>`;
-      });
-      const total = subtotal - discount;
-      content += `</ul><p>Voucher discount: ₱${discount.toFixed(2)}</p><p><strong>Total: ₱${total < 0 ? 0 : total}</strong></p>`;
-      content += `<div style="text-align: center;"><button onclick="checkout()">Checkout</button></div>`;
-      document.getElementById('cart-content').innerHTML = content;
-    }
-
-    function renderCart() {
-      document.getElementById('cart-count').textContent = cart.reduce((sum, i) => sum + i.quantity, 0);
-    }
-
-    function addToCart(name, price, quantity = 1) {
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.quantity += quantity;
-      } else {
-        cart.push({ name, price, quantity });
-      }
-      renderCart();
-      alert(name + " added to cart!");
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      renderCartContent();
-      renderCart();
-    }
-
-    function checkout() {
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-      const message = `Hello! I would like to order the following:\n\n` + cart.map((item, i) => `${i + 1}. ${item.name} x${item.quantity}`).join("\n") + `\n\nVoucher discount: ₱${discount.toFixed(2)}\nTotal after discount: ₱${(cart.reduce((sum, i) => sum + i.price * i.quantity, 0) - discount).toFixed(2)}`;
-      const fbLink = `https://www.facebook.com/messages/t/YourPageName?text=${encodeURIComponent(message)}`;
-      window.open(fbLink, '_blank');
-    }
-
-    function openCartPanel() {
-      document.getElementById('main').style.display = 'none';
-      document.getElementById('cart-section').style.display = 'block';
-      renderCartContent();
+    function openCartPanelWithAnimation() {
+      const main = document.getElementById('main');
+      const cart = document.getElementById('cart-section');
+      main.style.transition = 'opacity 0.3s ease';
+      cart.style.transition = 'opacity 0.3s ease';
+      main.style.opacity = '0';
+      setTimeout(() => {
+        main.style.display = 'none';
+        cart.style.display = 'block';
+        cart.style.opacity = '0';
+        setTimeout(() => {
+          cart.style.opacity = '1';
+        }, 10);
+        renderCartContent();
+      }, 300);
     }
 
     function goToMain() {
@@ -296,8 +254,14 @@
       document.getElementById('main').style.display = 'block';
       document.getElementById('main').scrollIntoView({ behavior: 'smooth' });
     }
+
+    function renderCartContent() {
+      const cartContent = document.getElementById('cart-content');
+      cartContent.innerHTML = '<p>Your cart is empty.</p>';
+    }
   </script>
 </body>
 </html>
+
 
 
