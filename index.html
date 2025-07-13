@@ -177,7 +177,44 @@
   <button class="sticky-cart-btn" onclick="openCartPanel()">🛒 Cart (<span id="cart-count">0</span>)</button>
 
   <section id="main">
-    <!-- Product cards here -->
+    <div class="card">
+      <h3>Solo Pack</h3>
+      <img src="solo.jpg" alt="Solo Pack" style="width:100%; border-radius: 10px;" />
+      <p>1 Healthy White Hotdog</p>
+      <p><strong>₱50</strong></p>
+      <div class="quantity-input">
+        <button onclick="changeQuantity('soloQty', -1)">-</button>
+        <input type="number" id="soloQty" value="1" min="1" />
+        <button onclick="changeQuantity('soloQty', 1)">+</button>
+      </div>
+      <button onclick="addToCart('Solo Pack', 50, parseInt(document.getElementById('soloQty').value))">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <h3>Family Pack</h3>
+      <img src="family.jpg" alt="Family Pack" style="width:100%; border-radius: 10px;" />
+      <p>5 Healthy White Hotdogs</p>
+      <p><strong>₱230</strong></p>
+      <div class="quantity-input">
+        <button onclick="changeQuantity('familyQty', -1)">-</button>
+        <input type="number" id="familyQty" value="1" min="1" />
+        <button onclick="changeQuantity('familyQty', 1)">+</button>
+      </div>
+      <button onclick="addToCart('Family Pack', 230, parseInt(document.getElementById('familyQty').value))">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <h3>Party Pack</h3>
+      <img src="party.jpg" alt="Party Pack" style="width:100%; border-radius: 10px;" />
+      <p>10 Healthy White Hotdogs</p>
+      <p><strong>₱450</strong></p>
+      <div class="quantity-input">
+        <button onclick="changeQuantity('partyQty', -1)">-</button>
+        <input type="number" id="partyQty" value="1" min="1" />
+        <button onclick="changeQuantity('partyQty', 1)">+</button>
+      </div>
+      <button onclick="addToCart('Party Pack', 450, parseInt(document.getElementById('partyQty').value))">Add to Cart</button>
+    </div>
   </section>
 
   <section id="cart-section">
@@ -262,4 +299,5 @@
   </script>
 </body>
 </html>
+
 
