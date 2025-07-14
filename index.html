@@ -1,5 +1,3 @@
-<!-- Full working code with restored product/cart logic -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,129 +30,213 @@
   </style>
 </head>
 <body class="bg-white text-gray-800 font-sans">
-<!-- (HTML remains unchanged as requested) -->
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const productList = document.getElementById('product-list');
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-    const cartCount = document.getElementById('cart-count');
-    const cartOverlay = document.getElementById('cart-overlay');
-    const cart = document.getElementById('cart');
+  <!-- Header -->
+  <header class="bg-red-500 text-white p-4 flex justify-between items-center">
+    <h1 class="text-lg sm:text-2xl font-bold">FROZEN WHITE</h1>
+    <button onclick="toggleCart()" class="relative">
+      🛒 <span id="cart-count" class="bg-white text-red-500 text-xs rounded-full px-1 absolute -top-2 -right-2">0</span>
+    </button>
+  </header>
 
-    let cartItems = [];
+  <!-- Search & Filter -->
+  <div class="p-4 flex flex-col sm:flex-row gap-2">
+    <input id="search-bar" type="text" placeholder="Search Products..." class="border p-2 rounded flex-1" oninput="searchProducts()">
+    <select onchange="filterCategory(this.value)" class="border p-2 rounded">
+      <option value="All">All</option>
+      <option value="Best Sellers">Best Sellers</option>
+      <option value="New">New</option>
+      <option value="Discounted">Discounted</option>
+    </select>
+  </div>
 
-    const products = [
-      { name: 'White Hotdog', price: 99, image: 'https://via.placeholder.com/300x200?text=White+Hotdog', category: 'Best Sellers' },
-      { name: 'Cheesy Dog', price: 120, image: 'https://via.placeholder.com/300x200?text=Cheesy+Dog', category: 'New' },
-      { name: 'Healthy Pack', price: 150, image: 'https://via.placeholder.com/300x200?text=Healthy+Pack', category: 'Discounted' },
-    ];
+  <!-- Product List -->
+  <section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
 
-    function renderProducts(filtered = products) {
-      if (!productList) return;
-      productList.innerHTML = '';
-      filtered.forEach((p, i) => {
-        const div = document.createElement('div');
-        div.className = 'fade-in border rounded shadow p-2';
-        div.innerHTML = `
-          <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded" />
-          <h3 class="font-bold">${p.name}</h3>
-          <p class="text-sm text-gray-600">₱${p.price}</p>
-          <button onclick="addToCart(${i})" class="bg-red-500 hover:bg-red-600 text-white w-full mt-2 py-1 rounded">Add to Cart</button>
-        `;
-        productList.appendChild(div);
-      });
-    }
+  <!-- Cart Overlay -->
+  <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleCart()"></div>
+  <aside id="cart" class="fixed top-0 right-[-100%] w-64 sm:w-80 h-full bg-white shadow-lg transition-all duration-300 z-50 p-4 flex flex-col">
+    <h2 class="text-lg font-bold mb-2">Your Cart</h2>
+    <div id="cart-items" class="flex-1 overflow-y-auto"></div>
+    <div class="mt-2 font-semibold">Total: ₱<span id="cart-total">0</span></div>
+    <button onclick="toggleCart()" class="mt-2 bg-red-500 text-white py-1 rounded">Close</button>
+  </aside>
 
-    window.addToCart = function(index) {
-      cartItems.push(products[index]);
-      updateCart();
-    }
+  <!-- Carousel -->
+  <div class="overflow-hidden relative w-full h-40 sm:h-64 my-4">
+    <div id="carousel" class="flex transition-transform duration-500 w-full">
+      <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
+      <img src="https://i.imgur.com/v75oEXV.jpeg" class="w-full flex-shrink-0 object-cover">
+      <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
+    </div>
+    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+      <button onclick="setCarouselIndex(0)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+      <button onclick="setCarouselIndex(1)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+      <button onclick="setCarouselIndex(2)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+    </div>
+  </div>
 
-    function updateCart() {
-      if (!cartItemsContainer || !cartTotal || !cartCount) return;
-      cartItemsContainer.innerHTML = '';
-      let total = 0;
-      cartItems.forEach((item, i) => {
-        total += item.price;
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-          <span class="cart-item-name">${item.name}</span>
-          <span class="cart-item-price">₱${item.price}</span>
-          <button onclick="removeFromCart(${i})" class="cart-remove-btn">✕</button>
-        `;
-        cartItemsContainer.appendChild(div);
-      });
-      cartTotal.textContent = total;
-      cartCount.textContent = cartItems.length;
-    }
+  <!-- Admin Section -->
+  <div class="p-4">
+    <h3 class="text-lg font-bold">Admin Login</h3>
+    <input id="login-email" type="email" placeholder="Email" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <input id="login-pass" type="password" placeholder="Password" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <button onclick="adminLogin()" class="bg-blue-500 text-white py-1 px-4 rounded">Login</button>
+    <p id="login-msg" class="text-green-500 hidden mt-2">✅ Admin Access Granted</p>
+  </div>
 
-    window.removeFromCart = function(index) {
-      cartItems.splice(index, 1);
-      updateCart();
-    }
+  <!-- Add Product -->
+  <div class="p-4">
+    <h3 class="text-lg font-bold">Add Product</h3>
+    <input id="prod-name" type="text" placeholder="Product Name" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <input id="prod-price" type="number" placeholder="Price" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <input id="prod-image" type="text" placeholder="Image URL" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <input id="prod-category" type="text" placeholder="Category" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <button onclick="addProduct()" class="bg-green-500 text-white py-1 px-4 rounded">Add Product</button>
+  </div>
 
-    window.toggleCart = function() {
-      if (cart && cartOverlay) {
-        cart.classList.toggle('cart-open');
-        cartOverlay.classList.toggle('hidden');
+  <!-- Shipping Check -->
+  <div class="p-4">
+    <h3 class="text-lg font-bold">Check Shipping Status</h3>
+    <input id="order-id" type="text" placeholder="Order ID" class="border p-2 rounded block my-2 w-full sm:w-1/2">
+    <button onclick="checkShippingStatus()" class="bg-yellow-500 text-white py-1 px-4 rounded">Check</button>
+    <p id="shipping-result" class="mt-2"></p>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const productList = document.getElementById('product-list');
+      const cartItemsContainer = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+      const cartCount = document.getElementById('cart-count');
+      const cartOverlay = document.getElementById('cart-overlay');
+      const cart = document.getElementById('cart');
+
+      let cartItems = [];
+
+      const products = [
+        { name: 'White Hotdog', price: 99, image: 'https://via.placeholder.com/300x200?text=White+Hotdog', category: 'Best Sellers' },
+        { name: 'Cheesy Dog', price: 120, image: 'https://via.placeholder.com/300x200?text=Cheesy+Dog', category: 'New' },
+        { name: 'Healthy Pack', price: 150, image: 'https://via.placeholder.com/300x200?text=Healthy+Pack', category: 'Discounted' },
+      ];
+
+      function renderProducts(filtered = products) {
+        if (!productList) return;
+        productList.innerHTML = '';
+        filtered.forEach((p, i) => {
+          const div = document.createElement('div');
+          div.className = 'fade-in border rounded shadow p-2';
+          div.innerHTML = `
+            <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded" />
+            <h3 class="font-bold">${p.name}</h3>
+            <p class="text-sm text-gray-600">₱${p.price}</p>
+            <button onclick="addToCart(${i})" class="bg-red-500 hover:bg-red-600 text-white w-full mt-2 py-1 rounded">Add to Cart</button>
+          `;
+          productList.appendChild(div);
+        });
       }
-    }
 
-    window.filterCategory = function(cat) {
-      if (cat === 'All') renderProducts();
-      else renderProducts(products.filter(p => p.category === cat));
-    }
-
-    window.searchProducts = function() {
-      const keywordInput = document.getElementById('search-bar');
-      if (!keywordInput) return;
-      const keyword = keywordInput.value.toLowerCase();
-      renderProducts(products.filter(p => p.name.toLowerCase().includes(keyword)));
-    }
-
-    window.adminLogin = function() {
-      const email = document.getElementById('login-email')?.value;
-      const pass = document.getElementById('login-pass')?.value;
-      if (email === 'admin@frozen.com' && pass === 'hotdog') {
-        const el = document.querySelector('[style]');
-        if (el) el.removeAttribute('style');
-        document.getElementById('login-msg')?.classList.remove('hidden');
+      window.addToCart = function(index) {
+        cartItems.push(products[index]);
+        updateCart();
       }
-    }
 
-    window.addProduct = function() {
-      const name = document.getElementById('prod-name')?.value;
-      const price = parseInt(document.getElementById('prod-price')?.value);
-      const image = document.getElementById('prod-image')?.value;
-      const category = document.getElementById('prod-category')?.value;
-      if (name && price && image) {
-        products.push({ name, price, image, category });
-        renderProducts();
+      function updateCart() {
+        if (!cartItemsContainer || !cartTotal || !cartCount) return;
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+        cartItems.forEach((item, i) => {
+          total += item.price;
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <span class="cart-item-name">${item.name}</span>
+            <span class="cart-item-price">₱${item.price}</span>
+            <button onclick="removeFromCart(${i})" class="cart-remove-btn">✕</button>
+          `;
+          cartItemsContainer.appendChild(div);
+        });
+        cartTotal.textContent = total;
+        cartCount.textContent = cartItems.length;
       }
-    }
 
-    window.checkShippingStatus = function() {
-      const id = document.getElementById('order-id')?.value.trim();
-      const result = document.getElementById('shipping-result');
-      if (!result) return;
-      if (id === '') result.textContent = '❗ Please enter a valid Order ID.';
-      else result.textContent = `📦 Order #${id} is now being processed.`;
-    }
+      window.removeFromCart = function(index) {
+        cartItems.splice(index, 1);
+        updateCart();
+      }
 
-    let carouselIndex = 0;
-    setInterval(() => {
+      window.toggleCart = function() {
+        if (cart && cartOverlay) {
+          cart.classList.toggle('cart-open');
+          cartOverlay.classList.toggle('hidden');
+        }
+      }
+
+      window.filterCategory = function(cat) {
+        if (cat === 'All') renderProducts();
+        else renderProducts(products.filter(p => p.category === cat));
+      }
+
+      window.searchProducts = function() {
+        const keywordInput = document.getElementById('search-bar');
+        if (!keywordInput) return;
+        const keyword = keywordInput.value.toLowerCase();
+        renderProducts(products.filter(p => p.name.toLowerCase().includes(keyword)));
+      }
+
+      window.adminLogin = function() {
+        const email = document.getElementById('login-email')?.value;
+        const pass = document.getElementById('login-pass')?.value;
+        if (email === 'admin@frozen.com' && pass === 'hotdog') {
+          const el = document.querySelector('[style]');
+          if (el) el.removeAttribute('style');
+          document.getElementById('login-msg')?.classList.remove('hidden');
+        }
+      }
+
+      window.addProduct = function() {
+        const name = document.getElementById('prod-name')?.value;
+        const price = parseInt(document.getElementById('prod-price')?.value);
+        const image = document.getElementById('prod-image')?.value;
+        const category = document.getElementById('prod-category')?.value;
+        if (name && price && image) {
+          products.push({ name, price, image, category });
+          renderProducts();
+        }
+      }
+
+      window.checkShippingStatus = function() {
+        const id = document.getElementById('order-id')?.value.trim();
+        const result = document.getElementById('shipping-result');
+        if (!result) return;
+        if (id === '') result.textContent = '❗ Please enter a valid Order ID.';
+        else result.textContent = `📦 Order #${id} is now being processed.`;
+      }
+
+      let carouselIndex = 0;
       const carousel = document.getElementById('carousel');
-      if (carousel) {
-        carouselIndex = (carouselIndex + 1) % 3;
-        carousel.style.transform = `translateX(-${carouselIndex * 100}%)`;
-      }
-    }, 4000);
+      const dots = document.querySelectorAll('button[onclick^="setCarouselIndex"]');
 
-    renderProducts();
-  });
-</script>
+      window.setCarouselIndex = function(index) {
+        carouselIndex = index;
+        if (carousel) {
+          carousel.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        }
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('opacity-100', i === index);
+          dot.classList.toggle('opacity-50', i !== index);
+        });
+      }
+
+      setInterval(() => {
+        carouselIndex = (carouselIndex + 1) % 3;
+        setCarouselIndex(carouselIndex);
+      }, 4000);
+
+      renderProducts();
+    });
+  </script>
+
 </body>
 </html>
