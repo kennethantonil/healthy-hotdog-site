@@ -19,162 +19,126 @@
 
     <!-- Header -->
     <header class="bg-white shadow p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center z-10">
-      <div class="flex items-center justify-between w-full sm:w-auto">
-        <img src="https://drive.google.com/uc?export=view&id=15QKVX9VcJdLq4RtQNDdXhPOjSLF9bAdc" alt="Mommy Sam's Logo" class="h-10 md:h-14 rounded-full">
-        <button id="cartToggle" aria-label="Toggle Cart" class="relative ml-auto sm:ml-4">
-          <!-- Flat Cart Icon -->
-          <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M3 3h2l.4 2H21l-3.6 7H7.4L6 6H4.4l-.4-2zM7 18c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-          </svg>
-          <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 rounded-full hidden">0</span>
-        </button>
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
+        <img src="https://i.imgur.com/V3eQP4i.jpeg" alt="Mommy Sam's Logo" class="h-10 md:h-14 rounded-full">
+        <input id="searchInput" type="text" placeholder="Search products..." class="border rounded px-2 py-1 text-sm w-full sm:w-60">
+        <div class="flex gap-3">
+          <button id="settingsToggle" aria-label="Settings" class="relative">
+            <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 16a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-10a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 20a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
+            </svg>
+          </button>
+          <button id="cartToggle" aria-label="Toggle Cart" class="relative">
+            <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 3h2l.4 2H21l-3.6 7H7.4L6 6H4.4l-.4-2zM7 18c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 rounded-full hidden">0</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Product Categories -->
+    <!-- Carousel -->
+    <div class="relative w-full overflow-hidden max-w-screen-xl mx-auto mt-4 rounded-xl">
+      <div id="carousel" class="whitespace-nowrap transition-transform duration-700 ease-in-out">
+        <img src="https://i.imgur.com/Kg68IWo.jpeg" class="inline-block w-full h-48 object-cover" />
+        <img src="https://i.imgur.com/vzDJzkV.jpeg" class="inline-block w-full h-48 object-cover" />
+      </div>
+    </div>
+
+    <!-- Categories -->
     <nav class="w-full px-4 py-2 bg-white shadow-sm z-10">
-      <div class="flex flex-wrap sm:justify-center gap-2 w-full" id="categoryFilters">
+      <div class="grid grid-cols-2 sm:flex flex-wrap sm:justify-center gap-2 w-full" id="categoryFilters">
         <span data-category="Chicken Hotdog" class="category-btn px-3 py-2 bg-yellow-100 text-yellow-700 rounded-full text-sm cursor-pointer hover:bg-yellow-200 transition w-full sm:w-auto text-center">Chicken Hotdog</span>
         <span data-category="Fish Hotdog" class="category-btn px-3 py-2 bg-blue-100 text-blue-700 rounded-full text-sm cursor-pointer hover:bg-blue-200 transition w-full sm:w-auto text-center">Fish Hotdog</span>
         <span data-category="Beef Hotdog" class="category-btn px-3 py-2 bg-red-100 text-red-700 rounded-full text-sm cursor-pointer hover:bg-red-200 transition w-full sm:w-auto text-center">Beef Hotdog</span>
         <span data-category="Regular Hotdog" class="category-btn px-3 py-2 bg-gray-100 text-gray-700 rounded-full text-sm cursor-pointer hover:bg-gray-200 transition w-full sm:w-auto text-center">Regular Hotdog</span>
-        <span data-category="All" class="category-btn px-3 py-2 bg-green-100 text-green-700 rounded-full text-sm cursor-pointer hover:bg-green-200 transition w-full sm:w-auto text-center">All</span>
+        <span data-category="All" class="category-btn px-3 py-2 bg-green-100 text-green-700 rounded-full text-sm cursor-pointer hover:bg-green-200 transition w-full sm:w-auto text-center active">All</span>
       </div>
     </nav>
-
-    <!-- Toast Notification -->
-    <div id="notification" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-xl shadow z-50">Added to cart!</div>
-
-    <!-- Carousel -->
-    <section class="relative w-full overflow-hidden mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 px-4">
-      ${[1, 2, 3, 4].map(() => `
-        <img src="https://drive.google.com/uc?export=view&id=1G-Z4XpeblWFRtKY9vJ9dUvbeBMyMkbrz" loading="lazy" class="w-full object-cover h-48 sm:h-64 rounded-lg">
-      `).join("")}
-    </section>
 
     <!-- Product List -->
     <main class="flex-1 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="productList"></main>
 
-    <!-- Cart Sidebar -->
-    <aside id="cartSidebar" class="hidden fixed top-0 right-0 w-full sm:w-80 max-w-full h-full bg-white shadow-xl p-4 rounded-l-xl z-40 overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Your Cart</h2>
-        <button id="closeCart" class="text-gray-500 hover:text-gray-800 text-2xl leading-none">×</button>
-      </div>
-      <ul id="cartItems" class="space-y-2"></ul>
-      <button id="removeAll" class="mt-4 bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 w-full">Remove All</button>
-      <a id="checkoutBtn" href="#" target="_blank" class="mt-2 block text-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Checkout via Messenger</a>
-    </aside>
+    <!-- Floating Contact -->
+    <a href="https://www.facebook.com/MommySamWhiteHotdog" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-sm sm:text-base z-50">Contact Us</a>
 
-    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-40 z-30"></div>
-  </div>
+    <!-- Scripts -->
+    <script>
+      const carousel = document.getElementById('carousel');
+      let currentSlide = 0;
+      const totalSlides = carousel.children.length;
+      setInterval(() => {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+      }, 4000);
 
-  <!-- JavaScript -->
-  <script>
-    const products = [
-      { id: 1, name: "Solo Pack", price: 120, description: "Perfect for individual enjoyment.", label: "New", category: "Chicken Hotdog" },
-      { id: 2, name: "Family Pack", price: 300, description: "Ideal for sharing with family.", label: "Best Seller", category: "Beef Hotdog" },
-      { id: 3, name: "Party Pack", price: 500, description: "For parties and gatherings.", label: "", category: "Fish Hotdog" }
-    ];
+      const products = [
+        { name: "Chicken Delight", category: "Chicken Hotdog", price: "₱120", image: "https://i.imgur.com/V3eQP4i.jpeg" },
+        { name: "Fish Supreme", category: "Fish Hotdog", price: "₱130", image: "https://i.imgur.com/V3eQP4i.jpeg" },
+        { name: "Beefy Bites", category: "Beef Hotdog", price: "₱150", image: "https://i.imgur.com/V3eQP4i.jpeg" },
+        { name: "Classic Red", category: "Regular Hotdog", price: "₱100", image: "https://i.imgur.com/V3eQP4i.jpeg" },
+        { name: "Fishy Fun", category: "Fish Hotdog", price: "₱125", image: "https://i.imgur.com/V3eQP4i.jpeg" },
+        { name: "Tender Chicken", category: "Chicken Hotdog", price: "₱115", image: "https://i.imgur.com/V3eQP4i.jpeg" },
+      ];
 
-    const productImage = "https://drive.google.com/uc?export=view&id=1G-Z4XpeblWFRtKY9vJ9dUvbeBMyMkbrz";
-    let cart = [];
-    let currentCategory = "All";
-
-    function updateCartUI() {
-      const cartItems = document.getElementById("cartItems");
+      const productList = document.getElementById("productList");
+      const filters = document.querySelectorAll(".category-btn");
+      const searchInput = document.getElementById("searchInput");
       const cartCount = document.getElementById("cartCount");
-      cartItems.innerHTML = "";
-      let totalItems = 0;
 
-      cart.forEach(item => {
-        totalItems += item.quantity;
-        cartItems.innerHTML += `
-          <li class="flex justify-between items-center">
-            <span>${item.name} x${item.quantity}</span>
-            <div class="flex gap-1">
-              <button onclick="changeQty(${item.id}, -1)" class="bg-gray-200 px-2 rounded text-sm">−</button>
-              <button onclick="changeQty(${item.id}, 1)" class="bg-gray-200 px-2 rounded text-sm">+</button>
-            </div>
-          </li>`;
+      let cart = [];
+
+      function renderProducts(category = "All", search = "") {
+        productList.innerHTML = "";
+
+        let filtered = products.filter(p =>
+          (category === "All" || p.category === category) &&
+          p.name.toLowerCase().includes(search.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          productList.innerHTML = `<p class="col-span-full text-center text-gray-500">No products found.</p>`;
+          return;
+        }
+
+        filtered.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "bg-white p-4 rounded-xl shadow text-center";
+          div.innerHTML = `
+            <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover rounded-lg mb-3">
+            <h3 class="font-semibold">${p.name}</h3>
+            <p class="text-gray-600 mb-2">${p.category}</p>
+            <p class="font-bold text-lg">${p.price}</p>
+            <button class="mt-2 px-4 py-1 bg-green-500 text-white rounded-full text-sm add-to-cart">Add to Cart</button>
+          `;
+          div.querySelector(".add-to-cart").addEventListener("click", () => {
+            cart.push(p);
+            cartCount.textContent = cart.length;
+            cartCount.classList.remove("hidden");
+          });
+          productList.appendChild(div);
+        });
+      }
+
+      renderProducts();
+
+      filters.forEach(btn => {
+        btn.addEventListener("click", () => {
+          filters.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderProducts(btn.dataset.category, searchInput.value);
+        });
       });
 
-      cartCount.textContent = totalItems;
-      cartCount.classList.toggle("hidden", totalItems === 0);
-
-      const summary = cart.map(item => `${item.name} x${item.quantity}`).join("\n");
-      document.getElementById("checkoutBtn").href = `https://www.messenger.com/t/154919933362593?text=${encodeURIComponent(summary)}`;
-    }
-
-    function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      const existing = cart.find(item => item.id === id);
-      if (existing) existing.quantity += 1;
-      else cart.push({ id, name: product.name, quantity: 1 });
-      updateCartUI();
-      showNotification();
-    }
-
-    function changeQty(id, delta) {
-      const item = cart.find(i => i.id === id);
-      if (!item) return;
-      item.quantity += delta;
-      if (item.quantity <= 0) cart = cart.filter(i => i.id !== id);
-      updateCartUI();
-    }
-
-    function showNotification() {
-      const notif = document.getElementById("notification");
-      notif.classList.remove("hidden");
-      setTimeout(() => notif.classList.add("hidden"), 2000);
-    }
-
-    function renderProducts() {
-      const container = document.getElementById("productList");
-      const filtered = currentCategory === "All" ? products : products.filter(p => p.category === currentCategory);
-
-      container.innerHTML = filtered.map(p => `
-        <div class="bg-white shadow rounded-xl p-4 relative">
-          <img src="${productImage}" alt="${p.name}" loading="lazy" class="h-40 w-full object-cover rounded-md mb-2">
-          ${p.label ? `<span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">${p.label}</span>` : ""}
-          <h3 class="text-lg font-semibold">${p.name}</h3>
-          <p class="text-sm text-gray-500">${p.description}</p>
-          <p class="text-xl font-bold mt-2">₱${p.price}</p>
-          <div class="flex flex-wrap items-center gap-2 mt-2">
-            <button onclick="changeQty(${p.id}, -1)" class="bg-green-500 text-white w-8 h-8 rounded-full text-sm">−</button>
-            <button onclick="changeQty(${p.id}, 1)" class="bg-green-500 text-white w-8 h-8 rounded-full text-sm">+</button>
-            <button onclick="addToCart(${p.id})" class="ml-auto bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Add to Cart</button>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    document.querySelectorAll(".category-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentCategory = btn.dataset.category;
-        renderProducts();
+      searchInput.addEventListener("input", () => {
+        const selected = document.querySelector(".category-btn.active");
+        const category = selected ? selected.dataset.category : "All";
+        renderProducts(category, searchInput.value);
       });
-    });
-
-    document.getElementById("cartToggle").onclick = () => {
-      document.getElementById("cartSidebar").classList.remove("hidden");
-      document.getElementById("overlay").classList.remove("hidden");
-    };
-    document.getElementById("closeCart").onclick = closeCart;
-    document.getElementById("overlay").onclick = closeCart;
-    document.getElementById("removeAll").onclick = () => {
-      cart = [];
-      updateCartUI();
-    };
-    function closeCart() {
-      document.getElementById("cartSidebar").classList.add("hidden");
-      document.getElementById("overlay").classList.add("hidden");
-    }
-
-    renderProducts();
-  </script>
+    </script>
+  </div>
 </body>
 
 </html>
+
