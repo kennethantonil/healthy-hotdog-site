@@ -80,6 +80,11 @@
   </button>
 </nav>
 
+<!-- Image Viewer Modal -->
+<div id="image-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50" onclick="closeImageModal()">
+  <img id="modal-img" src="" class="max-h-[80%] max-w-[80%] rounded shadow-lg">
+</div>
+
 <script>
 const productList = document.getElementById('product-list');
 const cartItemsContainer = document.getElementById('cart-items');
@@ -105,7 +110,7 @@ function renderProducts(filtered = products) {
     const div = document.createElement('div');
     div.className = 'fade-in border rounded shadow p-2';
     div.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded" />
+      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded cursor-pointer" onclick="openImageModal('${p.image}')" />
       <h3 class="font-bold">${p.name}</h3>
       <p class="text-sm text-gray-600">₱${p.price}</p>
       <div class="flex items-center gap-2 mt-2">
@@ -219,10 +224,20 @@ setInterval(() => {
   setCarouselIndex(carouselIndex);
 }, 4000);
 
+function openImageModal(src) {
+  document.getElementById('modal-img').src = src;
+  document.getElementById('image-modal').classList.remove('hidden');
+}
+
+function closeImageModal() {
+  document.getElementById('image-modal').classList.add('hidden');
+}
+
 renderProducts();
 </script>
 
 </body>
 </html>
+
 
 
