@@ -1,242 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FROZEN WHITE</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frozen White</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .fade-in {
-      animation: fadeIn 1s ease-in-out forwards;
-      opacity: 0;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    .cart-open { right: 0; }
-    .cart-bg { background-color: rgba(0, 0, 0, 0.5); }
-    .cart-item {
-      @apply flex justify-between items-center gap-2 p-2 border rounded bg-gray-50;
-    }
-    .cart-item-name {
-      @apply font-semibold text-sm;
-    }
-    .cart-item-price {
-      @apply text-xs text-gray-600;
-    }
-    .cart-remove-btn {
-      @apply text-red-500 hover:text-red-700;
-    }
+    .fade-in { animation: fadeIn 1s ease-in-out forwards; opacity: 0; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    .cart { right: -100%; transition: right 0.3s ease; }
+    .cart.cart-open { right: 0; }
   </style>
 </head>
 <body class="bg-white text-gray-800 font-sans">
 
-  <!-- Header -->
-  <header class="bg-red-500 text-white p-4 flex justify-between items-center">
-    <h1 class="text-lg sm:text-2xl font-bold">FROZEN WHITE</h1>
-    <button onclick="toggleCart()" class="relative">
-      🛒 <span id="cart-count" class="bg-white text-red-500 text-xs rounded-full px-1 absolute -top-2 -right-2">0</span>
-    </button>
-  </header>
+<header class="bg-red-500 text-white p-4 flex justify-between items-center">
+  <h1 class="text-lg sm:text-2xl font-bold">FROZEN WHITE</h1>
+  <button onclick="toggleCart()" class="relative">
+    🛒 <span id="cart-count" class="bg-white text-red-500 text-xs rounded-full px-1 absolute -top-2 -right-2">0</span>
+  </button>
+</header>
 
-  <!-- Search & Filter -->
-  <div class="p-4 flex flex-col sm:flex-row gap-2">
-    <input id="search-bar" type="text" placeholder="Search Products..." class="border p-2 rounded flex-1" oninput="searchProducts()">
-    <select onchange="filterCategory(this.value)" class="border p-2 rounded">
-      <option value="All">All</option>
-      <option value="Best Sellers">Best Sellers</option>
-      <option value="New">New</option>
-      <option value="Discounted">Discounted</option>
-    </select>
+<div id="cart-message" class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded shadow z-50 transition duration-300">
+  ✅ Added to cart!
+</div>
+
+<div class="p-4 flex flex-col sm:flex-row gap-2">
+  <input id="search-bar" type="text" placeholder="Search Products..." class="border p-2 rounded flex-1" oninput="searchProducts()">
+  <select onchange="filterCategory(this.value)" class="border p-2 rounded">
+    <option value="All">All</option>
+    <option value="Best Sellers">Best Sellers</option>
+    <option value="New">New</option>
+    <option value="Discounted">Discounted</option>
+  </select>
+</div>
+
+<section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
+
+<div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleCart()"></div>
+<aside id="cart" class="cart fixed top-0 w-64 sm:w-80 h-full bg-white shadow-2xl rounded-l-2xl transition-all duration-300 z-50 p-4 flex flex-col">
+  <h2 class="text-xl font-bold mb-4 text-center">🛒 Your Cart</h2>
+  <div id="cart-items" class="flex-1 overflow-y-auto space-y-2"></div>
+  <div class="mt-2">
+    <input id="voucher-code" type="text" placeholder="Voucher Code" class="border p-2 rounded w-full text-sm mb-2">
+    <button onclick="applyVoucher()" class="bg-blue-500 hover:bg-blue-600 text-white py-1 w-full rounded text-sm">Apply Voucher</button>
+    <p id="voucher-msg" class="text-xs text-center text-green-600 hidden mt-1"></p>
   </div>
+  <div class="mt-4 font-semibold text-lg text-center">Total: ₱<span id="cart-total">0</span></div>
+  <button onclick="checkoutCart()" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 rounded-xl font-bold text-lg shadow transition duration-300 hover:scale-105">
+    ✅ Checkout
+  </button>
+</aside>
 
-  <!-- Product List -->
-  <section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
-
-  <!-- Cart Overlay -->
-  <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleCart()"></div>
-  <aside id="cart" class="fixed top-0 right-[-100%] w-64 sm:w-80 h-full bg-white shadow-lg transition-all duration-300 z-50 p-4 flex flex-col">
-    <h2 class="text-lg font-bold mb-2">Your Cart</h2>
-    <div id="cart-items" class="flex-1 overflow-y-auto"></div>
-    <div class="mt-2 font-semibold">Total: ₱<span id="cart-total">0</span></div>
-    <button onclick="toggleCart()" class="mt-2 bg-red-500 text-white py-1 rounded">Close</button>
-  </aside>
-
-  <!-- Carousel -->
-  <div class="overflow-hidden relative w-full h-40 sm:h-64 my-4">
-    <div id="carousel" class="flex transition-transform duration-500 w-full">
-      <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
-      <img src="https://i.imgur.com/v75oEXV.jpeg" class="w-full flex-shrink-0 object-cover">
-      <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
-    </div>
-    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
-      <button onclick="setCarouselIndex(0)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-      <button onclick="setCarouselIndex(1)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-      <button onclick="setCarouselIndex(2)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-    </div>
+<div class="overflow-hidden relative w-full h-40 sm:h-64 my-4">
+  <div id="carousel" class="flex transition-transform duration-500 w-full">
+    <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
+    <img src="https://i.imgur.com/v75oEXV.jpeg" class="w-full flex-shrink-0 object-cover">
+    <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
   </div>
-
-  <!-- Admin Section -->
-  <div class="p-4">
-    <h3 class="text-lg font-bold">Admin Login</h3>
-    <input id="login-email" type="email" placeholder="Email" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <input id="login-pass" type="password" placeholder="Password" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <button onclick="adminLogin()" class="bg-blue-500 text-white py-1 px-4 rounded">Login</button>
-    <p id="login-msg" class="text-green-500 hidden mt-2">✅ Admin Access Granted</p>
+  <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+    <button onclick="setCarouselIndex(0)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+    <button onclick="setCarouselIndex(1)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+    <button onclick="setCarouselIndex(2)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
   </div>
+</div>
 
-  <!-- Add Product -->
-  <div class="p-4">
-    <h3 class="text-lg font-bold">Add Product</h3>
-    <input id="prod-name" type="text" placeholder="Product Name" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <input id="prod-price" type="number" placeholder="Price" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <input id="prod-image" type="text" placeholder="Image URL" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <input id="prod-category" type="text" placeholder="Category" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <button onclick="addProduct()" class="bg-green-500 text-white py-1 px-4 rounded">Add Product</button>
-  </div>
+<nav class="fixed bottom-0 left-0 w-full bg-white border-t flex justify-around items-center p-2 shadow">
+  <button class="flex flex-col items-center text-xs">
+    <span>🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="flex flex-col items-center text-xs">
+    <span>🎥</span>
+    <span>Videos</span>
+  </button>
+  <button class="flex flex-col items-center text-xs">
+    <span>👤</span>
+    <span>Me</span>
+  </button>
+</nav>
 
-  <!-- Shipping Check -->
-  <div class="p-4">
-    <h3 class="text-lg font-bold">Check Shipping Status</h3>
-    <input id="order-id" type="text" placeholder="Order ID" class="border p-2 rounded block my-2 w-full sm:w-1/2">
-    <button onclick="checkShippingStatus()" class="bg-yellow-500 text-white py-1 px-4 rounded">Check</button>
-    <p id="shipping-result" class="mt-2"></p>
-  </div>
+<script>
+const productList = document.getElementById('product-list');
+const cartItemsContainer = document.getElementById('cart-items');
+const cartTotal = document.getElementById('cart-total');
+const cartCount = document.getElementById('cart-count');
+const cartOverlay = document.getElementById('cart-overlay');
+const cart = document.getElementById('cart');
+const cartMessage = document.getElementById('cart-message');
+const voucherMsg = document.getElementById('voucher-msg');
 
-  <!-- JavaScript -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const productList = document.getElementById('product-list');
-      const cartItemsContainer = document.getElementById('cart-items');
-      const cartTotal = document.getElementById('cart-total');
-      const cartCount = document.getElementById('cart-count');
-      const cartOverlay = document.getElementById('cart-overlay');
-      const cart = document.getElementById('cart');
+let cartItems = [];
+let discount = 0;
 
-      let cartItems = [];
+const products = [
+  { name: 'White Hotdog', price: 99, image: 'https://i.imgur.com/gAeCg4G.jpeg', category: 'Best Sellers' },
+  { name: 'Cheesy Dog', price: 120, image: 'https://scontent.fmnl11-1.fna.fbcdn.net/v/t39.30808-6/518332580_718293694399686_6655837026657246827_n.jpg', category: 'New' },
+  { name: 'Healthy Pack', price: 150, image: 'https://scontent.fmnl11-1.fna.fbcdn.net/v/t39.30808-6/518302288_716111591284563_7887887552012104628_n.jpg', category: 'Discounted' },
+];
 
-      const products = [
-        { name: 'White Hotdog', price: 99, image: 'https://via.placeholder.com/300x200?text=White+Hotdog', category: 'Best Sellers' },
-        { name: 'Cheesy Dog', price: 120, image: 'https://via.placeholder.com/300x200?text=Cheesy+Dog', category: 'New' },
-        { name: 'Healthy Pack', price: 150, image: 'https://via.placeholder.com/300x200?text=Healthy+Pack', category: 'Discounted' },
-      ];
+function renderProducts(filtered = products) {
+  productList.innerHTML = '';
+  filtered.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'fade-in border rounded shadow p-2';
+    div.innerHTML = `
+      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded" />
+      <h3 class="font-bold">${p.name}</h3>
+      <p class="text-sm text-gray-600">₱${p.price}</p>
+      <div class="flex items-center gap-2 mt-2">
+        <button onclick="changeQuantity(${i}, -1)" class="bg-gray-200 px-2">-</button>
+        <span id="qty-${i}">1</span>
+        <button onclick="changeQuantity(${i}, 1)" class="bg-gray-200 px-2">+</button>
+        <button onclick="addToCart(${i})" class="bg-red-500 hover:bg-red-600 text-white flex-1 py-1 rounded">Add to Cart</button>
+      </div>
+    `;
+    productList.appendChild(div);
+  });
+}
 
-      function renderProducts(filtered = products) {
-        if (!productList) return;
-        productList.innerHTML = '';
-        filtered.forEach((p, i) => {
-          const div = document.createElement('div');
-          div.className = 'fade-in border rounded shadow p-2';
-          div.innerHTML = `
-            <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded" />
-            <h3 class="font-bold">${p.name}</h3>
-            <p class="text-sm text-gray-600">₱${p.price}</p>
-            <button onclick="addToCart(${i})" class="bg-red-500 hover:bg-red-600 text-white w-full mt-2 py-1 rounded">Add to Cart</button>
-          `;
-          productList.appendChild(div);
-        });
-      }
+const quantities = [1,1,1];
+function changeQuantity(index, change) {
+  quantities[index] = Math.max(1, quantities[index] + change);
+  document.getElementById(`qty-${index}`).textContent = quantities[index];
+}
 
-      window.addToCart = function(index) {
-        cartItems.push(products[index]);
-        updateCart();
-      }
+function addToCart(index) {
+  for (let i = 0; i < quantities[index]; i++) {
+    cartItems.push(products[index]);
+  }
+  updateCart();
+  showCartMessage();
+}
 
-      function updateCart() {
-        if (!cartItemsContainer || !cartTotal || !cartCount) return;
-        cartItemsContainer.innerHTML = '';
-        let total = 0;
-        cartItems.forEach((item, i) => {
-          total += item.price;
-          const div = document.createElement('div');
-          div.className = 'cart-item';
-          div.innerHTML = `
-            <span class="cart-item-name">${item.name}</span>
-            <span class="cart-item-price">₱${item.price}</span>
-            <button onclick="removeFromCart(${i})" class="cart-remove-btn">✕</button>
-          `;
-          cartItemsContainer.appendChild(div);
-        });
-        cartTotal.textContent = total;
-        cartCount.textContent = cartItems.length;
-      }
+function updateCart() {
+  cartItemsContainer.innerHTML = '';
+  let total = 0;
+  cartItems.forEach((item, i) => {
+    total += item.price;
+    const div = document.createElement('div');
+    div.className = 'flex items-center gap-2 p-2 border rounded bg-gray-50';
+    div.innerHTML = `
+      <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-cover rounded" />
+      <div class="flex-1">
+        <span class="font-semibold text-sm">${item.name}</span><br>
+        <span class="text-xs text-gray-600">₱${item.price}</span>
+      </div>
+      <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-700">✕</button>
+    `;
+    cartItemsContainer.appendChild(div);
+  });
+  cartTotal.textContent = total - discount;
+  cartCount.textContent = cartItems.length;
+}
 
-      window.removeFromCart = function(index) {
-        cartItems.splice(index, 1);
-        updateCart();
-      }
+function removeFromCart(index) {
+  cartItems.splice(index, 1);
+  updateCart();
+}
 
-      window.toggleCart = function() {
-        if (cart && cartOverlay) {
-          cart.classList.toggle('cart-open');
-          cartOverlay.classList.toggle('hidden');
-        }
-      }
+function toggleCart() {
+  cart.classList.toggle('cart-open');
+  cartOverlay.classList.toggle('hidden');
+}
 
-      window.filterCategory = function(cat) {
-        if (cat === 'All') renderProducts();
-        else renderProducts(products.filter(p => p.category === cat));
-      }
+function showCartMessage() {
+  cartMessage.classList.remove('hidden');
+  setTimeout(() => {
+    cartMessage.classList.add('hidden');
+  }, 2000);
+}
 
-      window.searchProducts = function() {
-        const keywordInput = document.getElementById('search-bar');
-        if (!keywordInput) return;
-        const keyword = keywordInput.value.toLowerCase();
-        renderProducts(products.filter(p => p.name.toLowerCase().includes(keyword)));
-      }
+function applyVoucher() {
+  const code = document.getElementById('voucher-code').value;
+  if (code === 'DISCOUNT50') {
+    discount = 50;
+    voucherMsg.classList.remove('hidden');
+    voucherMsg.textContent = '✅ ₱50 discount applied!';
+  } else {
+    discount = 0;
+    voucherMsg.classList.remove('hidden');
+    voucherMsg.textContent = '❗ Invalid voucher code.';
+  }
+  updateCart();
+}
 
-      window.adminLogin = function() {
-        const email = document.getElementById('login-email')?.value;
-        const pass = document.getElementById('login-pass')?.value;
-        if (email === 'admin@frozen.com' && pass === 'hotdog') {
-          const el = document.querySelector('[style]');
-          if (el) el.removeAttribute('style');
-          document.getElementById('login-msg')?.classList.remove('hidden');
-        }
-      }
+function checkoutCart() {
+  alert('✅ Checkout successful!');
+  cartItems = [];
+  discount = 0;
+  updateCart();
+  toggleCart();
+}
 
-      window.addProduct = function() {
-        const name = document.getElementById('prod-name')?.value;
-        const price = parseInt(document.getElementById('prod-price')?.value);
-        const image = document.getElementById('prod-image')?.value;
-        const category = document.getElementById('prod-category')?.value;
-        if (name && price && image) {
-          products.push({ name, price, image, category });
-          renderProducts();
-        }
-      }
+function filterCategory(cat) {
+  if (cat === 'All') renderProducts();
+  else renderProducts(products.filter(p => p.category === cat));
+}
 
-      window.checkShippingStatus = function() {
-        const id = document.getElementById('order-id')?.value.trim();
-        const result = document.getElementById('shipping-result');
-        if (!result) return;
-        if (id === '') result.textContent = '❗ Please enter a valid Order ID.';
-        else result.textContent = `📦 Order #${id} is now being processed.`;
-      }
+function searchProducts() {
+  const keyword = document.getElementById('search-bar').value.toLowerCase();
+  renderProducts(products.filter(p => p.name.toLowerCase().includes(keyword)));
+}
 
-      let carouselIndex = 0;
-      const carousel = document.getElementById('carousel');
-      const dots = document.querySelectorAll('button[onclick^="setCarouselIndex"]');
+let carouselIndex = 0;
+const carousel = document.getElementById('carousel');
+const dots = document.querySelectorAll('button[onclick^="setCarouselIndex"]');
+function setCarouselIndex(index) {
+  carouselIndex = index;
+  carousel.style.transform = `translateX(-${carouselIndex * 100}%)`;
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('opacity-100', i === index);
+    dot.classList.toggle('opacity-50', i !== index);
+  });
+}
+setInterval(() => {
+  carouselIndex = (carouselIndex + 1) % 3;
+  setCarouselIndex(carouselIndex);
+}, 4000);
 
-      window.setCarouselIndex = function(index) {
-        carouselIndex = index;
-        if (carousel) {
-          carousel.style.transform = `translateX(-${carouselIndex * 100}%)`;
-        }
-        dots.forEach((dot, i) => {
-          dot.classList.toggle('opacity-100', i === index);
-          dot.classList.toggle('opacity-50', i !== index);
-        });
-      }
-
-      setInterval(() => {
-        carouselIndex = (carouselIndex + 1) % 3;
-        setCarouselIndex(carouselIndex);
-      }, 4000);
-
-      renderProducts();
-    });
-  </script>
+renderProducts();
+</script>
 
 </body>
 </html>
+
