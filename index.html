@@ -52,7 +52,10 @@
     <section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
   </section>
 
-  <section id="videos-section" class="hidden p-4">
+  <section id="videos-section" class="hidden p-0 m-0">
+  <div id="video-list" class="flex flex-col items-center w-full overflow-y-auto"></div>
+</section>
+
   <h2 class="text-2xl font-bold mb-6 text-center">🎥 Featured Videos</h2>
 
   <div class="fade-in bg-white border rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
@@ -305,6 +308,98 @@ function shareVideo(link) {
     navigator.clipboard.writeText(link).then(() => alert('🔗 Link copied to clipboard!'));
   }
 }
+const videoData = [
+  { type: 'facebook', url: 'https://www.facebook.com/100086571859036/videos/2192721281231977/', caption: 'Frozen White Official - Facebook Video' },
+  { type: 'local', url: 'https://www.w3schools.com/html/mov_bbb.mp4', caption: 'New Product Coming Soon!' },
+  { type: 'local', url: 'https://www.w3schools.com/html/movie.mp4', caption: 'Hotdog Promo Video' },
+];
+
+let videoIndex = 0;
+
+function loadMoreVideos(count = 2) {
+  const container = document.getElementById('video-list');
+  for (let i = 0; i < count; i++) {
+    if (videoIndex >= videoData.length) return;
+    const data = videoData[videoIndex++];
+    const card = document.createElement('div');
+    card.className = 'fade-in relative w-full h-screen flex justify-center items-center';
+    if (data.type === 'facebook') {
+      card.innerHTML = `
+        <iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(data.url)}&show_text=false&autoplay=false" 
+          class="w-full h-full object-cover" style="border:none;" allowfullscreen></iframe>
+        <div class="absolute right-2 bottom-24 flex flex-col items-center gap-4">
+          <button onclick="likeVideo(this)" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">
+            ❤️ <span class="like-count text-xs block">0</span>
+          </button>
+          <button onclick="shareVideo('${data.url}')" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">🔗</button>
+        </div>
+        <div class="absolute bottom-2 left-2 text-white">
+          <p class="font-semibold">Frozen White Official</p>
+          <p class="text-xs">${data.caption}</p>
+        </div>
+      `;
+    } else {
+      card.innerHTML = `
+        <video src="${data.url}" muted playsinline class="w-full h-full object-cover video-autoplay"></video>
+        <div class="absolute right-2 bottom-24 flex flex-col items-center gap-4">
+          <button onclick="likeVideo(this)" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">
+            ❤️ <span class="like-count text-xs block">0</span>
+          </button>
+          <button onclick="shareVideo('${data.url}')" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">🔗</button>
+        </div>
+        <div class="absolute bottom-2 left-2 text-white">
+          <p class="font-semibold">Frozen White Official</p>
+          <p class="text-xs">${data.caption}</p>
+        </div>
+      `;
+    }
+    container.appendChild(card);
+  }
+}
+
+window.addEventListener('scroll', () => {
+  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+    loadMoreVideos();
+  }
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.target.tagName === 'VIDEO') {
+      if (entry.isIntersecting) {
+        entry.target.play();
+      } else {
+        entry.target.pause();
+      }
+    }
+  });
+}, { threshold: 0.6 });
+
+function observeVideos() {
+  document.querySelectorAll('.video-autoplay').forEach(video => {
+    observer.observe(video);
+  });
+}
+
+let touchStartY = 0;
+let touchEndY = 0;
+
+document.addEventListener('touchstart', e => {
+  touchStartY = e.changedTouches[0].screenY;
+});
+
+document.addEventListener('touchend', e => {
+  touchEndY = e.changedTouches[0].screenY;
+  handleSwipeGesture();
+});
+
+function handleSwipeGesture() {
+  if (touchEndY < touchStartY - 50) window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+  if (touchEndY > touchStartY + 50) window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
+}
+
+loadMoreVideos(3);
+setInterval(observeVideos, 1000);
 
 </script>
 
