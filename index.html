@@ -6,28 +6,29 @@
   <title>Frozen White</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-  .fade-in { animation: fadeIn 1s ease-in-out forwards; opacity: 0; }
-  @keyframes fadeIn { to { opacity: 1; } }
-  .cart { right: -100%; transition: right 0.3s ease; }
-  .cart.cart-open { right: 0; }
-
-  /* TikTok-like video snapping */
-  #video-list > div {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    scroll-snap-align: start;
-  }
-</style>
-
-
+    .fade-in { animation: fadeIn 1s ease-in-out forwards; opacity: 0; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    .cart { right: -100%; transition: right 0.3s ease; }
+    .cart.cart-open { right: 0; }
+    .live-overlay-button {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(4px);
+      border-radius: 0.25rem;
+      font-weight: bold;
+      border: 1px solid rgba(0,0,0,0.2);
+      box-shadow: none;
+    }
+  </style>
 </head>
 <body class="bg-white text-gray-800 font-sans">
 
 <header class="bg-red-500 text-white p-4 flex justify-between items-center">
   <h1 class="text-lg sm:text-2xl font-bold">FROZEN WHITE</h1>
   <button onclick="toggleCart()" class="relative">
-    🛒 <span id="cart-count" class="bg-white text-red-500 text-xs rounded-full px-1 absolute -top-2 -right-2">0</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7H18M7 13H5.4M6 21a1 1 0 100-2 1 1 0 000 2zm12 0a1 1 0 100-2 1 1 0 000 2z" />
+    </svg>
+    <span id="cart-count" class="bg-white text-red-500 text-xs rounded-full px-1 absolute -top-2 -right-2">0</span>
   </button>
 </header>
 
@@ -37,19 +38,6 @@
 
 <main>
   <section id="home-section" class="pb-24">
-    <div class="overflow-hidden relative w-full h-40 sm:h-64 my-4 rounded-xl">
-      <div id="carousel" class="flex transition-transform duration-500 w-full">
-        <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover rounded-xl">
-        <img src="https://i.imgur.com/v75oEXV.jpeg" class="w-full flex-shrink-0 object-cover rounded-xl">
-        <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover rounded-xl">
-      </div>
-      <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
-        <button onclick="setCarouselIndex(0)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-        <button onclick="setCarouselIndex(1)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-        <button onclick="setCarouselIndex(2)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-      </div>
-    </div>
-
     <div class="p-4 flex flex-col sm:flex-row gap-2">
       <input id="search-bar" type="text" placeholder="Search Products..." class="border p-2 rounded flex-1" oninput="searchProducts()">
       <select onchange="filterCategory(this.value)" class="border p-2 rounded">
@@ -62,94 +50,42 @@
     <section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
   </section>
 
-  <section id="videos-section" class="hidden p-0 m-0 w-full h-screen overflow-hidden relative">
-  <div id="video-list" class="w-full h-full overflow-y-scroll snap-y snap-mandatory"></div>
-</section>
-
-
-    <h3 class="text-lg font-semibold mb-2">White Hotdog Facebook Video</h3>
-    <div class="flex justify-between items-center">
-      <button onclick="likeVideo(this)" class="flex items-center text-red-500 hover:text-red-700 gap-1 text-sm">
-        ❤️ <span class="like-count">0</span>
-      </button>
-      <button onclick="shareVideo('https://www.facebook.com/100086571859036/videos/2192721281231977/')" class="text-blue-500 hover:text-blue-700 text-sm">Share</button>
+  <section id="videos-section" class="hidden p-0 m-0 w-full h-screen overflow-hidden relative bg-black flex flex-col">
+    <div id="live-container" class="flex-1 flex justify-center items-center"></div>
+    <p id="no-live-text" class="text-white text-center p-4">No Live Yet</p>
+    <div class="flex justify-around items-center p-2 bg-white bg-opacity-50">
+      <button onclick="toggleLiveCart()" class="live-overlay-button px-2 py-1">🛒 Products</button>
+      <button onclick="likeLive()" class="live-overlay-button px-2 py-1">❤️ Like</button>
+      <button onclick="shareLive()" class="live-overlay-button px-2 py-1">🔗 Share</button>
     </div>
-  </div>
-</div>
-
-      <div class="p-4">
-        <h3 class="text-lg font-semibold mb-2">Sample Video 2</h3>
-        <div class="flex justify-between items-center">
-          <button onclick="likeVideo(this)" class="flex items-center text-red-500 hover:text-red-700 gap-1 text-sm">
-            ❤️ <span class="like-count">0</span>
-          </button>
-          <button onclick="shareVideo('https://www.w3schools.com/html/movie.mp4')" class="text-blue-500 hover:text-blue-700 text-sm">Share</button>
-        </div>
-      </div>
+    <div id="live-product-cart" class="hidden bg-white bg-opacity-80 p-2 overflow-y-auto">
+      <div id="live-products" class="space-y-2"></div>
     </div>
-  </div>
-</section>
-
-
-  <section id="me-section" class="hidden p-4 bg-gray-50 mt-4 rounded shadow">
-    <h2 class="text-xl font-bold mb-2">👤 My Profile</h2>
-    <p class="text-sm">Name: John Doe</p>
-    <p class="text-sm">Email: johndoe@example.com</p>
-    <p class="text-sm">Loyalty Points: 150</p>
-    <button class="mt-2 bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600">Logout</button>
+    <div class="p-2">
+      <input type="text" placeholder="Write a comment..." class="w-full p-2 rounded border border-gray-300">
+    </div>
   </section>
+
+  <section id="me-section" class="hidden p-4 bg-gray-50 mt-4 rounded shadow"></section>
 </main>
 
 <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleCart()"></div>
-<aside id="cart" class="cart fixed top-0 w-64 sm:w-80 h-full bg-white shadow-2xl rounded-l-2xl transition-all duration-300 z-50 p-4 flex flex-col">
-  <h2 class="text-xl font-bold mb-4 text-center">🛒 Your Cart</h2>
-  <div id="cart-items" class="flex-1 overflow-y-auto space-y-2"></div>
-  <div class="mt-2">
-    <input id="voucher-code" type="text" placeholder="Voucher Code" class="border p-2 rounded w-full text-sm mb-2">
-    <button onclick="applyVoucher()" class="bg-blue-500 hover:bg-blue-600 text-white py-1 w-full rounded text-sm">Apply Voucher</button>
-    <p id="voucher-msg" class="text-xs text-center text-green-600 hidden mt-1"></p>
-  </div>
-  <div class="mt-4 font-semibold text-lg text-center">Total: ₱<span id="cart-total">0</span></div>
-  <button onclick="checkoutCart()" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 rounded-xl font-bold text-lg shadow transition duration-300 hover:scale-105">
-    ✅ Checkout
-  </button>
-</aside>
+<aside id="cart" class="cart fixed top-0 w-64 sm:w-80 h-full bg-white shadow-2xl rounded-l-2xl transition-all duration-300 z-50 p-4 flex flex-col"></aside>
 
 <nav class="fixed bottom-0 left-0 w-full bg-white border-t flex justify-around items-center p-2 shadow">
-  <button onclick="showSection('home-section')" class="flex flex-col items-center text-xs">
-    <span>🏠</span>
-    <span>Home</span>
-  </button>
-  <button onclick="showSection('videos-section')" class="flex flex-col items-center text-xs">
-    <span>🎥</span>
-    <span>Videos</span>
-  </button>
-  <button onclick="showSection('me-section')" class="flex flex-col items-center text-xs">
-    <span>👤</span>
-    <span>Me</span>
-  </button>
+  <button onclick="showSection('home-section')" class="flex flex-col items-center text-xs">🏠 Home</button>
+  <button onclick="showSection('videos-section'); checkLive()" class="flex flex-col items-center text-xs">📺 Live</button>
+  <button onclick="showSection('me-section')" class="flex flex-col items-center text-xs">👤 Me</button>
 </nav>
 
-<div id="image-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50" onclick="closeImageModal()">
-  <img id="modal-img" src="" class="max-h-[80%] max-w-[80%] rounded shadow-lg">
-</div>
-
 <script>
-const sections = ['home-section', 'videos-section', 'me-section'];
-function showSection(id) {
-  sections.forEach(s => document.getElementById(s).classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
-
-let products = [
+const products = [
   { name: 'White Hotdog', price: 99, image: 'https://i.imgur.com/gAeCg4G.jpeg', category: 'Best Sellers' },
   { name: 'Cheesy Dog', price: 120, image: 'https://i.imgur.com/QOuh61H.jpeg', category: 'New' },
   { name: 'Healthy Pack', price: 150, image: 'https://i.imgur.com/MDikZOM.jpeg', category: 'Discounted' },
 ];
 
 let cartItems = [];
-let currentCarousel = 0;
-let voucherApplied = false;
 
 function renderProducts(filtered = products) {
   const list = document.getElementById('product-list');
@@ -158,7 +94,7 @@ function renderProducts(filtered = products) {
     const div = document.createElement('div');
     div.className = 'fade-in border rounded shadow p-2';
     div.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded cursor-pointer" onclick="viewImage('${p.image}')">
+      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded">
       <h3 class="font-bold">${p.name}</h3>
       <p class="text-sm text-gray-600">₱${p.price}</p>
       <div class="flex items-center gap-2 mt-2">
@@ -166,9 +102,25 @@ function renderProducts(filtered = products) {
         <input id="qty-${index}" type="number" value="1" min="1" class="w-12 text-center border rounded">
         <button onclick="changeQuantity(${index}, 1)" class="px-2 py-1 bg-gray-200 rounded">+</button>
         <button onclick="addToCart(${index})" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-sm">Add to Cart</button>
-      </div>
-    `;
+      </div>`;
     list.appendChild(div);
+  });
+}
+
+function renderLiveProducts() {
+  const container = document.getElementById('live-products');
+  container.innerHTML = '';
+  products.forEach((p, index) => {
+    const div = document.createElement('div');
+    div.className = 'flex justify-between items-center p-2 border rounded shadow';
+    div.innerHTML = `
+      <img src="${p.image}" class="w-12 h-12 object-cover rounded">
+      <div class="ml-2 flex-1">
+        <h4 class="text-sm font-bold">${p.name}</h4>
+        <p class="text-xs text-gray-500">₱${p.price}</p>
+      </div>
+      <button onclick="addToCart(${index})" class="bg-red-500 text-white px-2 py-1 rounded text-xs">Add</button>`;
+    container.appendChild(div);
   });
 }
 
@@ -181,66 +133,13 @@ function changeQuantity(index, delta) {
 }
 
 function addToCart(index) {
-  const qty = parseInt(document.getElementById(`qty-${index}`).value) || 1;
+  const qty = parseInt(document.getElementById(`qty-${index}`)?.value) || 1;
   for (let i = 0; i < qty; i++) {
     cartItems.push(products[index]);
   }
-  updateCart();
-  showAddedMessage();
-}
-
-function updateCart() {
-  const cartContainer = document.getElementById('cart-items');
-  cartContainer.innerHTML = '';
-  let total = 0;
-  cartItems.forEach((item, i) => {
-    total += item.price;
-    const div = document.createElement('div');
-    div.className = 'flex justify-between items-center p-2 border rounded shadow';
-    div.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded">
-      <div class="flex-1 ml-2">
-        <h4 class="text-sm font-bold">${item.name}</h4>
-        <p class="text-xs text-gray-500">₱${item.price}</p>
-      </div>
-      <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-700">✕</button>
-    `;
-    cartContainer.appendChild(div);
-  });
-  document.getElementById('cart-total').textContent = total;
   document.getElementById('cart-count').textContent = cartItems.length;
-}
-
-function removeFromCart(index) {
-  cartItems.splice(index, 1);
+  showAddedMessage();
   updateCart();
-}
-
-function toggleCart() {
-  document.getElementById('cart').classList.toggle('cart-open');
-  document.getElementById('cart-overlay').classList.toggle('hidden');
-}
-
-function applyVoucher() {
-  const code = document.getElementById('voucher-code').value.trim();
-  const msg = document.getElementById('voucher-msg');
-  if (code === 'DISCOUNT10' && !voucherApplied) {
-    voucherApplied = true;
-    cartItems = cartItems.map(item => ({ ...item, price: item.price * 0.9 }));
-    updateCart();
-    msg.textContent = '✅ 10% Discount Applied!';
-    msg.classList.remove('hidden');
-  } else {
-    msg.textContent = '❌ Invalid or Already Applied';
-    msg.classList.remove('hidden');
-  }
-}
-
-function checkoutCart() {
-  alert('✅ Checkout complete!');
-  cartItems = [];
-  updateCart();
-  toggleCart();
 }
 
 function showAddedMessage() {
@@ -249,14 +148,37 @@ function showAddedMessage() {
   setTimeout(() => msg.classList.add('hidden'), 2000);
 }
 
-function viewImage(src) {
-  const modal = document.getElementById('image-modal');
-  document.getElementById('modal-img').src = src;
-  modal.classList.remove('hidden');
+function updateCart() {
+  const cartContainer = document.getElementById('cart');
+  cartContainer.innerHTML = `
+    <h2 class="text-xl font-bold mb-4 text-center">🛒 Your Cart</h2>
+    <div id="cart-items" class="flex-1 overflow-y-auto space-y-2">
+      ${cartItems.map((item, i) => `
+        <div class="flex justify-between items-center p-2 border rounded shadow">
+          <img src="${item.image}" class="w-12 h-12 object-cover rounded">
+          <div class="flex-1 ml-2">
+            <h4 class="text-sm font-bold">${item.name}</h4>
+            <p class="text-xs text-gray-500">₱${item.price}</p>
+          </div>
+          <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-700">✕</button>
+        </div>`).join('')}
+    </div>
+    <div class="mt-4 font-semibold text-lg text-center">Total: ₱${cartItems.reduce((t, i) => t + i.price, 0)}</div>
+    <button onclick="checkoutCart()" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 rounded-xl font-bold text-lg shadow">✅ Checkout</button>
+  `;
 }
 
-function closeImageModal() {
-  document.getElementById('image-modal').classList.add('hidden');
+function removeFromCart(index) {
+  cartItems.splice(index, 1);
+  document.getElementById('cart-count').textContent = cartItems.length;
+  updateCart();
+}
+
+function checkoutCart() {
+  alert('✅ Checkout complete!');
+  cartItems = [];
+  updateCart();
+  toggleCart();
 }
 
 function filterCategory(cat) {
@@ -269,135 +191,40 @@ function searchProducts() {
   renderProducts(products.filter(p => p.name.toLowerCase().includes(keyword)));
 }
 
-function setCarouselIndex(index) {
-  currentCarousel = index;
-  document.getElementById('carousel').style.transform = `translateX(-${index * 100}%)`;
-  document.querySelectorAll('button[onclick^="setCarouselIndex"]').forEach((dot, i) => {
-    dot.classList.toggle('opacity-100', i === index);
-    dot.classList.toggle('opacity-50', i !== index);
-  });
+function showSection(sectionId) {
+  document.querySelectorAll('main > section').forEach(section => section.classList.add('hidden'));
+  document.getElementById(sectionId).classList.remove('hidden');
+  if (sectionId === 'videos-section') renderLiveProducts();
 }
 
-setInterval(() => {
-  currentCarousel = (currentCarousel + 1) % 3;
-  setCarouselIndex(currentCarousel);
-}, 4000);
+function toggleCart() {
+  document.getElementById('cart').classList.toggle('cart-open');
+  document.getElementById('cart-overlay').classList.toggle('hidden');
+}
+
+function checkLive() {
+  const liveContainer = document.getElementById('live-container');
+  const noLiveText = document.getElementById('no-live-text');
+  const liveAvailable = false;
+  if (liveAvailable) {
+    noLiveText.classList.add('hidden');
+    liveContainer.innerHTML = '<iframe src="https://www.facebook.com/plugins/video.php?href=YOUR_LIVE_VIDEO_URL" class="w-full h-full" frameborder="0" allowfullscreen></iframe>';
+  } else {
+    noLiveText.classList.remove('hidden');
+    liveContainer.innerHTML = '';
+  }
+}
+
+function toggleLiveCart() {
+  document.getElementById('live-product-cart').classList.toggle('hidden');
+}
+
+function likeLive() { alert('❤️ Liked!'); }
+function shareLive() { alert('🔗 Share this live!'); }
 
 renderProducts();
-  function likeVideo(btn) {
-  const countSpan = btn.querySelector('.like-count');
-  let count = parseInt(countSpan.textContent);
-  countSpan.textContent = count + 1;
-}
-
-function shareVideo(link) {
-  if (navigator.share) {
-    navigator.share({
-      title: 'Check this video!',
-      url: link
-    }).catch(() => alert('Sharing canceled or failed.'));
-  } else {
-    navigator.clipboard.writeText(link).then(() => alert('🔗 Link copied to clipboard!'));
-  }
-}
-const videoData = [
-  { type: 'facebook', url: 'https://www.facebook.com/100086571859036/videos/2192721281231977/', caption: 'Frozen White Official - Facebook Video' },
-  { type: 'local', url: 'https://www.w3schools.com/html/mov_bbb.mp4', caption: 'New Product Coming Soon!' },
-  { type: 'local', url: 'https://www.w3schools.com/html/movie.mp4', caption: 'Hotdog Promo Video' },
-];
-
-let videoIndex = 0;
-
-function loadMoreVideos(count = 2) {
-  const container = document.getElementById('video-list');
-  for (let i = 0; i < count; i++) {
-    if (videoIndex >= videoData.length) return;
-    const data = videoData[videoIndex++];
-    const card = document.createElement('div');
-    card.className = 'fade-in relative w-full h-screen flex justify-center items-center';
-    if (data.type === 'facebook') {
-      card.innerHTML = `
-        <iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(data.url)}&show_text=false&autoplay=false" 
-          class="w-full h-full object-cover" style="border:none;" allowfullscreen></iframe>
-        <div class="absolute right-2 bottom-24 flex flex-col items-center gap-4">
-          <button onclick="likeVideo(this)" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">
-            ❤️ <span class="like-count text-xs block">0</span>
-          </button>
-          <button onclick="shareVideo('${data.url}')" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">🔗</button>
-        </div>
-        <div class="absolute bottom-2 left-2 text-white">
-          <p class="font-semibold">Frozen White Official</p>
-          <p class="text-xs">${data.caption}</p>
-        </div>
-      `;
-    } else {
-      card.innerHTML = `
-        <video src="${data.url}" muted playsinline class="w-full h-full object-cover video-autoplay"></video>
-        <div class="absolute right-2 bottom-24 flex flex-col items-center gap-4">
-          <button onclick="likeVideo(this)" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">
-            ❤️ <span class="like-count text-xs block">0</span>
-          </button>
-          <button onclick="shareVideo('${data.url}')" class="bg-white p-2 rounded-full shadow hover:scale-110 transition">🔗</button>
-        </div>
-        <div class="absolute bottom-2 left-2 text-white">
-          <p class="font-semibold">Frozen White Official</p>
-          <p class="text-xs">${data.caption}</p>
-        </div>
-      `;
-    }
-    container.appendChild(card);
-  }
-}
-
-window.addEventListener('scroll', () => {
-  if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-    loadMoreVideos();
-  }
-});
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.target.tagName === 'VIDEO') {
-      if (entry.isIntersecting) {
-        entry.target.play();
-      } else {
-        entry.target.pause();
-      }
-    }
-  });
-}, { threshold: 0.6 });
-
-function observeVideos() {
-  document.querySelectorAll('.video-autoplay').forEach(video => {
-    observer.observe(video);
-  });
-}
-
-let touchStartY = 0;
-let touchEndY = 0;
-
-document.addEventListener('touchstart', e => {
-  touchStartY = e.changedTouches[0].screenY;
-});
-
-document.addEventListener('touchend', e => {
-  touchEndY = e.changedTouches[0].screenY;
-  handleSwipeGesture();
-});
-
-function handleSwipeGesture() {
-  if (touchEndY < touchStartY - 50) window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-  if (touchEndY > touchStartY + 50) window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
-}
-
-loadMoreVideos(3);
-setInterval(observeVideos, 1000);
-
+updateCart();
 </script>
 
 </body>
 </html>
-
-
-
-
