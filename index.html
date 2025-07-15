@@ -25,17 +25,46 @@
   ✅ Added to cart!
 </div>
 
-<div class="p-4 flex flex-col sm:flex-row gap-2">
-  <input id="search-bar" type="text" placeholder="Search Products..." class="border p-2 rounded flex-1" oninput="searchProducts()">
-  <select onchange="filterCategory(this.value)" class="border p-2 rounded">
-    <option value="All">All</option>
-    <option value="Best Sellers">Best Sellers</option>
-    <option value="New">New</option>
-    <option value="Discounted">Discounted</option>
-  </select>
-</div>
+<main>
+  <section id="home-section" class="pb-24">
+    <div class="overflow-hidden relative w-full h-40 sm:h-64 my-4 rounded-xl">
+      <div id="carousel" class="flex transition-transform duration-500 w-full">
+        <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover rounded-xl">
+        <img src="https://i.imgur.com/v75oEXV.jpeg" class="w-full flex-shrink-0 object-cover rounded-xl">
+        <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover rounded-xl">
+      </div>
+      <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+        <button onclick="setCarouselIndex(0)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+        <button onclick="setCarouselIndex(1)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+        <button onclick="setCarouselIndex(2)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
+      </div>
+    </div>
 
-<section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
+    <div class="p-4 flex flex-col sm:flex-row gap-2">
+      <input id="search-bar" type="text" placeholder="Search Products..." class="border p-2 rounded flex-1" oninput="searchProducts()">
+      <select onchange="filterCategory(this.value)" class="border p-2 rounded">
+        <option value="All">All</option>
+        <option value="Best Sellers">Best Sellers</option>
+        <option value="New">New</option>
+        <option value="Discounted">Discounted</option>
+      </select>
+    </div>
+    <section id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4"></section>
+  </section>
+
+  <section id="videos-section" class="hidden p-4">
+    <h2 class="text-xl font-bold mb-4">🎥 Videos</h2>
+    <p>Video content coming soon!</p>
+  </section>
+
+  <section id="me-section" class="hidden p-4 bg-gray-50 mt-4 rounded shadow">
+    <h2 class="text-xl font-bold mb-2">👤 My Profile</h2>
+    <p class="text-sm">Name: John Doe</p>
+    <p class="text-sm">Email: johndoe@example.com</p>
+    <p class="text-sm">Loyalty Points: 150</p>
+    <button class="mt-2 bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600">Logout</button>
+  </section>
+</main>
 
 <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleCart()"></div>
 <aside id="cart" class="cart fixed top-0 w-64 sm:w-80 h-full bg-white shadow-2xl rounded-l-2xl transition-all duration-300 z-50 p-4 flex flex-col">
@@ -52,111 +81,100 @@
   </button>
 </aside>
 
-<div class="overflow-hidden relative w-full h-40 sm:h-64 my-4">
-  <div id="carousel" class="flex transition-transform duration-500 w-full">
-    <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
-    <img src="https://i.imgur.com/v75oEXV.jpeg" class="w-full flex-shrink-0 object-cover">
-    <img src="https://i.imgur.com/Xl1292p.jpeg" class="w-full flex-shrink-0 object-cover">
-  </div>
-  <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
-    <button onclick="setCarouselIndex(0)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-    <button onclick="setCarouselIndex(1)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-    <button onclick="setCarouselIndex(2)" class="w-2 h-2 rounded-full bg-white opacity-50"></button>
-  </div>
-</div>
-
 <nav class="fixed bottom-0 left-0 w-full bg-white border-t flex justify-around items-center p-2 shadow">
-  <button class="flex flex-col items-center text-xs">
+  <button onclick="showSection('home-section')" class="flex flex-col items-center text-xs">
     <span>🏠</span>
     <span>Home</span>
   </button>
-  <button class="flex flex-col items-center text-xs">
+  <button onclick="showSection('videos-section')" class="flex flex-col items-center text-xs">
     <span>🎥</span>
     <span>Videos</span>
   </button>
-  <button class="flex flex-col items-center text-xs">
+  <button onclick="showSection('me-section')" class="flex flex-col items-center text-xs">
     <span>👤</span>
     <span>Me</span>
   </button>
 </nav>
 
-<!-- Image Viewer Modal -->
 <div id="image-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50" onclick="closeImageModal()">
   <img id="modal-img" src="" class="max-h-[80%] max-w-[80%] rounded shadow-lg">
 </div>
 
 <script>
-const productList = document.getElementById('product-list');
-const cartItemsContainer = document.getElementById('cart-items');
-const cartTotal = document.getElementById('cart-total');
-const cartCount = document.getElementById('cart-count');
-const cartOverlay = document.getElementById('cart-overlay');
-const cart = document.getElementById('cart');
-const cartMessage = document.getElementById('cart-message');
-const voucherMsg = document.getElementById('voucher-msg');
+const sections = ['home-section', 'videos-section', 'me-section'];
+function showSection(id) {
+  sections.forEach(s => document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 
-let cartItems = [];
-let discount = 0;
-
-const products = [
+let products = [
   { name: 'White Hotdog', price: 99, image: 'https://i.imgur.com/gAeCg4G.jpeg', category: 'Best Sellers' },
   { name: 'Cheesy Dog', price: 120, image: 'https://i.imgur.com/QOuh61H.jpeg', category: 'New' },
   { name: 'Healthy Pack', price: 150, image: 'https://i.imgur.com/MDikZOM.jpeg', category: 'Discounted' },
 ];
 
+let cartItems = [];
+let currentCarousel = 0;
+let voucherApplied = false;
+
 function renderProducts(filtered = products) {
-  productList.innerHTML = '';
-  filtered.forEach((p, i) => {
+  const list = document.getElementById('product-list');
+  list.innerHTML = '';
+  filtered.forEach((p, index) => {
     const div = document.createElement('div');
     div.className = 'fade-in border rounded shadow p-2';
     div.innerHTML = `
-      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded cursor-pointer" onclick="openImageModal('${p.image}')" />
+      <img src="${p.image}" alt="${p.name}" class="w-full h-32 object-cover rounded cursor-pointer" onclick="viewImage('${p.image}')">
       <h3 class="font-bold">${p.name}</h3>
       <p class="text-sm text-gray-600">₱${p.price}</p>
       <div class="flex items-center gap-2 mt-2">
-        <button onclick="changeQuantity(${i}, -1)" class="bg-gray-200 px-2">-</button>
-        <span id="qty-${i}">1</span>
-        <button onclick="changeQuantity(${i}, 1)" class="bg-gray-200 px-2">+</button>
-        <button onclick="addToCart(${i})" class="bg-red-500 hover:bg-red-600 text-white flex-1 py-1 rounded">Add to Cart</button>
+        <button onclick="changeQuantity(${index}, -1)" class="px-2 py-1 bg-gray-200 rounded">-</button>
+        <input id="qty-${index}" type="number" value="1" min="1" class="w-12 text-center border rounded">
+        <button onclick="changeQuantity(${index}, 1)" class="px-2 py-1 bg-gray-200 rounded">+</button>
+        <button onclick="addToCart(${index})" class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded text-sm">Add to Cart</button>
       </div>
     `;
-    productList.appendChild(div);
+    list.appendChild(div);
   });
 }
 
-const quantities = [1,1,1];
-function changeQuantity(index, change) {
-  quantities[index] = Math.max(1, quantities[index] + change);
-  document.getElementById(`qty-${index}`).textContent = quantities[index];
+function changeQuantity(index, delta) {
+  const qtyInput = document.getElementById(`qty-${index}`);
+  let qty = parseInt(qtyInput.value);
+  qty = isNaN(qty) ? 1 : qty;
+  qty = Math.max(1, qty + delta);
+  qtyInput.value = qty;
 }
 
 function addToCart(index) {
-  for (let i = 0; i < quantities[index]; i++) {
+  const qty = parseInt(document.getElementById(`qty-${index}`).value) || 1;
+  for (let i = 0; i < qty; i++) {
     cartItems.push(products[index]);
   }
   updateCart();
-  showCartMessage();
+  showAddedMessage();
 }
 
 function updateCart() {
-  cartItemsContainer.innerHTML = '';
+  const cartContainer = document.getElementById('cart-items');
+  cartContainer.innerHTML = '';
   let total = 0;
   cartItems.forEach((item, i) => {
     total += item.price;
     const div = document.createElement('div');
-    div.className = 'flex items-center gap-2 p-2 border rounded bg-gray-50';
+    div.className = 'flex justify-between items-center p-2 border rounded shadow';
     div.innerHTML = `
-      <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-cover rounded" />
-      <div class="flex-1">
-        <span class="font-semibold text-sm">${item.name}</span><br>
-        <span class="text-xs text-gray-600">₱${item.price}</span>
+      <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded">
+      <div class="flex-1 ml-2">
+        <h4 class="text-sm font-bold">${item.name}</h4>
+        <p class="text-xs text-gray-500">₱${item.price}</p>
       </div>
       <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-700">✕</button>
     `;
-    cartItemsContainer.appendChild(div);
+    cartContainer.appendChild(div);
   });
-  cartTotal.textContent = total - discount;
-  cartCount.textContent = cartItems.length;
+  document.getElementById('cart-total').textContent = total;
+  document.getElementById('cart-count').textContent = cartItems.length;
 }
 
 function removeFromCart(index) {
@@ -165,37 +183,46 @@ function removeFromCart(index) {
 }
 
 function toggleCart() {
-  cart.classList.toggle('cart-open');
-  cartOverlay.classList.toggle('hidden');
-}
-
-function showCartMessage() {
-  cartMessage.classList.remove('hidden');
-  setTimeout(() => {
-    cartMessage.classList.add('hidden');
-  }, 2000);
+  document.getElementById('cart').classList.toggle('cart-open');
+  document.getElementById('cart-overlay').classList.toggle('hidden');
 }
 
 function applyVoucher() {
-  const code = document.getElementById('voucher-code').value;
-  if (code === 'DISCOUNT50') {
-    discount = 50;
-    voucherMsg.classList.remove('hidden');
-    voucherMsg.textContent = '✅ ₱50 discount applied!';
+  const code = document.getElementById('voucher-code').value.trim();
+  const msg = document.getElementById('voucher-msg');
+  if (code === 'DISCOUNT10' && !voucherApplied) {
+    voucherApplied = true;
+    cartItems = cartItems.map(item => ({ ...item, price: item.price * 0.9 }));
+    updateCart();
+    msg.textContent = '✅ 10% Discount Applied!';
+    msg.classList.remove('hidden');
   } else {
-    discount = 0;
-    voucherMsg.classList.remove('hidden');
-    voucherMsg.textContent = '❗ Invalid voucher code.';
+    msg.textContent = '❌ Invalid or Already Applied';
+    msg.classList.remove('hidden');
   }
-  updateCart();
 }
 
 function checkoutCart() {
-  alert('✅ Checkout successful!');
+  alert('✅ Checkout complete!');
   cartItems = [];
-  discount = 0;
   updateCart();
   toggleCart();
+}
+
+function showAddedMessage() {
+  const msg = document.getElementById('cart-message');
+  msg.classList.remove('hidden');
+  setTimeout(() => msg.classList.add('hidden'), 2000);
+}
+
+function viewImage(src) {
+  const modal = document.getElementById('image-modal');
+  document.getElementById('modal-img').src = src;
+  modal.classList.remove('hidden');
+}
+
+function closeImageModal() {
+  document.getElementById('image-modal').classList.add('hidden');
 }
 
 function filterCategory(cat) {
@@ -208,36 +235,26 @@ function searchProducts() {
   renderProducts(products.filter(p => p.name.toLowerCase().includes(keyword)));
 }
 
-let carouselIndex = 0;
-const carousel = document.getElementById('carousel');
-const dots = document.querySelectorAll('button[onclick^="setCarouselIndex"]');
 function setCarouselIndex(index) {
-  carouselIndex = index;
-  carousel.style.transform = `translateX(-${carouselIndex * 100}%)`;
-  dots.forEach((dot, i) => {
+  currentCarousel = index;
+  document.getElementById('carousel').style.transform = `translateX(-${index * 100}%)`;
+  document.querySelectorAll('button[onclick^="setCarouselIndex"]').forEach((dot, i) => {
     dot.classList.toggle('opacity-100', i === index);
     dot.classList.toggle('opacity-50', i !== index);
   });
 }
+
 setInterval(() => {
-  carouselIndex = (carouselIndex + 1) % 3;
-  setCarouselIndex(carouselIndex);
+  currentCarousel = (currentCarousel + 1) % 3;
+  setCarouselIndex(currentCarousel);
 }, 4000);
-
-function openImageModal(src) {
-  document.getElementById('modal-img').src = src;
-  document.getElementById('image-modal').classList.remove('hidden');
-}
-
-function closeImageModal() {
-  document.getElementById('image-modal').classList.add('hidden');
-}
 
 renderProducts();
 </script>
 
 </body>
 </html>
+
 
 
 
