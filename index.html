@@ -53,30 +53,45 @@
   </section>
 
   <section id="videos-section" class="hidden p-4">
-  <h2 class="text-xl font-bold mb-4">🎥 Videos</h2>
-  <div id="video-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-    <div class="fade-in border rounded-lg shadow hover:shadow-xl transition duration-300 overflow-hidden bg-white">
-      <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls class="w-full h-48 object-cover"></video>
-      <div class="p-2">
-        <h3 class="font-semibold">Sample Video 1</h3>
-        <div class="flex justify-between mt-2">
-          <button onclick="likeVideo(this)" class="text-red-500 hover:text-red-700 flex items-center gap-1 text-sm">
-            ❤️ <span class="like-count">0</span> Likes
+  <h2 class="text-2xl font-bold mb-6 text-center">🎥 Featured Videos</h2>
+
+  <div id="video-list" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+    <div class="fade-in bg-white border rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
+      <div class="relative group">
+        <video src="https://www.w3schools.com/html/mov_bbb.mp4" controls class="w-full h-48 object-cover"></video>
+        <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onclick="shareVideo('https://www.w3schools.com/html/mov_bbb.mp4')" class="bg-white p-1 rounded-full shadow text-blue-500 hover:text-blue-700">
+            🔗
           </button>
-          <button onclick="shareVideo('https://www.w3schools.com/html/mov_bbb.mp4')" class="text-blue-500 hover:text-blue-700 text-sm">🔗 Share</button>
+        </div>
+      </div>
+      <div class="p-4">
+        <h3 class="text-lg font-semibold mb-2">Sample Video 1</h3>
+        <div class="flex justify-between items-center">
+          <button onclick="likeVideo(this)" class="flex items-center text-red-500 hover:text-red-700 gap-1 text-sm">
+            ❤️ <span class="like-count">0</span>
+          </button>
+          <button onclick="shareVideo('https://www.w3schools.com/html/mov_bbb.mp4')" class="text-blue-500 hover:text-blue-700 text-sm">Share</button>
         </div>
       </div>
     </div>
 
-    <div class="fade-in border rounded-lg shadow hover:shadow-xl transition duration-300 overflow-hidden bg-white">
-      <video src="https://www.w3schools.com/html/movie.mp4" controls class="w-full h-48 object-cover"></video>
-      <div class="p-2">
-        <h3 class="font-semibold">Sample Video 2</h3>
-        <div class="flex justify-between mt-2">
-          <button onclick="likeVideo(this)" class="text-red-500 hover:text-red-700 flex items-center gap-1 text-sm">
-            ❤️ <span class="like-count">0</span> Likes
+    <div class="fade-in bg-white border rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
+      <div class="relative group">
+        <video src="https://www.w3schools.com/html/movie.mp4" controls class="w-full h-48 object-cover"></video>
+        <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onclick="shareVideo('https://www.w3schools.com/html/movie.mp4')" class="bg-white p-1 rounded-full shadow text-blue-500 hover:text-blue-700">
+            🔗
           </button>
-          <button onclick="shareVideo('https://www.w3schools.com/html/movie.mp4')" class="text-blue-500 hover:text-blue-700 text-sm">🔗 Share</button>
+        </div>
+      </div>
+      <div class="p-4">
+        <h3 class="text-lg font-semibold mb-2">Sample Video 2</h3>
+        <div class="flex justify-between items-center">
+          <button onclick="likeVideo(this)" class="flex items-center text-red-500 hover:text-red-700 gap-1 text-sm">
+            ❤️ <span class="like-count">0</span>
+          </button>
+          <button onclick="shareVideo('https://www.w3schools.com/html/movie.mp4')" class="text-blue-500 hover:text-blue-700 text-sm">Share</button>
         </div>
       </div>
     </div>
