@@ -1,69 +1,168 @@
-<!-- full-app.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KRA Store</title>
-  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+    header {
+      background: #fff;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    header img {
+      height: 40px;
+    }
+    .cart-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cart {
+      position: fixed;
+      top: 70px;
+      right: 10px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 999;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    .cart .cart-item {
+      border-bottom: 1px solid #eee;
+      padding: 5px 0;
+    }
+    .cart .checkout {
+      margin-top: 10px;
+      background: #007bff;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .products div {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .products img {
+      width: 100%;
+      max-height: 160px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    button {
+      background: #28a745;
+      color: white;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .auth-form {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .auth-form button {
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <img src="https://i.imgur.com/oBS7M18.png" alt="KRA Store" style="width:100%; max-height:100px; object-fit:contain;">
-    <button onclick="toggleCart()">🛒 Cart</button>
-    <span id="userEmail" style="float:right"></span>
+    <img src="https://i.imgur.com/oBS7M18.png" alt="Header Logo" />
+    <button class="cart-button" onclick="toggleCart()">🛒 Cart</button>
   </header>
 
-  <main id="mainView">
-    <div id="authView">
-      <h2>Login</h2>
-      <input type="email" id="loginEmail" placeholder="Email"><br>
-      <input type="password" id="loginPassword" placeholder="Password"><br>
-      <button onclick="loginUser()">Login</button>
-      <p>or <a href="#" onclick="showSignup()">Sign Up</a></p>
-    </div>
-
-    <div id="signupView" style="display:none">
-      <h2>Sign Up</h2>
-      <input type="email" id="signupEmail" placeholder="Email"><br>
-      <input type="password" id="signupPassword" placeholder="Password"><br>
-      <button onclick="signupUser()">Sign Up</button>
-      <p>or <a href="#" onclick="showLogin()">Login</a></p>
-    </div>
-
-    <div id="storeView" style="display:none">
-      <h2>Welcome to KRA Store</h2>
-      <div id="productContainer"></div>
-    </div>
-
-    <div id="adminView" style="display:none">
-      <h2>Admin Dashboard</h2>
-      <input id="prodName" placeholder="Product name"><br>
-      <input id="prodPrice" placeholder="Price" type="number"><br>
-      <input id="prodImage" placeholder="Image URL"><br>
-      <input id="prodCat" placeholder="Category"><br>
-      <button onclick="addProduct()">Add Product</button>
-      <div id="adminProductList"></div>
-    </div>
-  </main>
+  <div class="auth-form" id="authForm">
+    <h2>Login or Sign Up</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="signIn()">Login</button>
+    <button onclick="signUp()">Sign Up</button>
+  </div>
 
   <div class="cart" id="cartBox" style="display:none"></div>
+  <main class="products" id="productContainer"></main>
 
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAWooMw5-vQxovPjVuIkHbJVlCR8iIp2pI",
       authDomain: "kra-shop-d05f3.firebaseapp.com",
-      projectId: "kra-shop-d05f3"
+      projectId: "kra-shop-d05f3",
+      storageBucket: "kra-shop-d05f3.appspot.com",
+      messagingSenderId: "377788922175",
+      appId: "1:377788922175:web:6b3b61362d9f73da2f3b8a"
     };
+
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
     const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function signIn() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(user => {
+          document.getElementById("authForm").style.display = 'none';
+          loadProducts();
+        })
+        .catch(error => alert(error.message));
+    }
+
+    function signUp() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(user => {
+          document.getElementById("authForm").style.display = 'none';
+          loadProducts();
+        })
+        .catch(error => alert(error.message));
+    }
 
     let cart = [];
-
     function addToCart(product) {
       cart.push(product);
       updateCartUI();
@@ -73,21 +172,21 @@
       const cartBox = document.getElementById('cartBox');
       cartBox.innerHTML = '';
       cart.forEach(item => {
-        cartBox.innerHTML += `<div class='cart-item'>${item.name} - ₱${item.price}</div>`;
+        cartBox.innerHTML += `<div class="cart-item">${item.name} - ₱${item.price}</div>`;
       });
-      cartBox.innerHTML += `<div class='checkout' onclick='checkoutCart()'>Checkout via Messenger</div>`;
+      cartBox.innerHTML += `<div class="checkout" onclick="checkoutCart()">Checkout via Messenger</div>`;
       cartBox.style.display = 'block';
+    }
+
+    function toggleCart() {
+      const box = document.getElementById('cartBox');
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
     }
 
     function checkoutCart() {
       const msg = cart.map(item => `${item.name} - ₱${item.price}`).join('\n');
       const url = `https://m.me/krastoriesph?ref=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
-    }
-
-    function toggleCart() {
-      const box = document.getElementById('cartBox');
-      box.style.display = box.style.display === 'block' ? 'none' : 'block';
     }
 
     function loadProducts() {
@@ -97,97 +196,24 @@
         snapshot.forEach(doc => {
           const p = doc.data();
           container.innerHTML += `
-            <div class='product'>
-              <img src='${p.image}' style='width:100%; max-height:200px; object-fit:cover'>
+            <div>
+              <img src="${p.image}" alt="${p.name}" />
               <h3>${p.name}</h3>
               <p>₱${p.price}</p>
-              <small>${p.category}</small><br>
+              <small>${p.category}</small>
               <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
             </div>`;
         });
       });
     }
 
-    function loginUser() {
-      const email = loginEmail.value;
-      const pass = loginPassword.value;
-      auth.signInWithEmailAndPassword(email, pass)
-        .then(user => checkAuth(user.user))
-        .catch(e => alert(e.message));
-    }
-
-    function signupUser() {
-      const email = signupEmail.value;
-      const pass = signupPassword.value;
-      auth.createUserWithEmailAndPassword(email, pass)
-        .then(user => checkAuth(user.user))
-        .catch(e => alert(e.message));
-    }
-
-    function checkAuth(user) {
-      userEmail.textContent = user.email;
-      authView.style.display = signupView.style.display = 'none';
-      if (user.email === 'admin@kra.com') {
-        adminView.style.display = 'block';
-        loadAdminProducts();
-      } else {
-        storeView.style.display = 'block';
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("authForm").style.display = 'none';
         loadProducts();
       }
-    }
-
-    function showSignup() {
-      authView.style.display = 'none';
-      signupView.style.display = 'block';
-    }
-
-    function showLogin() {
-      signupView.style.display = 'none';
-      authView.style.display = 'block';
-    }
-
-    auth.onAuthStateChanged(user => {
-      if (user) checkAuth(user);
     });
-
-    function addProduct() {
-      const data = {
-        name: prodName.value,
-        price: parseFloat(prodPrice.value),
-        image: prodImage.value,
-        category: prodCat.value
-      };
-      db.collection('products').add(data).then(loadAdminProducts);
-    }
-
-    function loadAdminProducts() {
-      const list = document.getElementById('adminProductList');
-      list.innerHTML = '';
-      db.collection('products').get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const p = doc.data();
-          list.innerHTML += `<div>${p.name} - ₱${p.price} <button onclick="deleteProduct('${doc.id}')">❌</button></div>`;
-        });
-      });
-    }
-
-    function deleteProduct(id) {
-      db.collection('products').doc(id).delete().then(loadAdminProducts);
-    }
   </script>
-
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; margin: 0; background: #f7f7f7; padding: 0 10px; }
-    header { background: #fff; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-    main { padding-top: 10px; }
-    .product { background: white; margin-bottom: 10px; padding: 10px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
-    .cart { position: fixed; top: 60px; right: 10px; background: white; border: 1px solid #ccc; padding: 10px; max-height: 400px; overflow-y: auto; z-index: 999; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.15); }
-    .cart .cart-item { border-bottom: 1px solid #eee; padding: 5px 0; }
-    .cart .checkout { margin-top: 10px; background: #007bff; color: white; padding: 10px; text-align: center; cursor: pointer; border-radius: 5px; }
-    button { padding: 10px 15px; background: #2d89ef; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: #1864ab; }
-    input { margin: 5px 0; padding: 8px; width: 100%; }
-  </style>
 </body>
 </html>
+
