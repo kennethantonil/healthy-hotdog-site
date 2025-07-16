@@ -85,7 +85,7 @@
       apiKey: "AIzaSyAWooMw5-vQxovPjVuIkHbJVlCR8iIp2pI",
       authDomain: "kra-shop-d05f3.firebaseapp.com",
       projectId: "kra-shop-d05f3",
-      storageBucket: "kra-shop-d05f3.firebasestorage.app",
+      storageBucket: "kra-shop-d05f3.appspot.com",
       messagingSenderId: "377788922175",
       appId: "1:377788922175:web:6b3b61362d9f73da2f3b8a"
     };
@@ -119,6 +119,7 @@
     function getProducts() {
       productList.innerHTML = '';
       db.collection('products').onSnapshot(snapshot => {
+        productList.innerHTML = '';
         snapshot.docs.forEach(doc => renderProduct(doc));
       });
     }
@@ -130,7 +131,9 @@
         .then(() => {
           adminPanel.style.display = 'block';
         })
-        .catch(err => alert(err.message));
+        .catch(err => {
+          alert("Login Failed: " + err.message);
+        });
     }
 
     function addProduct() {
@@ -154,4 +157,5 @@
   </script>
 </body>
 </html>
+
 
