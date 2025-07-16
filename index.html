@@ -107,6 +107,15 @@
     .auth-form button {
       width: 100%;
     }
+    .live-box {
+      margin: 20px auto;
+      max-width: 640px;
+    }
+    iframe {
+      width: 100%;
+      height: 360px;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
@@ -124,6 +133,12 @@
   </div>
 
   <div class="cart" id="cartBox" style="display:none"></div>
+
+  <div class="live-box">
+    <h3>📺 Live Selling</h3>
+    <iframe src="https://www.youtube.com/embed/live_stream?channel=UCvW9T8gAcDt7--YyZAMjvhg" allowfullscreen></iframe>
+  </div>
+
   <main class="products" id="productContainer"></main>
 
   <script>
@@ -216,4 +231,5 @@
   </script>
 </body>
 </html>
+
 
