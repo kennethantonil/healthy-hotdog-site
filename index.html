@@ -1,147 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KRA Store</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
       color: #333;
     }
-    header {
-      background: #fff;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
     header img {
-      height: 40px;
-    }
-    .cart-button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .cart {
-      position: fixed;
-      top: 70px;
-      right: 10px;
-      background: white;
-      border: 1px solid #ccc;
+      width: 100%;
+      max-height: 100px;
+      object-fit: contain;
+      background-color: #fff;
       padding: 10px;
-      max-height: 400px;
-      overflow-y: auto;
-      z-index: 999;
-      width: 90%;
-      max-width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      border-bottom: 1px solid #ddd;
     }
-    .cart .cart-item {
-      border-bottom: 1px solid #eee;
-      padding: 5px 0;
+
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 20px;
     }
-    .cart .checkout {
-      margin-top: 10px;
-      background: #007bff;
-      color: white;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      border-radius: 5px;
+    nav a {
+      margin-right: 20px;
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 500;
     }
+
     .products {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 15px;
       padding: 20px;
     }
-    .products div {
+    .product {
       background: white;
-      border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
     }
-    .products img {
+    .product:hover {
+      transform: translateY(-5px);
+    }
+    .product img {
       width: 100%;
-      max-height: 160px;
+      height: 180px;
       object-fit: cover;
-      border-radius: 5px;
+      border-radius: 10px;
     }
-    button {
+    .product h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1em;
+    }
+    .product p {
+      color: #444;
+      margin: 5px 0;
+    }
+    .product button {
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .product button:hover {
+      background-color: #e91e63;
+    }
+
+    .cart-toggle-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .cart {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      overflow-y: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 999;
+    }
+    .cart .cart-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .cart .checkout {
+      margin-top: 15px;
       background: #28a745;
       color: white;
-      padding: 8px;
-      border: none;
+      padding: 10px;
+      text-align: center;
       border-radius: 5px;
-      margin-top: 10px;
       cursor: pointer;
     }
-    .auth-form {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .auth-form input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    .auth-form button {
-      width: 100%;
-    }
-    .live-box {
-      margin: 20px auto;
-      max-width: 640px;
-    }
-    iframe {
-      width: 100%;
-      height: 360px;
-      border-radius: 10px;
+
+    @media(max-width: 600px) {
+      .products {
+        grid-template-columns: 1fr;
+      }
+      .cart {
+        width: 90%;
+        right: 5%;
+        bottom: 90px;
+      }
     }
   </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
-<body>
+
+<body id="top">
   <header>
-    <img src="https://i.imgur.com/oBS7M18.png" alt="Header Logo" />
-    <button class="cart-button" onclick="toggleCart()">🛒 Cart</button>
+    <img src="https://i.imgur.com/oBS7M18.png" alt="KRA Store" />
   </header>
 
-  <div class="auth-form" id="authForm">
-    <h2>Login or Sign Up</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="signIn()">Login</button>
-    <button onclick="signUp()">Sign Up</button>
-  </div>
+  <!-- Navigation -->
+  <nav>
+    <a href="#top">🏠 Home</a>
+    <a href="#products">🛍️ Products</a>
+    <a href="#cartBox">📦 Cart</a>
+  </nav>
 
-  <div class="cart" id="cartBox" style="display:none"></div>
+  <main>
+    <div class="products" id="products"></div>
+  </main>
 
-  <div class="live-box">
-    <h3>📺 Live Selling</h3>
-    <iframe src="https://www.youtube.com/embed/live_stream?channel=UCvW9T8gAcDt7--YyZAMjvhg" allowfullscreen></iframe>
-  </div>
-
-  <main class="products" id="productContainer"></main>
+  <!-- Cart -->
+  <div class="cart" id="cartBox"></div>
+  <button class="cart-toggle-btn" onclick="toggleCart()">🛒</button>
 
   <script>
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAWooMw5-vQxovPjVuIkHbJVlCR8iIp2pI",
       authDomain: "kra-shop-d05f3.firebaseapp.com",
@@ -150,86 +175,61 @@
       messagingSenderId: "377788922175",
       appId: "1:377788922175:web:6b3b61362d9f73da2f3b8a"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    function signIn() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(user => {
-          document.getElementById("authForm").style.display = 'none';
-          loadProducts();
-        })
-        .catch(error => alert(error.message));
-    }
-
-    function signUp() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(user => {
-          document.getElementById("authForm").style.display = 'none';
-          loadProducts();
-        })
-        .catch(error => alert(error.message));
-    }
-
+    // Cart functionality
     let cart = [];
     function addToCart(product) {
       cart.push(product);
       updateCartUI();
     }
-
     function updateCartUI() {
       const cartBox = document.getElementById('cartBox');
       cartBox.innerHTML = '';
       cart.forEach(item => {
-        cartBox.innerHTML += `<div class="cart-item">${item.name} - ₱${item.price}</div>`;
+        cartBox.innerHTML += `<div class='cart-item'>${item.name} - ₱${item.price}</div>`;
       });
-      cartBox.innerHTML += `<div class="checkout" onclick="checkoutCart()">Checkout via Messenger</div>`;
+      cartBox.innerHTML += `<div class='checkout' onclick='checkoutCart()'>Checkout via Messenger</div>`;
       cartBox.style.display = 'block';
     }
-
     function toggleCart() {
       const box = document.getElementById('cartBox');
       box.style.display = box.style.display === 'block' ? 'none' : 'block';
     }
-
     function checkoutCart() {
       const msg = cart.map(item => `${item.name} - ₱${item.price}`).join('\n');
       const url = `https://m.me/krastoriesph?ref=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
+    // Load products from Firebase
     function loadProducts() {
-      const container = document.getElementById('productContainer');
-      container.innerHTML = '';
-      db.collection('products').get().then(snapshot => {
+      db.collection("products").onSnapshot(snapshot => {
+        const container = document.getElementById("products");
+        container.innerHTML = '';
         snapshot.forEach(doc => {
           const p = doc.data();
           container.innerHTML += `
-            <div>
-              <img src="${p.image}" alt="${p.name}" />
+            <div class="product">
+              <img src="${p.image}" alt="${p.name}">
               <h3>${p.name}</h3>
               <p>₱${p.price}</p>
-              <small>${p.category}</small>
+              <small>${p.category}</small><br>
               <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
             </div>`;
         });
       });
     }
+    loadProducts();
 
+    // Admin login detection
     auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("authForm").style.display = 'none';
-        loadProducts();
+      if (user && user.email === 'admin@kra.com') {
+        console.log("Admin logged in");
       }
     });
   </script>
 </body>
 </html>
-
-
