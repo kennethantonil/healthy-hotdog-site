@@ -1,259 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>E-Commerce App</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopNow - Ultimate Bootstrap E-Commerce</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; margin: 0; background: #f7f7f7; color: #333; }
-    nav { background: #ee4d2d; color: white; padding: 10px; text-align: center; display: flex; flex-wrap: wrap; justify-content: center; }
-    nav button { background: white; color: #ee4d2d; border: none; padding: 8px 12px; margin: 5px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-    section { display: none; padding: 20px; }
-    section.active { display: block; }
-    .form-container, .card, .cart-item { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
-    label { display: block; margin-top: 10px; }
-    input { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-    .btn { background: #ee4d2d; color: white; padding: 10px; border: none; border-radius: 6px; margin-top: 15px; cursor: pointer; }
-    .btn:hover { background: #d8431f; }
-    .me-menu { display: flex; flex-direction: column; gap: 10px; }
-    .me-menu button { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 10px; text-align: left; display: flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer; }
+    body.dark-mode { background-color: #121212; color: #eee; }
+    .dark-mode .card { background-color: #1e1e1e; color: #fff; }
+    .floating-chat, .floating-cart {
+      position: fixed; bottom: 20px; width: 50px; height: 50px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: transform 0.2s;
+    }
+    .floating-chat { right: 20px; background: linear-gradient(135deg, #00b4ff, #007bff); }
+    .floating-cart { right: 80px; background: linear-gradient(135deg, #28a745, #218838); }
+    .floating-chat:hover, .floating-cart:hover { transform: scale(1.1); }
+    .blink-badge {
+      position: absolute; top: -5px; right: -5px; background: red; color: #fff;
+      border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0; } }
+    .fade-in-slide { animation: fadeSlide 0.5s ease forwards; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .product-img { width: 100%; height: 150px; object-fit: cover; border-radius: 15px; transition: transform 0.3s; }
+    .product-img:hover { transform: scale(1.05); }
+    .logo-img { height: 60px; margin-right: 0; }
   </style>
 </head>
 <body>
-  <nav>
-    <button onclick="switchTab('dashboard')"><i class="fas fa-home"></i> Dashboard</button>
-    <button onclick="switchTab('products')"><i class="fas fa-box"></i> Products</button>
-    <button onclick="switchTab('cart')"><i class="fas fa-shopping-cart"></i> Cart</button>
-    <button onclick="switchTab('me')"><i class="fas fa-user-circle"></i> Me</button>
-  </nav>
-
-  <section id="dashboard" class="active">
-    <h1>Dashboard</h1>
-    <div class="card">Welcome, <span id="userName">Guest</span>!</div>
-  </section>
-
-  <section id="products">
-    <h1>Products</h1>
-    <div id="productList"></div>
-  </section>
-
-  <section id="cart">
-    <h1>Cart</h1>
-    <div id="cartList"></div>
-    <div id="totalAmount" style="text-align:right; font-weight:bold; margin-top:10px;"></div>
-    <button class="btn" onclick="checkout()">Checkout</button>
-  </section>
-
-  <section id="me">
-    <h1>Me</h1>
-    <div class="me-menu">
-      <button onclick="switchTab('login')"><i class="fas fa-sign-in-alt"></i> Login</button>
-      <button onclick="switchTab('signup')"><i class="fas fa-user-plus"></i> Sign Up</button>
-      <button onclick="switchTab('profile')"><i class="fas fa-user"></i> Edit Profile</button>
-      <button onclick="switchTab('addresses')"><i class="fas fa-map-marker-alt"></i> Addresses</button>
-      <button onclick="switchTab('password')"><i class="fas fa-lock"></i> Change Password</button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary rounded-bottom">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="https://i.imgur.com/HpWzUcE.png" alt="Logo" class="logo-img">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('shop')">Shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('cart')">Cart</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('live')">Live</a></li>
+        <li class="nav-item"><a class="nav-link" href="#" onclick="toggleDarkMode()">🌓</a></li>
+      </ul>
     </div>
-  </section>
+  </div>
+</nav>
 
-  <section id="login">
-    <h1>Login</h1>
-    <form class="form-container" onsubmit="handleLogin(event)">
-      <label>Email</label><input type="email" id="loginEmail" required />
-      <label>Password</label><input type="password" id="loginPass" required />
-      <button class="btn">Login</button>
-    </form>
-  </section>
+<div class="container py-4">
+  <div id="shopSection" class="fade-in-slide">
+    <input type="text" class="form-control mb-3" placeholder="Search Products..." onkeyup="filterProducts(this.value)">
+    <div class="row" id="productList"></div>
+  </div>
 
-  <section id="signup">
-    <h1>Sign Up</h1>
-    <form class="form-container" onsubmit="handleSignup(event)">
-      <label>Name</label><input id="signupName" required />
-      <label>Email</label><input type="email" id="signupEmail" required />
-      <label>Password</label><input type="password" id="signupPass" required />
-      <button class="btn">Sign Up</button>
-    </form>
-  </section>
+  <div id="cartSection" style="display:none;" class="fade-in-slide">
+    <h3>Your Cart</h3>
+    <div id="cartItems"></div>
+    <div class="mt-3">
+      <h5>Total: ₱<span id="cartTotal">0</span></h5>
+      <button class="btn btn-success" onclick="confirmCheckout()">Checkout</button>
+    </div>
+  </div>
 
-  <section id="profile">
-    <h1>Edit Profile</h1>
-    <form class="form-container" onsubmit="saveProfile(event)">
-      <label>Name</label><input id="name" required />
-      <label>Email</label><input id="email" type="email" required />
-      <label>Phone</label><input id="phone" type="tel" required />
-      <button class="btn">Save</button>
-    </form>
-  </section>
+  <div id="liveSection" style="display:none;" class="fade-in-slide">
+    <h3>Live Selling</h3>
+    <button class="btn btn-primary mb-2" onclick="toggleLiveMode()">Toggle Live/Replay</button>
+    <video id="liveVideo" class="w-100 rounded" controls autoplay muted>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
 
-  <section id="addresses">
-    <h1>Addresses</h1>
-    <div id="addressList"></div>
-    <button class="btn" onclick="addNewAddress()">+ Add New</button>
-  </section>
+<div class="floating-chat" onclick="window.location.href='https://m.me/YOUR_PAGE_USERNAME'">
+  💬<div class="blink-badge">!</div>
+</div>
+<div class="floating-cart" onclick="showSection('cart')">
+  🛒
+</div>
 
-  <section id="password">
-    <h1>Change Password</h1>
-    <form class="form-container" onsubmit="changePassword(event)">
-      <label>Current Password</label><input type="password" id="currentPass" required />
-      <label>New Password</label><input type="password" id="newPass" required />
-      <label>Confirm Password</label><input type="password" id="confirmPass" required />
-      <button class="btn">Update</button>
-    </form>
-  </section>
+<div class="modal fade" id="orderSummaryModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Your Order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="orderSummaryBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" onclick="checkout()">Confirm & Checkout</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <script>
-    const products = [
-      { name: 'Earbuds', price: 1200 },
-      { name: 'Phone Case', price: 250 },
-      { name: 'Smart Watch', price: 2200 },
-      { name: 'Power Bank', price: 900 }
-    ];
+<div class="modal fade" id="successModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Success!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">Your order has been sent successfully!</div>
+    </div>
+  </div>
+</div>
 
-    function switchTab(id) {
-      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      if(id === 'cart') renderCart();
-      if(id === 'products') renderProducts();
-      if(id === 'addresses') loadAddresses();
-      if(id === 'profile') loadProfile();
-      if(id === 'dashboard') loadDashboard();
-    }
+<script>
+  const products = [
+    { name: 'Hotdog Special', price: 100, img: 'https://via.placeholder.com/200x150?text=Hotdog' },
+    { name: 'Beef Burger', price: 150, img: 'https://via.placeholder.com/200x150?text=Burger' },
+    { name: 'Chicken Nuggets', price: 80, img: 'https://via.placeholder.com/200x150?text=Nuggets' },
+    { name: 'Iced Tea', price: 50, img: 'https://via.placeholder.com/200x150?text=Iced+Tea' },
+    { name: 'Soda', price: 40, img: 'https://via.placeholder.com/200x150?text=Soda' }
+  ];
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let darkMode = localStorage.getItem('darkMode') === 'true';
+  const productList = document.getElementById('productList');
 
-    function handleSignup(e) {
-      e.preventDefault();
-      const name = document.getElementById('signupName').value;
-      const email = document.getElementById('signupEmail').value;
-      const pass = document.getElementById('signupPass').value;
-      localStorage.setItem('account', JSON.stringify({ name, email, pass }));
-      alert('Signup successful!');
-      switchTab('login');
-    }
+  function renderProducts(filter = '') {
+    productList.innerHTML = '';
+    products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase())).forEach(p => {
+      productList.innerHTML += `
+        <div class="col-md-4 mb-3">
+          <div class="card p-3 rounded-4 shadow">
+            <img src="${p.img}" class="product-img mb-2">
+            <h5>${p.name}</h5>
+            <p>₱${p.price}</p>
+            <div class="input-group">
+              <input type="number" value="1" min="1" class="form-control rounded-start">
+              <button class="btn btn-primary rounded-end" onclick="addToCart('${p.name}', ${p.price}, this)">Add</button>
+            </div>
+          </div>
+        </div>`;
+    });
+  }
 
-    function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const pass = document.getElementById('loginPass').value;
-      const account = JSON.parse(localStorage.getItem('account') || '{}');
-      if (email === account.email && pass === account.pass) {
-        localStorage.setItem('loggedIn', 'true');
-        switchTab('dashboard');
-        document.getElementById('userName').textContent = account.name || 'User';
-      } else {
-        alert('Invalid credentials');
-      }
-    }
+  function addToCart(name, price, btn) {
+    const qty = parseInt(btn.parentElement.querySelector('input').value);
+    cart.push({ name, price, qty });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Added to Cart!');
+  }
 
-    function loadDashboard() {
-      const account = JSON.parse(localStorage.getItem('account') || '{}');
-      document.getElementById('userName').textContent = account.name || 'User';
-    }
+  function loadCart() {
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
+    cartItems.innerHTML = '';
+    let total = 0;
+    cart.forEach((item, index) => {
+      total += item.price * item.qty;
+      cartItems.innerHTML += `
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>${item.qty} x ${item.name}</div>
+          <div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="editQty(${index}, -1)">-</button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="editQty(${index}, 1)">+</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="removeItem(${index})">x</button>
+          </div>
+        </div>`;
+    });
+    cartTotal.innerText = total;
+  }
 
-    function saveProfile(e) {
-      e.preventDefault();
-      const profile = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value
-      };
-      localStorage.setItem('userProfile', JSON.stringify(profile));
-      alert('Saved!');
-    }
+  function editQty(index, change) {
+    cart[index].qty += change;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCart();
+  }
 
-    function loadProfile() {
-      const p = JSON.parse(localStorage.getItem('userProfile') || '{}');
-      document.getElementById('name').value = p.name || '';
-      document.getElementById('email').value = p.email || '';
-      document.getElementById('phone').value = p.phone || '';
-    }
+  function removeItem(index) {
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCart();
+  }
 
-    function renderProducts() {
-      const container = document.getElementById('productList');
-      container.innerHTML = '';
-      products.forEach(p => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.innerHTML = `<strong>${p.name}</strong><p>₱${p.price}</p><button class='btn' onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>`;
-        container.appendChild(div);
-      });
-    }
+  function confirmCheckout() {
+    if (!cart.length) return alert('Your cart is empty!');
+    document.getElementById('orderSummaryBody').innerHTML = cart.map(i => `${i.qty} x ${i.name} = ₱${i.qty * i.price}`).join('<br>');
+    new bootstrap.Modal(document.getElementById('orderSummaryModal')).show();
+  }
 
-    function addToCart(product) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      cart.push(product);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert(product.name + ' added!');
-    }
+  function checkout() {
+    const order = cart.map(i => `${i.qty} x ${i.name}`).join(', ');
+    window.location.href = `https://m.me/YOUR_PAGE_USERNAME?ref=${encodeURIComponent(order)}`;
+    new bootstrap.Modal(document.getElementById('successModal')).show();
+  }
 
-    function renderCart() {
-      const list = document.getElementById('cartList');
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      list.innerHTML = '';
-      let total = 0;
-      cart.forEach((item, i) => {
-        total += item.price;
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `<div><strong>${item.name}</strong><p>₱${item.price}</p></div><button class='btn' onclick='removeItem(${i})'>Remove</button>`;
-        list.appendChild(div);
-      });
-      document.getElementById('totalAmount').textContent = 'Total: ₱' + total.toLocaleString();
-    }
+  function filterProducts(value) { renderProducts(value); }
 
-    function removeItem(index) {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      renderCart();
-    }
+  function toggleDarkMode() {
+    darkMode = !darkMode;
+    localStorage.setItem('darkMode', darkMode);
+    document.body.classList.toggle('dark-mode', darkMode);
+  }
 
-    function checkout() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (!cart.length) return alert('Cart is empty!');
-      localStorage.removeItem('cart');
-      alert('Thank you for your purchase!');
-      renderCart();
-    }
+  function toggleLiveMode() {
+    const video = document.getElementById('liveVideo');
+    video.src = video.src.includes('mov_bbb') ? 'https://www.w3schools.com/html/movie.mp4' : 'https://www.w3schools.com/html/mov_bbb.mp4';
+  }
 
-    function changePassword(e) {
-      e.preventDefault();
-      const current = document.getElementById('currentPass').value;
-      const newPass = document.getElementById('newPass').value;
-      const confirm = document.getElementById('confirmPass').value;
-      const account = JSON.parse(localStorage.getItem('account') || '{}');
-      if (current !== account.pass) return alert('Wrong current password!');
-      if (newPass !== confirm) return alert('New passwords do not match.');
-      account.pass = newPass;
-      localStorage.setItem('account', JSON.stringify(account));
-      alert('Password changed!');
-      e.target.reset();
-    }
+  function showSection(section) {
+    document.getElementById('shopSection').style.display = 'none';
+    document.getElementById('cartSection').style.display = 'none';
+    document.getElementById('liveSection').style.display = 'none';
+    document.getElementById(section + 'Section').style.display = 'block';
+    if (section === 'cart') loadCart();
+  }
 
-    function loadAddresses() {
-      const list = document.getElementById('addressList');
-      const stored = JSON.parse(localStorage.getItem('userAddresses') || '[]');
-      list.innerHTML = '';
-      stored.forEach(addr => {
-        const div = document.createElement('div');
-        div.className = 'form-container';
-        div.innerHTML = `<strong>${addr.label}</strong><p>${addr.name}</p><p>${addr.address}</p><p>${addr.phone}</p>`;
-        list.appendChild(div);
-      });
-    }
-
-    function addNewAddress() {
-      const label = prompt('Label?');
-      const name = prompt('Name?');
-      const address = prompt('Address?');
-      const phone = prompt('Phone?');
-      if (!label || !name || !address || !phone) return alert('All fields required');
-      const data = JSON.parse(localStorage.getItem('userAddresses') || '[]');
-      data.push({ label, name, address, phone });
-      localStorage.setItem('userAddresses', JSON.stringify(data));
-      loadAddresses();
-    }
-  </script>
+  renderProducts();
+  if (darkMode) document.body.classList.add('dark-mode');
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
