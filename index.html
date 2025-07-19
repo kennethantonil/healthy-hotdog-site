@@ -2,234 +2,348 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KRA Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Healthy White Hotdog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
+    html {
+      scroll-behavior: smooth;
     }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to right, #dbecc1, #b6e2d3);
+      color: #2d3e2e;
       margin: 0;
       padding: 0;
-      background: #f9f9f9;
-      color: #333;
+      transition: background 0.4s, color 0.4s;
     }
-    header img {
-      width: 100%;
-      max-height: 100px;
-      object-fit: contain;
-      background-color: #fff;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
+    body.dark-mode {
+      background: #1a1a1a;
+      color: #f0f0f0;
+    }
+
+    header, nav {
+      background-color: #76c893;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 999;
     }
 
     nav {
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      padding: 10px 20px;
+      display: flex;
+      justify-content: space-around;
+      padding: 1rem;
+      font-size: 1rem;
     }
-    nav a {
-      margin-right: 20px;
-      text-decoration: none;
-      color: #007bff;
-      font-weight: 500;
-    }
-
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      padding: 20px;
-    }
-    .product {
+    nav button {
       background: white;
-      border-radius: 15px;
-      padding: 15px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease;
-    }
-    .product:hover {
-      transform: translateY(-5px);
-    }
-    .product img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-    .product h3 {
-      margin: 10px 0 5px;
-      font-size: 1.1em;
-    }
-    .product p {
-      color: #444;
-      margin: 5px 0;
-    }
-    .product button {
-      background-color: #ff4081;
-      color: white;
+      color: #2d3e2e;
       border: none;
-      padding: 8px 12px;
+      padding: 0.5rem 1rem;
       border-radius: 20px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .product button:hover {
-      background-color: #e91e63;
+      font-weight: bold;
     }
 
-    .cart-toggle-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
+    section {
+      scroll-margin-top: 100px;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background-color: #f3fdf6;
+      border: 2px solid #b6e2d3;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1rem;
+      margin: 1rem auto;
+      max-width: 300px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .card img {
+      max-width: 100%;
+      border-radius: 12px;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .quantity-input {
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      cursor: pointer;
-      z-index: 1000;
+      margin-top: 0.5rem;
     }
 
-    .cart {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      width: 300px;
-      max-height: 400px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 15px;
-      overflow-y: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      display: none;
-      z-index: 999;
-    }
-    .cart .cart-item {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-    .cart .checkout {
-      margin-top: 15px;
-      background: #28a745;
-      color: white;
-      padding: 10px;
+    .quantity-input input {
+      width: 60px;
+      padding: 0.3rem;
+      margin: 0 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #76c893;
       text-align: center;
-      border-radius: 5px;
+    }
+
+    .quantity-input button {
+      background-color: #76c893;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    @media(max-width: 600px) {
-      .products {
-        grid-template-columns: 1fr;
-      }
-      .cart {
+    .sticky-cart-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #76c893;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 50px;
+      z-index: 1000;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+    }
+
+    #cart, #products, #homepage {
+      display: none;
+    }
+
+    #cart {
+      background-color: #f3fdf6;
+      border: 2px solid #76c893;
+      padding: 1rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 90%;
+      margin: auto;
+    }
+
+    .remove-item {
+      background: red;
+      color: white;
+      border: none;
+      margin-left: 10px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .dark-mode .card {
+      background: #2a2a2a;
+      color: white;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 80%;
+      max-width: 250px;
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #76c893;
+    }
+
+    @media (max-width: 768px) {
+      .card {
         width: 90%;
-        right: 5%;
-        bottom: 90px;
+      }
+      .sticky-cart-btn {
+        display: block;
       }
     }
   </style>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
+<body>
 
-<body id="top">
   <header>
-    <img src="https://i.imgur.com/oBS7M18.png" alt="KRA Store" />
+    🌭 Healthy White Hotdog
   </header>
 
-  <!-- Navigation -->
   <nav>
-    <a href="#top">🏠 Home</a>
-    <a href="#products">🛍️ Products</a>
-    <a href="#cartBox">📦 Cart</a>
+    <button onclick="showSection('homepage')">🏠 Home</button>
+    <button onclick="showSection('products')">🧺 Products</button>
+    <button onclick="showSection('cart')">🛒 Cart (<span id="cart-count">0</span>)</button>
+    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
   </nav>
 
-  <main>
-    <div class="products" id="products"></div>
-  </main>
+  <section id="homepage" style="display: block; text-align: center;">
+    <h1>Welcome to Healthy White Hotdog!</h1>
+    <p>Delicious and guilt-free hotdog packs for every occasion 🍴</p>
+    <button onclick="showSection('products')">Explore Packs</button>
+  </section>
 
-  <!-- Cart -->
-  <div class="cart" id="cartBox"></div>
-  <button class="cart-toggle-btn" onclick="toggleCart()">🛒</button>
+  <section id="products">
+    <div class="card">
+      <img src="https://via.placeholder.com/300x200?text=Solo+Pack" alt="Solo Pack">
+      <h3>Solo Pack</h3>
+      <p>₱50</p>
+      <div class="quantity-input">
+        <button onclick="changeQuantity('qty-solo', -1)">-</button>
+        <input type="number" id="qty-solo" value="1" readonly>
+        <button onclick="changeQuantity('qty-solo', 1)">+</button>
+      </div>
+      <button onclick="addToCart('Solo Pack', 50, 'https://via.placeholder.com/300x200?text=Solo+Pack', parseInt(document.getElementById('qty-solo').value))">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/300x200?text=Family+Pack" alt="Family Pack">
+      <h3>Family Pack</h3>
+      <p>₱180</p>
+      <div class="quantity-input">
+        <button onclick="changeQuantity('qty-family', -1)">-</button>
+        <input type="number" id="qty-family" value="1" readonly>
+        <button onclick="changeQuantity('qty-family', 1)">+</button>
+      </div>
+      <button onclick="addToCart('Family Pack', 180, 'https://via.placeholder.com/300x200?text=Family+Pack', parseInt(document.getElementById('qty-family').value))">Add to Cart</button>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/300x200?text=Party+Pack" alt="Party Pack">
+      <h3>Party Pack</h3>
+      <p>₱350</p>
+      <div class="quantity-input">
+        <button onclick="changeQuantity('qty-party', -1)">-</button>
+        <input type="number" id="qty-party" value="1" readonly>
+        <button onclick="changeQuantity('qty-party', 1)">+</button>
+      </div>
+      <button onclick="addToCart('Party Pack', 350, 'https://via.placeholder.com/300x200?text=Party+Pack', parseInt(document.getElementById('qty-party').value))">Add to Cart</button>
+    </div>
+  </section>
+
+  <section id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <input type="text" id="voucher-input" placeholder="Enter voucher code" oninput="applyVoucher()" />
+    <div id="voucher-message"></div>
+    <div id="total">Total: ₱0</div>
+    <button onclick="checkout()">Checkout via Messenger</button>
+  </section>
+
+  <footer>
+    &copy; 2025 Healthy White Hotdog. All rights reserved.
+  </footer>
 
   <script>
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyAWooMw5-vQxovPjVuIkHbJVlCR8iIp2pI",
-      authDomain: "kra-shop-d05f3.firebaseapp.com",
-      projectId: "kra-shop-d05f3",
-      storageBucket: "kra-shop-d05f3.appspot.com",
-      messagingSenderId: "377788922175",
-      appId: "1:377788922175:web:6b3b61362d9f73da2f3b8a"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
+    const cart = [];
+    let discount = 0;
+    let discountMessage = '';
 
-    // Cart functionality
-    let cart = [];
-    function addToCart(product) {
-      cart.push(product);
-      updateCartUI();
-    }
-    function updateCartUI() {
-      const cartBox = document.getElementById('cartBox');
-      cartBox.innerHTML = '';
-      cart.forEach(item => {
-        cartBox.innerHTML += `<div class='cart-item'>${item.name} - ₱${item.price}</div>`;
-      });
-      cartBox.innerHTML += `<div class='checkout' onclick='checkoutCart()'>Checkout via Messenger</div>`;
-      cartBox.style.display = 'block';
-    }
-    function toggleCart() {
-      const box = document.getElementById('cartBox');
-      box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    }
-    function checkoutCart() {
-      const msg = cart.map(item => `${item.name} - ₱${item.price}`).join('\n');
-      const url = `https://m.me/krastoriesph?ref=${encodeURIComponent(msg)}`;
-      window.open(url, '_blank');
+    function changeQuantity(id, change) {
+      const input = document.getElementById(id);
+      let current = parseInt(input.value);
+      current = Math.max(1, current + change);
+      input.value = current;
     }
 
-    // Load products from Firebase
-    function loadProducts() {
-      db.collection("products").onSnapshot(snapshot => {
-        const container = document.getElementById("products");
-        container.innerHTML = '';
-        snapshot.forEach(doc => {
-          const p = doc.data();
-          container.innerHTML += `
-            <div class="product">
-              <img src="${p.image}" alt="${p.name}">
-              <h3>${p.name}</h3>
-              <p>₱${p.price}</p>
-              <small>${p.category}</small><br>
-              <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
-            </div>`;
-        });
-      });
-    }
-    loadProducts();
-
-    // Admin login detection
-    auth.onAuthStateChanged(user => {
-      if (user && user.email === 'admin@kra.com') {
-        console.log("Admin logged in");
+    function addToCart(name, price, image, quantity = 1) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.quantity += quantity;
+      } else {
+        cart.push({ name, price, quantity, image });
       }
-    });
+      renderCart();
+      alert(`${name} added to cart!`);
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById('cart-items');
+      cartItems.innerHTML = '';
+      let subtotal = 0;
+
+      cart.forEach((item, i) => {
+        subtotal += item.price * item.quantity;
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <img src="${item.image}" width="80" style="vertical-align:middle; border-radius:10px; cursor:pointer;" onclick="window.open('${item.image}', '_blank')">
+          ${item.name} x${item.quantity} - ₱${item.price * item.quantity}
+          <button class="remove-item" onclick="removeFromCart(${i})">✕</button>`;
+        cartItems.appendChild(li);
+      });
+
+      const finalTotal = Math.max(0, subtotal - discount);
+      document.getElementById('cart-count').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('total').textContent = 'Total: ₱' + finalTotal.toFixed(2);
+      document.getElementById('voucher-message').textContent = discountMessage;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    function applyVoucher() {
+      const code = document.getElementById('voucher-input').value.trim().toUpperCase();
+      const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+      if (code === "HOTDOG10") {
+        discount = 10;
+        discountMessage = "Voucher HOTDOG10 applied: ₱10 off!";
+      } else if (code === "PARTY20") {
+        discount = 20;
+        discountMessage = "Voucher PARTY20 applied: ₱20 off!";
+      } else if (code === "SAVE10%") {
+        discount = subtotal * 0.10;
+        discountMessage = "Voucher SAVE10% applied: 10% off!";
+      } else {
+        discount = 0;
+        discountMessage = "";
+      }
+      renderCart();
+    }
+
+    function checkout() {
+      if (cart.length === 0) return alert("Your cart is empty!");
+      const message = cart.map((item, i) => `${i+1}. ${item.name} x${item.quantity}`).join('\n');
+      const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0) - discount;
+      const link = `https://facebook.com/messages/t/YourPageName?text=${encodeURIComponent(`Order:\n${message}\n\nDiscount: ₱${discount.toFixed(2)}\nTotal: ₱${total.toFixed(2)}`)}`;
+      window.open(link, '_blank');
+    }
+
+    function showSection(id) {
+      ['homepage', 'products', 'cart'].forEach(sec => {
+        document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
+      });
+      if (id === 'cart') renderCart();
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    // Animate on load
+    window.onload = () => {
+      gsap.from("section", {
+        opacity: 0,
+        duration: 1,
+        y: 50,
+        stagger: 0.3
+      });
+    }
   </script>
 </body>
 </html>
+
