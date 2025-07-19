@@ -1,404 +1,820 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Healthy White Hotdog</title>
-  <link rel="icon" href="https://i.imgur.com/V1jYKko.png" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  ...
-</head>
+import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot, addDoc, serverTimestamp, query, where, getDocs, deleteDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-  <style>
-    :root {
-      --bg-light: #f4f4f4;
-      --bg-dark: #1a1a1a;
-      --text-light: #333;
-      --text-dark: #fff;
-      --primary: #ff5e5e;
-    }
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'Quicksand', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: var(--bg-light);
-      color: var(--text-light);
-      transition: background 0.3s, color 0.3s;
-    }
-    .dark-mode {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
-    header {
-      background-color: #fff;
-      padding: 10px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .dark-mode header {
-      background-color: #2a2a2a;
-    }
-    .logo-img {
-      max-height: 60px;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      background: #eee;
-      padding: 10px;
-      flex-wrap: wrap;
-    }
-    .dark-mode nav {
-      background: #333;
-    }
-    nav button {
-      padding: 10px 20px;
-      cursor: pointer;
-      font-weight: bold;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      transition: background 0.3s;
-    }
-    nav button:hover {
-      background: #e14e4e;
-    }
-    section {
-      padding: 20px;
-      animation: fadeIn 0.5s ease-in;
-    }
-    .card {
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin: 15px auto;
-      border-radius: 10px;
-      background: #fff;
-      max-width: 400px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      transition: transform 0.2s;
-    }
-    .dark-mode .card {
-      background: #2a2a2a;
-      border: 1px solid #444;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-    }
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-    }
-    .quantity-input {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      margin: 10px 0;
-    }
-    .quantity-input input {
-      width: 50px;
-      text-align: center;
-    }
-    #cart-items li {
-      margin: 10px 0;
-      list-style: none;
-      padding: 10px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .dark-mode #cart-items li {
-      background: #2a2a2a;
-    }
-    .remove-item {
-      background: red;
-      color: #fff;
-      border: none;
-      padding: 5px 10px;
-      margin-left: 10px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    .payment-buttons {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .payment-buttons button {
-      display: flex;
-      align-items: center;
-      margin: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      background: #fff;
-      border-radius: 8px;
-      transition: transform 0.2s;
-    }
-    .dark-mode .payment-buttons button {
-      background: #2a2a2a;
-      color: #fff;
-      border: 1px solid #444;
-    }
-    .payment-buttons button:hover {
-      transform: scale(1.05);
-    }
-    .payment-buttons img {
-      width: 24px;
-      height: 24px;
-      margin-right: 8px;
-    }
-    input[type="text"], input[type="number"] {
-      display: block;
-      margin: 5px auto;
-      padding: 10px;
-      width: 90%;
-      max-width: 400px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: #fff;
-    }
-    .dark-mode input {
-      background: #2a2a2a;
-      color: white;
-      border: 1px solid #555;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: #ddd;
-      margin-top: 40px;
-    }
-    .dark-mode footer {
-      background: #222;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <img src="https://i.imgur.com/oBS7M18.png" alt="Healthy White Hotdog Logo" class="logo-img" />
-  </header>
+// --- IMPORTANT: Firebase Configuration ---
+// This configuration is provided by the environment.
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+    apiKey: "YOUR_API_KEY", // Replace with your actual config
+    authDomain: "your-auth-domain.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-storage-bucket.appspot.com",
+    messagingSenderId: "your-sender-id",
+    appId: "your-app-id"
+};
 
-  <nav>
-    <button onclick="showSection('homepage')">
-  <img src="https://i.imgur.com/V1jYKko.png" alt="Home" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-</button>
+// --- Initialize Firebase ---
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-    <button onclick="showSection('products')">
-  <img src="https://i.imgur.com/bsLtkVk.png" alt="Products" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;">
-</button>
+// --- App ID ---
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-pinascart-app';
 
-    <button onclick="showSection('cart')">🛒 Cart (<span id="cart-count">0</span>)</button>
-    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
-  </nav>
+// --- Authentication Context ---
+const AuthContext = createContext();
 
-  <section id="homepage" style="display: block; text-align: center;">
-    <h1>Welcome to Healthy White Hotdog!</h1>
-    <p>Delicious and guilt-free hotdog packs for every occasion 🍴</p>
-    <button onclick="showSection('products')">Explore Packs</button>
-  </section>
+const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [isAdmin, setIsAdmin] = useState(false);
 
-  <section id="products" style="display:none;">
-    <div class="card">
-      <img src="https://i.imgur.com/Kg68IWo.jpeg" alt="Solo Pack">
-      <h3>Solo Pack</h3>
-      <p>₱50</p>
-      <div class="quantity-input">
-        <button onclick="changeQuantity('qty-solo', -1)">-</button>
-        <input type="number" id="qty-solo" value="1" readonly>
-        <button onclick="changeQuantity('qty-solo', 1)">+</button>
-      </div>
-      <button onclick="addToCart('Solo Pack', 50, 'https://i.imgur.com/Kg68IWo.jpeg', parseInt(document.getElementById('qty-solo').value))">Add to Cart</button>
-    </div>
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists() && userDocSnap.data().isAdmin) {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                }
+                setUser(user);
+            } else {
+                setUser(null);
+                setIsAdmin(false);
+            }
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
 
-    <div class="card">
-      <img src="https://i.imgur.com/vzDJzkV.jpeg" alt="Family Pack">
-      <h3>Family Pack</h3>
-      <p>₱180</p>
-      <div class="quantity-input">
-        <button onclick="changeQuantity('qty-family', -1)">-</button>
-        <input type="number" id="qty-family" value="1" readonly>
-        <button onclick="changeQuantity('qty-family', 1)">+</button>
-      </div>
-      <button onclick="addToCart('Family Pack', 180, 'https://i.imgur.com/vzDJzkV.jpeg', parseInt(document.getElementById('qty-family').value))">Add to Cart</button>
-    </div>
+    const value = { user, isAdmin, loading };
 
-    <div class="card">
-      <img src="https://i.imgur.com/V3eQP4i.jpeg" alt="Party Pack">
-      <h3>Party Pack</h3>
-      <p>₱350</p>
-      <div class="quantity-input">
-        <button onclick="changeQuantity('qty-party', -1)">-</button>
-        <input type="number" id="qty-party" value="1" readonly>
-        <button onclick="changeQuantity('qty-party', 1)">+</button>
-      </div>
-      <button onclick="addToCart('Party Pack', 350, 'https://i.imgur.com/V3eQP4i.jpeg', parseInt(document.getElementById('qty-party').value))">Add to Cart</button>
-    </div>
-  </section>
+    return (
+        <AuthContext.Provider value={value}>
+            {!loading && children}
+        </AuthContext.Provider>
+    );
+};
 
-  <section id="cart" style="display:none;">
-    <h2>Your Cart</h2>
-    <ul id="cart-items"></ul>
-    <input type="text" id="voucher-input" placeholder="Enter voucher code" oninput="applyVoucher()" />
-    <div id="voucher-message"></div>
-    <div id="total">Total: ₱0</div>
+const useAuth = () => {
+    return useContext(AuthContext);
+};
 
-    <h3>Customer Info</h3>
-    <input type="text" id="customer-name" placeholder="Your Name" />
-    <input type="text" id="customer-address" placeholder="Delivery Address" />
-    <input type="text" id="customer-contact" placeholder="Contact Number" />
 
-    <h3>Select Payment Method</h3>
-    <div class="payment-buttons">
-      <button onclick="checkout('messenger')">
-        <img src="https://i.imgur.com/KC8nrKz.png" alt="Messenger Icon"> Messenger
-      </button>
-      <button onclick="checkout('cod')">
-        <img src="https://i.imgur.com/nUaMaaX.png" alt="COD Icon"> Cash on Delivery
-      </button>
-      <button onclick="checkout('gcash')">
-        <img src="https://i.imgur.com/83g16na.png" alt="GCash Icon"> GCash
-      </button>
-    </div>
-  </section>
+// --- Main App Component ---
+export default function App() {
+    const [currentPage, setCurrentPage] = useState('home');
 
-  <footer>
-    &copy; 2025 Healthy White Hotdog. All rights reserved.
-  </footer>
+    return (
+        <AuthProvider>
+            <div className="bg-gray-100 min-h-screen font-sans antialiased">
+                <div className="container mx-auto max-w-lg h-screen flex flex-col shadow-2xl bg-white">
+                    <main className="flex-1 overflow-y-auto pb-20">
+                        <PageContent currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                    </main>
+                    <BottomNavBar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+                </div>
+            </div>
+        </AuthProvider>
+    );
+}
 
-  <script>
-    const cart = [];
-    let discount = 0;
-    let discountMessage = '';
+// --- Page Content Router ---
+const PageContent = ({ currentPage, setCurrentPage }) => {
+    const { user } = useAuth();
 
-    function changeQuantity(id, change) {
-      const input = document.getElementById(id);
-      let current = parseInt(input.value);
-      current = Math.max(1, current + change);
-      input.value = current;
+    switch (currentPage) {
+        case 'home':
+            return <HomePage setCurrentPage={setCurrentPage} />;
+        case 'live':
+            return <LiveStreamPage />;
+        case 'cart':
+            return <CartPage />;
+        case 'profile':
+            return user ? <ProfilePage setCurrentPage={setCurrentPage} /> : <AuthPage setCurrentPage={setCurrentPage} />;
+        case 'admin':
+            return <AdminPage />;
+        default:
+            return <HomePage setCurrentPage={setCurrentPage} />;
+    }
+};
+
+// --- UI Components ---
+
+const BottomNavBar = ({ currentPage, setCurrentPage }) => {
+    const { isAdmin } = useAuth();
+    const navItems = [
+        { name: 'home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+        { name: 'live', icon: 'M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.636 5.636a9 9 0 0112.728 0m-12.728 0l-2.829 2.829m15.556 0l2.829-2.829M12 18a6 6 0 100-12 6 6 0 000 12z' },
+        { name: 'cart', icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z' },
+        { name: 'profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+    ];
+    if (isAdmin) {
+        navItems.push({ name: 'admin', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z' });
     }
 
-    function addToCart(name, price, image, quantity = 1) {
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.quantity += quantity;
-      } else {
-        cart.push({ name, price, quantity, image });
-      }
-      renderCart();
-      alert(`${name} added to cart!`);
-    }
+    return (
+        <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-white border-t border-gray-200 shadow-lg">
+            <div className="flex justify-around">
+                {navItems.map(item => (
+                    <button
+                        key={item.name}
+                        onClick={() => setCurrentPage(item.name)}
+                        className={`flex-1 p-3 text-center transition-colors duration-300 ${currentPage === item.name ? 'text-purple-600 bg-purple-50' : 'text-gray-500 hover:bg-gray-100'}`}
+                    >
+                        <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon}></path></svg>
+                        <span className="text-xs capitalize">{item.name}</span>
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
 
-    function renderCart() {
-      const cartItems = document.getElementById('cart-items');
-      cartItems.innerHTML = '';
-      let subtotal = 0;
+const ProductCard = ({ product }) => {
+    const { user } = useAuth();
 
-      cart.forEach((item, i) => {
-        subtotal += item.price * item.quantity;
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <img src="${item.image}" width="80" style="vertical-align:middle; border-radius:10px; cursor:pointer;" onclick="window.open('${item.image}', '_blank')">
-          ${item.name} x${item.quantity} - ₱${(item.price * item.quantity).toFixed(2)}
-          <button class="remove-item" onclick="removeFromCart(${i})">✕</button>
-        `;
-        cartItems.appendChild(li);
-      });
-
-      const finalTotal = Math.max(0, subtotal - discount);
-      document.getElementById('cart-count').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('total').textContent = 'Total: ₱' + finalTotal.toFixed(2);
-      document.getElementById('voucher-message').textContent = discountMessage;
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      renderCart();
-    }
-
-    function applyVoucher() {
-      const code = document.getElementById('voucher-input').value.trim().toUpperCase();
-      const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
-      if (code === "HOTDOG10") {
-        discount = 10;
-        discountMessage = "Voucher HOTDOG10 applied: ₱10 off!";
-      } else if (code === "PARTY20") {
-        discount = 20;
-        discountMessage = "Voucher PARTY20 applied: ₱20 off!";
-      } else if (code === "SAVE10%") {
-        discount = subtotal * 0.10;
-        discountMessage = "Voucher SAVE10% applied: 10% off!";
-      } else {
-        discount = 0;
-        discountMessage = "";
-      }
-      renderCart();
-    }
-
-    function checkout(method = 'messenger') {
-      if (cart.length === 0) return alert("Your cart is empty!");
-
-      const name = document.getElementById("customer-name")?.value || "N/A";
-      const address = document.getElementById("customer-address")?.value || "N/A";
-      const contact = document.getElementById("customer-contact")?.value || "N/A";
-
-      const message = cart.map((item, i) => `${i + 1}. ${item.name} x${item.quantity}`).join('\n');
-      const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0) - discount;
-
-      const orderDetails = `Order Summary:
-${message}
-
-Name: ${name}
-Address: ${address}
-Contact: ${contact}
-Discount: ₱${discount.toFixed(2)}
-Total: ₱${total.toFixed(2)}`;
-
-      if (method === 'messenger') {
-        const link = `https://facebook.com/messages/t/YourPageName?text=${encodeURIComponent(orderDetails)}`;
-        window.open(link, '_blank');
-      } else if (method === 'cod') {
-        alert("Your order has been placed for Cash on Delivery.\n\n" + orderDetails);
-      } else if (method === 'gcash') {
-        alert("Send payment to 09XXXXXXXXX (GCash)\n\nThen message us on Facebook with proof of payment.\n\n" + orderDetails);
-      }
-    }
-
-    function showSection(id) {
-      ['homepage', 'products', 'cart'].forEach(sec => {
-        document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
-      });
-      if (id === 'cart') renderCart();
-    }
-
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
-
-    window.onload = () => {
-      gsap.from("section", {
-        opacity: 0,
-        duration: 1,
-        y: 50,
-        stagger: 0.3
-      });
+    const handleAddToCart = async () => {
+        if (!user) {
+            alert("Please log in to add items to your cart.");
+            return;
+        }
+        const cartRef = doc(db, "users", user.uid, "cart", product.id);
+        try {
+            const docSnap = await getDoc(cartRef);
+            if (docSnap.exists()) {
+                await updateDoc(cartRef, {
+                    quantity: docSnap.data().quantity + 1
+                });
+            } else {
+                await setDoc(cartRef, {
+                    ...product,
+                    quantity: 1
+                });
+            }
+            alert(`${product.name} added to cart!`);
+        } catch (error) {
+            console.error("Error adding to cart: ", error);
+            alert("Failed to add to cart. Please try again.");
+        }
     };
-  </script>
-</body>
-</html>
+
+    return (
+        <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform duration-300">
+            <img src={product.imageUrl || 'https://placehold.co/400x400/EEE/31343C?text=PinasCart'} alt={product.name} className="w-full h-48 object-cover" />
+            <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-800 truncate">{product.name}</h3>
+                <p className="text-sm text-gray-600 mt-1 h-10 overflow-hidden">{product.description}</p>
+                <div className="flex justify-between items-center mt-4">
+                    <span className="text-xl font-bold text-purple-600">₱{Number(product.price).toFixed(2)}</span>
+                    <button onClick={handleAddToCart} className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-700 transition-colors">
+                        Add+
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- Page Components ---
+
+const HomePage = ({ setCurrentPage }) => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const q = query(collection(db, "products"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const productsData = [];
+            querySnapshot.forEach((doc) => {
+                productsData.push({ id: doc.id, ...doc.data() });
+            });
+            setProducts(productsData);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching products: ", error);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    return (
+        <div className="p-4">
+            <header className="text-center my-4">
+                <h1 className="text-4xl font-bold text-purple-600 tracking-wider">PinasCart</h1>
+                <p className="text-gray-500">Your Favorite Online Sari-Sari Store</p>
+            </header>
+            
+            <div className="bg-purple-500 text-white p-4 rounded-lg shadow-lg mb-6 text-center">
+                <h2 className="font-bold text-xl">Live Selling Now!</h2>
+                <p>Watch our live stream and get exclusive deals!</p>
+                <button onClick={() => setCurrentPage('live')} className="mt-2 bg-white text-purple-500 font-bold py-2 px-4 rounded-full hover:bg-purple-100 transition-colors">
+                    Watch Now
+                </button>
+            </div>
+
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">All Products</h2>
+            {loading ? (
+                <p className="text-center">Loading products...</p>
+            ) : (
+                <div className="grid grid-cols-2 gap-4">
+                    {products.map(product => (
+                        <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+const LiveStreamPage = () => {
+    const [liveSession, setLiveSession] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
+    const { user } = useAuth();
+    const commentsEndRef = useRef(null);
+
+    useEffect(() => {
+        // Fetch live session data
+        const liveSessionRef = doc(db, "liveSession", "current");
+        const unsubscribeSession = onSnapshot(liveSessionRef, async (docSnap) => {
+            if (docSnap.exists() && docSnap.data().isLive) {
+                const sessionData = docSnap.data();
+                if (sessionData.featuredProductId) {
+                    const productRef = doc(db, "products", sessionData.featuredProductId);
+                    const productSnap = await getDoc(productRef);
+                    if (productSnap.exists()) {
+                        sessionData.featuredProduct = { id: productSnap.id, ...productSnap.data() };
+                    }
+                }
+                setLiveSession(sessionData);
+            } else {
+                setLiveSession(null);
+            }
+        });
+
+        // Fetch comments
+        const commentsQuery = query(collection(db, "liveSession", "current", "comments"));
+        const unsubscribeComments = onSnapshot(commentsQuery, (querySnapshot) => {
+            const commentsData = [];
+            querySnapshot.forEach(doc => commentsData.push({ id: doc.id, ...doc.data() }));
+            // Simple sort by timestamp, assumes serverTimestamp is resolved
+            commentsData.sort((a, b) => a.timestamp?.seconds - b.timestamp?.seconds);
+            setComments(commentsData);
+        });
+
+        return () => {
+            unsubscribeSession();
+            unsubscribeComments();
+        };
+    }, []);
+
+    useEffect(() => {
+        commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [comments]);
+
+    const handleSendComment = async (e) => {
+        e.preventDefault();
+        if (newComment.trim() === "" || !user) {
+            if(!user) alert("Please log in to comment.");
+            return;
+        }
+        await addDoc(collection(db, "liveSession", "current", "comments"), {
+            text: newComment,
+            author: user.email,
+            timestamp: serverTimestamp()
+        });
+        setNewComment("");
+    };
+    
+    const showFloatingHeart = (e) => {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.className = 'absolute text-2xl animate-ping-pong';
+        document.getElementById('video-container').appendChild(heart);
+        
+        const x = e.clientX - e.target.getBoundingClientRect().left;
+        const y = e.clientY - e.target.getBoundingClientRect().top;
+
+        heart.style.left = `${x}px`;
+        heart.style.top = `${y}px`;
+
+        setTimeout(() => {
+            heart.remove();
+        }, 2000);
+    };
+
+    const handleAddToCart = async (product) => {
+        if (!user) {
+            alert("Please log in to add items to your cart.");
+            return;
+        }
+        const cartRef = doc(db, "users", user.uid, "cart", product.id);
+        try {
+            const docSnap = await getDoc(cartRef);
+            if (docSnap.exists()) {
+                await updateDoc(cartRef, { quantity: docSnap.data().quantity + 1 });
+            } else {
+                await setDoc(cartRef, { ...product, quantity: 1 });
+            }
+            alert(`${product.name} added to cart!`);
+        } catch (error) {
+            console.error("Error adding to cart: ", error);
+            alert("Failed to add to cart. Please try again.");
+        }
+    };
+
+    if (!liveSession) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                <h2 className="text-2xl font-bold text-gray-700">The Live Stream Has Ended</h2>
+                <p className="text-gray-500 mt-2">Check back later for our next live selling event!</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col h-full bg-black text-white">
+            {/* Portrait Video Container */}
+            <div id="video-container" className="relative w-full aspect-[9/16] bg-gray-900" onClick={showFloatingHeart}>
+                <video 
+                    className="w-full h-full object-cover"
+                    src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4" 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                ></video>
+                <div className="absolute top-2 left-2 bg-red-600 text-white px-2 py-1 text-sm font-bold rounded">LIVE</div>
+            </div>
+
+            {/* Featured Product */}
+            {liveSession.featuredProduct && (
+                 <div className="p-2 bg-gray-800 border-t border-b border-gray-700">
+                    <div className="flex items-center gap-3">
+                        <img src={liveSession.featuredProduct.imageUrl || 'https://placehold.co/100x100/EEE/31343C?text=Item'} alt={liveSession.featuredProduct.name} className="w-16 h-16 rounded-md object-cover"/>
+                        <div className="flex-1">
+                            <p className="font-bold truncate">{liveSession.featuredProduct.name}</p>
+                            <p className="text-lg font-bold text-yellow-400">₱{Number(liveSession.featuredProduct.price).toFixed(2)}</p>
+                        </div>
+                        <button onClick={() => handleAddToCart(liveSession.featuredProduct)} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Comments Section */}
+            <div className="flex-1 p-2 overflow-y-auto">
+                <div className="flex flex-col gap-2">
+                    {comments.map(comment => (
+                        <div key={comment.id} className="bg-gray-700/50 rounded-lg p-2 text-sm">
+                            <span className="font-semibold text-purple-300">{comment.author}: </span>
+                            <span>{comment.text}</span>
+                        </div>
+                    ))}
+                    <div ref={commentsEndRef} />
+                </div>
+            </div>
+
+            {/* Comment Input */}
+            <form onSubmit={handleSendComment} className="p-2 bg-gray-900 border-t border-gray-700">
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        className="flex-1 bg-gray-700 border border-gray-600 rounded-full px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                    <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full transition-colors">
+                        Send
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+
+const CartPage = () => {
+    const [cartItems, setCartItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const [showCheckout, setShowCheckout] = useState(false);
+
+    useEffect(() => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
+        const cartCollectionRef = collection(db, "users", user.uid, "cart");
+        const unsubscribe = onSnapshot(cartCollectionRef, (snapshot) => {
+            const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setCartItems(items);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, [user]);
+
+    const updateQuantity = async (id, newQuantity) => {
+        if (newQuantity < 1) {
+            await deleteDoc(doc(db, "users", user.uid, "cart", id));
+        } else {
+            await updateDoc(doc(db, "users", user.uid, "cart", id), { quantity: newQuantity });
+        }
+    };
+
+    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    const handleCheckout = () => {
+        if (cartItems.length > 0) {
+            setShowCheckout(true);
+        } else {
+            alert("Your cart is empty!");
+        }
+    };
+
+    const handlePlaceOrder = async (paymentMethod) => {
+        alert(`Order placed successfully with ${paymentMethod}! Thank you for your purchase.`);
+        
+        // Clear the cart after "placing order"
+        const cartCollectionRef = collection(db, "users", user.uid, "cart");
+        const cartSnapshot = await getDocs(cartCollectionRef);
+        cartSnapshot.forEach(doc => {
+            deleteDoc(doc.ref);
+        });
+
+        setShowCheckout(false);
+    };
+
+    if (loading) return <p className="text-center p-4">Loading your cart...</p>;
+    if (!user) return <p className="text-center p-4">Please log in to see your cart.</p>;
+
+    return (
+        <div className="p-4">
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Your Cart</h1>
+            {cartItems.length === 0 ? (
+                <p>Your cart is empty.</p>
+            ) : (
+                <>
+                    <div className="space-y-4">
+                        {cartItems.map(item => (
+                            <div key={item.id} className="flex items-center bg-white p-3 rounded-lg shadow">
+                                <img src={item.imageUrl || 'https://placehold.co/100x100/EEE/31343C?text=Item'} alt={item.name} className="w-20 h-20 rounded-md object-cover" />
+                                <div className="flex-1 ml-4">
+                                    <h3 className="font-semibold text-gray-800">{item.name}</h3>
+                                    <p className="text-purple-600 font-bold">₱{Number(item.price).toFixed(2)}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-8 h-8 rounded-full bg-gray-200">-</button>
+                                    <span>{item.quantity}</span>
+                                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-8 h-8 rounded-full bg-gray-200">+</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-6 pt-4 border-t">
+                        <div className="flex justify-between items-center">
+                            <span className="text-lg font-semibold">Total:</span>
+                            <span className="text-2xl font-bold text-purple-600">₱{total.toFixed(2)}</span>
+                        </div>
+                        <button onClick={handleCheckout} className="w-full mt-4 bg-purple-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-purple-700 transition-colors">
+                            Checkout
+                        </button>
+                    </div>
+                </>
+            )}
+
+            {showCheckout && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+                        <h2 className="text-2xl font-bold mb-4">Select Payment Method</h2>
+                        <div className="space-y-3">
+                            <button onClick={() => handlePlaceOrder('GCash')} className="w-full bg-blue-500 text-white py-3 rounded-lg font-bold">Pay with GCash</button>
+                            <button onClick={() => handlePlaceOrder('Maya')} className="w-full bg-green-500 text-white py-3 rounded-lg font-bold">Pay with Maya</button>
+                            <button onClick={() => handlePlaceOrder('Cash on Delivery')} className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold">Cash on Delivery (COD)</button>
+                        </div>
+                        <button onClick={() => setShowCheckout(false)} className="w-full mt-4 bg-gray-200 text-gray-700 py-2 rounded-lg">Cancel</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const AuthPage = ({ setCurrentPage }) => {
+    const [isLogin, setIsLogin] = useState(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const handleAuth = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            if (isLogin) {
+                await signInWithEmailAndPassword(auth, email, password);
+            } else {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Create a user document in Firestore
+                await setDoc(doc(db, "users", userCredential.user.uid), {
+                    email: userCredential.user.email,
+                    createdAt: serverTimestamp(),
+                    isAdmin: false // Default to not admin
+                });
+            }
+            setCurrentPage('profile');
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    return (
+        <div className="p-6">
+            <h1 className="text-3xl font-bold text-center mb-6">{isLogin ? 'Login' : 'Sign Up'}</h1>
+            {error && <p className="bg-red-100 text-red-700 p-3 rounded-lg mb-4">{error}</p>}
+            <form onSubmit={handleAuth} className="space-y-4">
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email Address"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                />
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                />
+                <button type="submit" className="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition-colors">
+                    {isLogin ? 'Login' : 'Create Account'}
+                </button>
+            </form>
+            <button onClick={() => setIsLogin(!isLogin)} className="w-full mt-4 text-purple-600">
+                {isLogin ? 'Need an account? Sign Up' : 'Have an account? Login'}
+            </button>
+        </div>
+    );
+};
+
+const ProfilePage = ({ setCurrentPage }) => {
+    const { user } = useAuth();
+
+    const handleLogout = async () => {
+        await signOut(auth);
+        setCurrentPage('home');
+    };
+
+    return (
+        <div className="p-6">
+            <h1 className="text-3xl font-bold mb-6">My Profile</h1>
+            {user && (
+                <div className="bg-white p-4 rounded-lg shadow">
+                    <p className="text-lg"><strong>Email:</strong> {user.email}</p>
+                    <p className="text-lg"><strong>User ID:</strong> {user.uid}</p>
+                </div>
+            )}
+            <button onClick={handleLogout} className="w-full mt-6 bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 transition-colors">
+                Logout
+            </button>
+        </div>
+    );
+};
+
+
+const AdminPage = () => {
+    const { isAdmin } = useAuth();
+    const [currentTab, setCurrentTab] = useState('products');
+
+    if (!isAdmin) {
+        return (
+            <div className="p-6 text-center">
+                <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
+                <p>You do not have permission to view this page.</p>
+            </div>
+        );
+    }
+    
+    return (
+        <div className="p-4">
+            <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
+            <div className="flex border-b mb-4">
+                <button onClick={() => setCurrentTab('products')} className={`py-2 px-4 ${currentTab === 'products' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-gray-500'}`}>Product Management</button>
+                <button onClick={() => setCurrentTab('live')} className={`py-2 px-4 ${currentTab === 'live' ? 'border-b-2 border-purple-600 text-purple-600' : 'text-gray-500'}`}>Live Management</button>
+            </div>
+            {currentTab === 'products' ? <ProductManagement /> : <LiveManagement />}
+        </div>
+    );
+};
+
+const ProductManagement = () => {
+    const [products, setProducts] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [editingProduct, setEditingProduct] = useState(null);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [price, setPrice] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+
+    useEffect(() => {
+        const q = query(collection(db, "products"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const productsData = [];
+            querySnapshot.forEach((doc) => {
+                productsData.push({ id: doc.id, ...doc.data() });
+            });
+            setProducts(productsData);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleImageChange = (e) => {
+        if (e.target.files[0]) {
+            setImageFile(e.target.files[0]);
+        }
+    };
+    
+    const openModal = (product = null) => {
+        setEditingProduct(product);
+        setName(product ? product.name : '');
+        setDescription(product ? product.description : '');
+        setPrice(product ? product.price : '');
+        setImageFile(null);
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setEditingProduct(null);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        let imageUrl = editingProduct ? editingProduct.imageUrl : '';
+
+        if (imageFile) {
+            const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
+            await uploadBytes(storageRef, imageFile);
+            imageUrl = await getDownloadURL(storageRef);
+        }
+
+        const productData = { name, description, price: parseFloat(price), imageUrl };
+
+        if (editingProduct) {
+            await updateDoc(doc(db, "products", editingProduct.id), productData);
+        } else {
+            await addDoc(collection(db, "products"), productData);
+        }
+        closeModal();
+    };
+    
+    const handleDelete = async (id) => {
+        if(window.confirm("Are you sure you want to delete this product?")){
+            await deleteDoc(doc(db, "products", id));
+        }
+    };
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">Products</h2>
+                <button onClick={() => openModal()} className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700">Add Product</button>
+            </div>
+            <div className="space-y-2">
+                {products.map(p => (
+                    <div key={p.id} className="bg-white p-3 rounded-lg shadow flex justify-between items-center">
+                        <div>
+                            <p className="font-bold">{p.name}</p>
+                            <p>₱{Number(p.price).toFixed(2)}</p>
+                        </div>
+                        <div className="space-x-2">
+                            <button onClick={() => openModal(p)} className="text-blue-500">Edit</button>
+                            <button onClick={() => handleDelete(p.id)} className="text-red-500">Delete</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                        <h3 className="text-xl font-bold mb-4">{editingProduct ? 'Edit Product' : 'Add Product'}</h3>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} className="w-full p-2 border rounded" required />
+                            <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} className="w-full p-2 border rounded" required></textarea>
+                            <input type="number" placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} className="w-full p-2 border rounded" required />
+                            <input type="file" onChange={handleImageChange} className="w-full p-2 border rounded" />
+                            <div className="flex justify-end space-x-2">
+                                <button type="button" onClick={closeModal} className="bg-gray-300 py-2 px-4 rounded">Cancel</button>
+                                <button type="submit" className="bg-purple-600 text-white py-2 px-4 rounded">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const LiveManagement = () => {
+    const [isLive, setIsLive] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [featuredProductId, setFeaturedProductId] = useState('');
+
+    useEffect(() => {
+        // Fetch current live status
+        const liveSessionRef = doc(db, "liveSession", "current");
+        const unsubscribe = onSnapshot(liveSessionRef, (doc) => {
+            if (doc.exists()) {
+                setIsLive(doc.data().isLive);
+                setFeaturedProductId(doc.data().featuredProductId || '');
+            }
+        });
+
+        // Fetch products for dropdown
+        const q = query(collection(db, "products"));
+        const unsubscribeProducts = onSnapshot(q, (querySnapshot) => {
+            const productsData = [];
+            querySnapshot.forEach((doc) => {
+                productsData.push({ id: doc.id, ...doc.data() });
+            });
+            setProducts(productsData);
+        });
+
+        return () => {
+            unsubscribe();
+            unsubscribeProducts();
+        };
+    }, []);
+
+    const toggleLiveStatus = async () => {
+        const liveSessionRef = doc(db, "liveSession", "current");
+        await setDoc(liveSessionRef, { isLive: !isLive, featuredProductId }, { merge: true });
+    };
+
+    const updateFeaturedProduct = async (productId) => {
+        setFeaturedProductId(productId);
+        if (isLive) {
+            const liveSessionRef = doc(db, "liveSession", "current");
+            await updateDoc(liveSessionRef, { featuredProductId: productId });
+        }
+    };
+
+    return (
+        <div>
+            <h2 className="text-2xl font-bold mb-4">Live Stream Control</h2>
+            <div className="bg-white p-4 rounded-lg shadow">
+                <div className="flex items-center justify-between">
+                    <p className="text-lg">Live Status: <span className={isLive ? 'text-green-500 font-bold' : 'text-red-500 font-bold'}>{isLive ? 'ON AIR' : 'OFFLINE'}</span></p>
+                    <button onClick={toggleLiveStatus} className={`py-2 px-6 rounded-lg text-white font-bold ${isLive ? 'bg-red-500' : 'bg-green-500'}`}>
+                        {isLive ? 'End Stream' : 'Go Live'}
+                    </button>
+                </div>
+                <div className="mt-4">
+                    <label htmlFor="featuredProduct" className="block text-sm font-medium text-gray-700">Feature a Product:</label>
+                    <select
+                        id="featuredProduct"
+                        value={featuredProductId}
+                        onChange={(e) => updateFeaturedProduct(e.target.value)}
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md"
+                        disabled={!products.length}
+                    >
+                        <option value="">-- Select a Product --</option>
+                        {products.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Add custom animation for floating hearts
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes float-up {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
+}
+.animate-ping-pong {
+    animation: float-up 2s ease-out forwards;
+    pointer-events: none; /* So it doesn't interfere with other clicks */
+}
+`;
+document.head.appendChild(style);
+
 
 
 
