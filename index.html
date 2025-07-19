@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -239,7 +240,16 @@
     <input type="text" id="voucher-input" placeholder="Enter voucher code" oninput="applyVoucher()" />
     <div id="voucher-message"></div>
     <div id="total">Total: ₱0</div>
-    <button onclick="checkout()">Checkout via Messenger</button>
+    <h3>Customer Info</h3>
+<input type="text" id="customer-name" placeholder="Your Name" />
+<input type="text" id="customer-address" placeholder="Delivery Address" />
+<input type="text" id="customer-contact" placeholder="Contact Number" />
+
+<h3>Select Payment Method</h3>
+<button onclick="checkout('messenger')">Messenger</button>
+<button onclick="checkout('cod')">Cash on Delivery</button>
+<button onclick="checkout('gcash')">GCash</button>
+<button onclick="checkout()">Checkout via Messenger</button>
   </section>
 
   <footer>
@@ -315,13 +325,35 @@
       renderCart();
     }
 
-    function checkout() {
-      if (cart.length === 0) return alert("Your cart is empty!");
-      const message = cart.map((item, i) => `${i+1}. ${item.name} x${item.quantity}`).join('\n');
-      const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0) - discount;
-      const link = `https://facebook.com/messages/t/YourPageName?text=${encodeURIComponent(`Order:\n${message}\n\nDiscount: ₱${discount.toFixed(2)}\nTotal: ₱${total.toFixed(2)}`)}`;
-      window.open(link, '_blank');
-    }
+    function checkout(method = 'messenger') {
+  if (cart.length === 0) return alert("Your cart is empty!");
+
+  const name = document.getElementById("customer-name")?.value || "N/A";
+  const address = document.getElementById("customer-address")?.value || "N/A";
+  const contact = document.getElementById("customer-contact")?.value || "N/A";
+
+  const message = cart.map((item, i) => `${i+1}. ${item.name} x${item.quantity}`).join('\n');
+  const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0) - discount;
+
+  const orderDetails = `Order Summary:
+${message}
+
+Name: ${name}
+Address: ${address}
+Contact: ${contact}
+Discount: ₱${discount.toFixed(2)}
+Total: ₱${total.toFixed(2)}`;
+
+  if (method === 'messenger') {
+    const link = `https://facebook.com/messages/t/YourPageName?text=${encodeURIComponent(orderDetails)}`;
+    window.open(link, '_blank');
+  } else if (method === 'cod') {
+    alert("Your order has been placed for Cash on Delivery.\n\n" + orderDetails);
+  } else if (method === 'gcash') {
+    alert("Send payment to 09XXXXXXXXX (GCash)\n\nThen message us on Facebook with proof of payment.\n\n" + orderDetails);
+  }
+}
+
 
     function showSection(id) {
       ['homepage', 'products', 'cart'].forEach(sec => {
@@ -346,4 +378,5 @@
   </script>
 </body>
 </html>
+
 
