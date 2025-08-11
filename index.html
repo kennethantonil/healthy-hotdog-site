@@ -1,1226 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Local PH</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* Custom scrollbar for main content */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        /* Custom scrollbar for horizontal categories */
-        .custom-scrollbar-horizontal::-webkit-scrollbar {
-            height: 4px;
-        }
-        .custom-scrollbar-horizontal::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .custom-scrollbar-horizontal::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 2px;
-        }
-        .custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover {
-            background: #999;
-        }
-
-        /* Custom scrollbar for vertical comments in LiveScreen */
-        .custom-scrollbar-vertical::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scrollbar-vertical::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar-vertical::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-        }
-        .custom-scrollbar-vertical::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Keyframes for animations */
-        @keyframes bounce-once {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-5px);
-            }
-            60% {
-                transform: translateY(-2px);
-            }
-        }
-        .animate-bounce-once {
-            animation: bounce-once 0.8s ease-in-out;
-        }
-
-        @keyframes fadeInFromBottom {
-            from {
-                opacity: 0;
-                transform: translate(-50%, 20px);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-        }
-        .animate-fade-in-up {
-            animation: fadeInFromBottom 0.3s ease-out forwards;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
-        }
-        .animate-float {
-            animation: float 2s ease-out forwards;
-            pointer-events: none; /* Make hearts unclickable */
-        }
-
-        /* Spinner animation */
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CreatorBoost | Grow Your Audience</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #0e0e0e;
+      color: #fff;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, #ff4d6d, #ff7f50);
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    nav {
+      background: rgba(255,255,255,0.05);
+      display: flex; justify-content: center; flex-wrap: wrap;
+      backdrop-filter: blur(10px);
+    }
+    nav a {
+      color: #fff; padding: 0.8rem 1rem; text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #ff4d6d;
+    }
+    .hero {
+      background: linear-gradient(135deg, #ff4d6d, #ff7f50);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 60vh; text-align: center; padding: 1rem;
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .hero p {
+      max-width: 600px;
+      opacity: 0.9;
+    }
+    section {
+      padding: 2rem; max-width: 1200px; margin: auto;
+    }
+    h3 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1.8rem;
+      color: #ff7f50;
+    }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(15px);
+      padding: 1.5rem;
+      border-radius: 15px;
+      text-align: center;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      background: rgba(255,255,255,0.1);
+    }
+    .card h4 {
+      margin-bottom: 0.5rem;
+      color: #ff4d6d;
+    }
+    .card p {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+    img {
+      width: 100%; border-radius: 10px; margin-bottom: 0.8rem;
+    }
+    .cta {
+      text-align: center;
+      background: linear-gradient(135deg, #ff4d6d, #ff7f50);
+      padding: 2rem;
+      border-radius: 15px;
+      margin-top: 2rem;
+    }
+    .cta h3 {
+      color: #fff;
+    }
+    .cta p {
+      opacity: 0.9; margin: 0.5rem 0;
+    }
+    .cta button {
+      background: #fff;
+      color: #ff4d6d;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .cta button:hover {
+      background: #ffe1e7;
+      box-shadow: 0 0 10px rgba(255,77,109,0.7);
+    }
+    .contact-form input, .contact-form textarea {
+      width: 100%; padding: 0.8rem;
+      margin: 0.5rem 0; border: none;
+      border-radius: 8px;
+    }
+    .contact-form button {
+      background: #ff4d6d; color: #fff;
+      border: none; padding: 0.8rem 1.5rem;
+      cursor: pointer; border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .contact-form button:hover {
+      background: #ff7f50;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      margin-top: 2rem;
+      font-size: 0.85rem;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
-    <div id="app-container" class="w-full h-screen bg-gray-100 flex flex-col" style="max-width: 480px; margin: 0 auto;">
-        <div id="main-content" class="flex-grow overflow-y-auto pb-16 custom-scrollbar">
-            <!-- Content will be rendered here by JavaScript -->
-        </div>
-        <div id="bottom-nav-container">
-            <!-- Bottom navigation will be rendered here by JavaScript -->
-        </div>
-        <div id="toast-notification" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50 hidden">
-            <!-- Toast message will be rendered here by JavaScript -->
-        </div>
+<body>
+
+<header>
+  <h1>CreatorBoost</h1>
+  <p>Helping Small Creators Become Big Voices 🚀</p>
+</header>
+
+<nav>
+  <a href="#services">Services</a>
+  <a href="#stories">Success Stories</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<section class="hero">
+  <h2>Grow Your Audience, Fast</h2>
+  <p>We help small content creators stand out, get more followers, and turn views into real growth.</p>
+</section>
+
+<section id="services">
+  <h3>How We Help You</h3>
+  <div class="grid">
+    <div class="card">
+      <h4>Content Coaching</h4>
+      <p>Learn to create engaging, viral content that connects with your audience.</p>
     </div>
+    <div class="card">
+      <h4>Brand Design</h4>
+      <p>Eye-catching visuals, thumbnails, and layouts to boost your online presence.</p>
+    </div>
+    <div class="card">
+      <h4>Growth Strategy</h4>
+      <p>We analyze your content and build a custom plan to grow your reach.</p>
+    </div>
+    <div class="card">
+      <h4>Ad Campaigns</h4>
+      <p>Smart targeting that puts your content in front of the right people.</p>
+    </div>
+  </div>
+</section>
+
+<section id="stories">
+  <h3>Success Stories</h3>
+  <div class="grid">
+    <div class="card">
+      <img src="https://source.unsplash.com/400x300/?youtuber" alt="">
+      <p>From 200 to 10,000 subscribers in 3 months!</p>
+    </div>
+    <div class="card">
+      <img src="https://source.unsplash.com/400x300/?tiktoker" alt="">
+      <p>1.5M views on a single TikTok with our strategy.</p>
+    </div>
+    <div class="card">
+      <img src="https://source.unsplash.com/400x300/?instagram" alt="">
+      <p>Reached 5,000 IG followers in just 6 weeks.</p>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <h3>Ready to Start Growing?</h3>
+  <p>Book a free strategy call and let’s kickstart your creator journey!</p>
+  <button onclick="window.location.href='https://m.me/yourpage'">Message Us on Messenger</button>
+</div>
+
+<section id="contact">
+  <h3 style="color:#ff7f50;">Contact Us</h3>
+  <form class="contact-form">
+    <input type="text" placeholder="Your Name" required>
+    <input type="email" placeholder="Your Email" required>
+    <textarea placeholder="Your Message" rows="5" required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+</section>
+
+<footer>
+  <p>© 2025 CreatorBoost | Helping Small Creators Grow Big</p>
+</footer>
 
-    <script>
-        // --- MOCK DATA ---
-        const mockProducts = [
-            { id: 1, name: 'Bayo Floral Blouse', price: 895.00, image: 'https://placehold.co/400x600/f2e8e3/4a4a4a?text=Bayo+Blouse', category: 'Apparel', rating: 4.5, reviews: 32, description: 'A beautiful floral blouse perfect for any casual or semi-formal occasion. Made from light, breathable fabric.' },
-            { id: 2, name: 'Penshoppe Denim Jeans', price: 1299.00, image: 'https://placehold.co/400x600/dbe4f0/4a4a4a?text=Penshoppe+Jeans', category: 'Apparel', rating: 4.2, reviews: 55, description: 'Classic fit denim jeans from Penshoppe. Durable and comfortable for everyday wear.' },
-            { id: 3, name: 'Sunnies Face Fluffmatte', price: 395.00, image: 'https://placehold.co/400x600/f7d9d9/4a4a4a?text=Sunnies+Face', category: 'Beauty', rating: 4.8, reviews: 120, description: 'Best-selling fluffmatte lipstick from Sunnies Face. Lightweight and long-lasting, perfect for a matte finish.' },
-            { id: 4, name: 'Happy Skin Lip Mallow', price: 549.00, image: 'https://placehold.co/400x600/f5e1e1/4a4a4a?text=Happy+Skin', category: 'Beauty', rating: 4.6, reviews: 78, description: 'Nourishing lip mallow for a soft, hydrated pout. Infused with natural ingredients for a healthy glow.' },
-            { id: 5, name: 'Colourette Colourtint', price: 299.00, image: 'https://placehold.co/400x600/e8d3c3/4a4a4a?text=Colourette', category: 'Beauty', rating: 4.7, reviews: 90, description: 'Multi-use tint for lips, cheeks, and lids. Highly pigmented and blendable for a natural flush.' },
-            { id: 6, name: 'Bench Daily Scent', price: 150.00, image: 'https://placehold.co/400x600/e0f0e0/4a4a4a?text=Bench+Scent', category: 'Fragrance', rating: 4.0, reviews: 20, description: 'A refreshing daily scent from Bench. Light and invigorating, perfect for everyday use.' },
-            { id: 7, name: 'BLK Cosmetics Daydream Sunscreen', price: 499.00, image: 'https://placehold.co/400x600/fff2e6/4a4a4a?text=BLK+Sunscreen', category: 'Beauty', rating: 4.9, reviews: 150, description: 'Lightweight, non-greasy sunscreen with SPF 50. Protects your skin from harmful UV rays.' },
-            { id: 8, name: 'Oxygen Graphic Tee', price: 499.00, image: 'https://placehold.co/400x600/cccccc/4a4a4a?text=Oxygen+Tee', category: 'Apparel', rating: 4.1, reviews: 40, description: 'Comfortable graphic tee from Oxygen. Perfect for casual wear and expressing your style.' },
-            { id: 9, name: 'Penshoppe Basic Shorts', price: 799.00, image: 'https://placehold.co/400x600/dbe4f0/4a4a4a?text=Penshoppe+Shorts', category: 'Apparel', rating: 4.3, reviews: 30, description: 'Versatile basic shorts for men and women. Made with durable fabric for long-lasting comfort.' },
-            { id: 10, name: 'Human Nature Shampoo Bar', price: 199.00, image: 'https://placehold.co/400x600/c7d3b4/4a4a4a?text=Human+Nature', category: 'Beauty', rating: 4.7, reviews: 65, description: 'Eco-friendly shampoo bar from Human Nature. Cleanses and nourishes hair naturally.' },
-        ];
-
-        const mockLiveProduct = { id: 3, name: 'Sunnies Face Fluffmatte', price: 395.00, image: 'https://placehold.co/400x600/f7d9d9/4a4a4a?text=Sunnies+Face', originalPrice: 450.00, discount: '10%' };
-
-        const promoSlides = [
-            { id: 1, image: 'https://placehold.co/600x300/fce7f3/db2777?text=Mid-Year+Sale!', alt: 'Mid-Year Sale' },
-            { id: 2, image: 'https://placehold.co/600x300/e0e7ff/4f46e5?text=Free+Shipping', alt: 'Free Shipping' },
-            { id: 3, image: 'https://placehold.co/600x300/d1fae5/059669?text=New+Arrivals', alt: 'New Arrivals' },
-        ];
-
-        const mockOrders = [
-            { id: 'ORD001', date: '2025-07-15', total: 1299.00, status: 'Delivered', items: [{ name: 'Penshoppe Denim Jeans', quantity: 1, price: 1299.00, image: 'https://placehold.co/50x50/dbe4f0/4a4a4a?text=Jeans' }] },
-            { id: 'ORD002', date: '2025-07-10', total: 895.00, status: 'Completed', items: [{ name: 'Bayo Floral Blouse', quantity: 1, price: 895.00, image: 'https://placehold.co/50x50/f2e8e3/4a4a4a?text=Blouse' }] },
-            { id: 'ORD003', date: '2025-07-20', total: 499.00, status: 'Processing', items: [{ name: 'BLK Cosmetics Daydream Sunscreen', quantity: 1, price: 499.00, image: 'https://placehold.co/50x50/fff2e6/4a4a4a?text=Sunscreen' }] },
-        ];
-
-        // --- GLOBAL STATE ---
-        let activeTab = 'Home';
-        let cart = [];
-        let user = null; // null if logged out, user object if logged in
-        let showCheckout = false;
-        let showProductDetail = null; // Stores product ID for detail view
-        let showToastTimeout; // To manage toast visibility timeout
-
-        // --- UTILITY FUNCTIONS ---
-
-        /**
-         * Renders Lucide icons dynamically.
-         * @param {string} iconName - The name of the icon (e.g., 'Home', 'ShoppingCart').
-         * @param {number} size - The size of the icon.
-         * @param {string} className - Additional CSS classes.
-         * @param {number} strokeWidth - Stroke width for the icon.
-         * @param {string} fill - Fill color for the icon.
-         * @returns {string} HTML string for the icon.
-         */
-        const renderLucideIcon = (iconName, size = 24, className = '', strokeWidth = 2, fill = 'none') => {
-            // Ensure lucide.icons exists and contains the icon
-            if (typeof lucide !== 'undefined' && lucide.icons && lucide.icons[iconName]) {
-                return lucide.icons[iconName].toSvg({
-                    width: size,
-                    height: size,
-                    class: className,
-                    'stroke-width': strokeWidth,
-                    fill: fill
-                });
-            }
-            console.warn(`Lucide icon "${iconName}" not found or lucide library not fully loaded.`);
-            // Return a fallback SVG (e.g., a simple square or an 'X')
-            return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" class="${className}"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>`;
-        };
-
-        /**
-         * Displays a toast notification.
-         * @param {string} message - The message to display.
-         */
-        const showToastMessage = (message) => {
-            const toastElement = document.getElementById('toast-notification');
-            if (toastElement) {
-                clearTimeout(showToastTimeout); // Clear any existing timeout
-                toastElement.innerHTML = message;
-                toastElement.classList.remove('hidden');
-                toastElement.classList.add('animate-fade-in-up');
-
-                showToastTimeout = setTimeout(() => {
-                    toastElement.classList.remove('animate-fade-in-up');
-                    toastElement.classList.add('hidden');
-                }, 3000);
-            }
-        };
-
-        /**
-         * Updates the global cart state and re-renders the relevant components.
-         * @param {object} productToAdd - The product to add.
-         */
-        const addToCart = (productToAdd) => {
-            const existingProductIndex = cart.findIndex(item => item.id === productToAdd.id);
-            if (existingProductIndex > -1) {
-                cart[existingProductIndex].quantity += 1;
-            } else {
-                cart.push({ ...productToAdd, quantity: 1 });
-            }
-            showToastMessage(`${productToAdd.name} added to cart!`);
-            renderApp(); // Re-render to update cart count in nav
-        };
-
-        /**
-         * Updates the quantity of a product in the cart.
-         * @param {number} productId - The ID of the product.
-         * @param {number} newQuantity - The new quantity.
-         */
-        const updateQuantity = (productId, newQuantity) => {
-            if (newQuantity <= 0) {
-                cart = cart.filter(item => item.id !== productId);
-                showToastMessage('Item removed from cart!');
-            } else {
-                cart = cart.map(item =>
-                    item.id === productId ? { ...item, quantity: newQuantity } : item
-                );
-            }
-            renderApp(); // Re-render cart screen
-        };
-
-        /**
-         * Mock login function.
-         */
-        const login = () => {
-            user = { name: 'Juan Dela Cruz', email: 'juan.delacruz@example.com', avatar: 'https://placehold.co/100x100/e2e8f0/4a5568?text=JD' };
-            showToastMessage('Logged in successfully!');
-            renderApp();
-        };
-
-        /**
-         * Mock logout function.
-         */
-        const logout = () => {
-            user = null;
-            showToastMessage('Logged out.');
-            renderApp();
-        };
-
-        // --- COMPONENT RENDERING FUNCTIONS ---
-
-        /**
-         * Renders the Bottom Navigation bar.
-         */
-        const renderBottomNav = () => {
-            const navItems = [
-                { name: 'Home', icon: 'Home' },
-                { name: 'Live', icon: 'Video' },
-                { name: 'Cart', icon: 'ShoppingCart' },
-                { name: 'Me', icon: 'User' },
-            ];
-            const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-            const bottomNavHtml = `
-                <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 shadow-lg" style="max-width: 480px; margin: 0 auto;">
-                    ${navItems.map(item => `
-                        <button
-                            id="nav-${item.name.toLowerCase()}"
-                            class="flex flex-col items-center justify-center w-full h-full transition-colors duration-200 ${activeTab === item.name ? 'text-pink-500' : 'text-gray-500'}"
-                        >
-                            <div class="relative">
-                                ${renderLucideIcon(item.icon, 24, '', activeTab === item.name ? 2.5 : 2)}
-                                ${item.name === 'Cart' && cartItemCount > 0 ? `
-                                    <span class="absolute -top-2 -right-3 bg-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-bounce-once">
-                                        ${cartItemCount > 99 ? '99+' : cartItemCount}
-                                    </span>
-                                ` : ''}
-                            </div>
-                            <span class="text-xs mt-1">${item.name}</span>
-                        </button>
-                    `).join('')}
-                </div>
-            `;
-            const bottomNavContainer = document.getElementById('bottom-nav-container');
-            bottomNavContainer.innerHTML = bottomNavHtml;
-
-            // Attach event listeners
-            navItems.forEach(item => {
-                const button = document.getElementById(`nav-${item.name.toLowerCase()}`);
-                if (button) {
-                    button.onclick = () => {
-                        activeTab = item.name;
-                        showCheckout = false; // Hide checkout if navigating away
-                        showProductDetail = null; // Hide product detail if navigating away
-                        renderApp();
-                    };
-                }
-            });
-        };
-
-        let promoCarouselInterval; // Global variable to manage the carousel interval
-
-        /**
-         * Renders the Promo Carousel.
-         * @param {Array} slides - Array of slide objects.
-         */
-        const renderPromoCarousel = (slides) => {
-            let currentIndex = 0;
-
-            const updateCarousel = () => {
-                const carouselTrack = document.querySelector('#promo-carousel .flex');
-                if (carouselTrack) {
-                    carouselTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
-                }
-                const dots = document.querySelectorAll('#promo-carousel .absolute.bottom-2 button');
-                dots.forEach((dot, idx) => {
-                    if (idx === currentIndex) {
-                        dot.className = 'w-2 h-2 rounded-full transition-all duration-300 bg-white w-4';
-                    } else {
-                        dot.className = 'w-2 h-2 rounded-full transition-all duration-300 bg-white/50';
-                    }
-                });
-            };
-
-            const startAutoPlay = () => {
-                clearInterval(promoCarouselInterval); // Clear any existing interval
-                promoCarouselInterval = setInterval(() => {
-                    currentIndex = (currentIndex === slides.length - 1) ? 0 : currentIndex + 1;
-                    updateCarousel();
-                }, 3000);
-            };
-
-            const promoCarouselHtml = `
-                <div id="promo-carousel" class="relative w-full overflow-hidden rounded-lg shadow-md mb-4 aspect-video">
-                    <div class="flex transition-transform duration-500 ease-in-out h-full">
-                        ${slides.map((slide) => `
-                            <img src="${slide.image}" alt="${slide.alt}" class="w-full flex-shrink-0 object-cover" />
-                        `).join('')}
-                    </div>
-                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2">
-                        ${slides.map((_, index) => `
-                            <button class="w-2 h-2 rounded-full transition-all duration-300 ${currentIndex === index ? 'bg-white w-4' : 'bg-white/50'}" aria-label="Go to slide ${index + 1}"></button>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-            return promoCarouselHtml;
-        };
-
-        /**
-         * Attaches event listeners for the Promo Carousel after it's rendered.
-         * This needs to be called after innerHTML is set.
-         */
-        const attachPromoCarouselListeners = (slides) => {
-            const carouselElement = document.getElementById('promo-carousel');
-            if (!carouselElement) return;
-
-            let currentIndex = 0; // Re-initialize local index for event listeners
-
-            const updateCarouselDisplay = () => {
-                const carouselTrack = carouselElement.querySelector('.flex');
-                if (carouselTrack) {
-                    carouselTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
-                }
-                const dots = carouselElement.querySelectorAll('.absolute.bottom-2 button');
-                dots.forEach((dot, idx) => {
-                    if (idx === currentIndex) {
-                        dot.className = 'w-2 h-2 rounded-full transition-all duration-300 bg-white w-4';
-                    } else {
-                        dot.className = 'w-2 h-2 rounded-full transition-all duration-300 bg-white/50';
-                    }
-                });
-            };
-
-            const startAutoPlay = () => {
-                clearInterval(promoCarouselInterval);
-                promoCarouselInterval = setInterval(() => {
-                    currentIndex = (currentIndex === slides.length - 1) ? 0 : currentIndex + 1;
-                    updateCarouselDisplay();
-                }, 3000);
-            };
-
-            const dots = carouselElement.querySelectorAll('.absolute.bottom-2 button');
-            dots.forEach((dot, index) => {
-                dot.onclick = () => {
-                    currentIndex = index;
-                    updateCarouselDisplay();
-                    startAutoPlay(); // Reset timer on manual navigation
-                };
-            });
-
-            startAutoPlay(); // Start auto-play when listeners are attached
-        };
-
-
-        /**
-         * Renders a Product Card.
-         * @param {object} product - The product object.
-         * @returns {string} HTML string for the product card.
-         */
-        const renderProductCard = (product) => {
-            return `
-                <div id="product-card-${product.id}" class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover" />
-                    <div class="p-3">
-                        <h3 class="text-sm font-semibold text-gray-800 truncate">${product.name}</h3>
-                        <div class="flex items-center text-xs text-gray-500 mt-1">
-                            ${renderLucideIcon('Star', 14, 'text-yellow-400 mr-1', 2, 'currentColor')}
-                            <span>${product.rating.toFixed(1)} (${product.reviews} reviews)</span>
-                        </div>
-                        <p class="text-lg font-bold text-pink-500 mt-1">₱${product.price.toFixed(2)}</p>
-                        <button id="add-to-cart-${product.id}" class="w-full mt-2 py-2 text-sm font-bold rounded-lg transition-colors duration-300 bg-pink-500 text-white hover:bg-pink-600">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-            `;
-        };
-
-        /**
-         * Attaches event listeners for a Product Card.
-         * @param {object} product - The product object.
-         * @param {function} onProductClick - Callback for product click.
-         * @param {function} onAddToCart - Callback for add to cart.
-         */
-        const attachProductCardListeners = (product, onProductClick, onAddToCart) => {
-            const cardElement = document.getElementById(`product-card-${product.id}`);
-            const addToCartButton = document.getElementById(`add-to-cart-${product.id}`);
-
-            if (cardElement) {
-                cardElement.onclick = (e) => {
-                    if (!e.target.closest(`#add-to-cart-${product.id}`)) { // Prevent click if it's the add to cart button
-                        showProductDetail = product.id;
-                        renderApp();
-                    }
-                };
-            }
-            if (addToCartButton) {
-                addToCartButton.onclick = (e) => {
-                    e.stopPropagation(); // Stop event propagation to prevent card click
-                    onAddToCart(product);
-                    addToCartButton.textContent = 'Added!';
-                    addToCartButton.classList.remove('bg-pink-500', 'hover:bg-pink-600');
-                    addToCartButton.classList.add('bg-green-500');
-                    setTimeout(() => {
-                        addToCartButton.textContent = 'Add to Cart';
-                        addToCartButton.classList.remove('bg-green-500');
-                        addToCartButton.classList.add('bg-pink-500', 'hover:bg-pink-600');
-                    }, 1500);
-                };
-            }
-        };
-
-        /**
-         * Renders the Home Screen.
-         */
-        const renderHomeScreen = () => {
-            const mainContent = document.getElementById('main-content');
-            let searchTerm = '';
-            let activeCategory = 'All';
-            const categories = ['All', 'Apparel', 'Beauty', 'Gadgets', 'Home', 'Fragrance'];
-
-            const filterProducts = () => {
-                return mockProducts.filter(p =>
-                    (activeCategory === 'All' || p.category === activeCategory) &&
-                    p.name.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-            };
-
-            const renderContent = () => {
-                const filteredProducts = filterProducts();
-                let productsHtml = '';
-                if (filteredProducts.length > 0) {
-                    productsHtml = filteredProducts.map(product => renderProductCard(product)).join('');
-                } else {
-                    productsHtml = `
-                        <div class="col-span-2 text-center py-8 text-gray-500">
-                            ${renderLucideIcon('Search', 48, 'mx-auto mb-2')}
-                            <p>No products found matching your search or filter.</p>
-                        </div>
-                    `;
-                }
-
-                mainContent.innerHTML = `
-                    <div class="p-4 bg-white min-h-full">
-                        <header class="mb-4">
-                            <h1 class="text-2xl font-bold text-gray-800">Shop Local 🇵🇭</h1>
-                            <p class="text-gray-500">Find the best deals from Filipino brands!</p>
-                        </header>
-
-                        ${renderPromoCarousel(promoSlides)}
-
-                        <div class="relative mb-4">
-                            ${renderLucideIcon('Search', 20, 'absolute left-3 top-1/2 -translate-y-1/2 text-gray-400')}
-                            <input
-                                type="text"
-                                id="search-input"
-                                placeholder="Search products..."
-                                value="${searchTerm}"
-                                class="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm"
-                                aria-label="Search products"
-                            />
-                        </div>
-
-                        <div class="mb-4 relative">
-                            <div id="categories-container" class="flex space-x-2 overflow-x-auto pb-2 -mx-4 px-4 custom-scrollbar-horizontal">
-                                ${categories.map(cat => `
-                                    <button
-                                        id="category-btn-${cat.toLowerCase().replace(/\s/g, '-')}"
-                                        class="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors duration-200 ${activeCategory === cat ? 'bg-pink-500 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}"
-                                    >
-                                        ${cat}
-                                    </button>
-                                `).join('')}
-                            </div>
-                            <div id="scroll-hint" class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none flex items-center justify-end hidden">
-                                ${renderLucideIcon('ChevronRight', 20, 'text-gray-400')}
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            ${productsHtml}
-                        </div>
-                    </div>
-                `;
-
-                // Attach event listeners after rendering HTML
-                attachPromoCarouselListeners(promoSlides);
-
-                const searchInput = document.getElementById('search-input');
-                if (searchInput) {
-                    searchInput.oninput = (e) => {
-                        searchTerm = e.target.value;
-                        renderContent(); // Re-render content to apply search filter
-                    };
-                }
-
-                categories.forEach(cat => {
-                    const categoryBtn = document.getElementById(`category-btn-${cat.toLowerCase().replace(/\s/g, '-')}`);
-                    if (categoryBtn) {
-                        categoryBtn.onclick = () => {
-                            activeCategory = cat;
-                            renderContent(); // Re-render content to apply category filter
-                        };
-                    }
-                });
-
-                // Attach listeners for product cards
-                filteredProducts.forEach(product => {
-                    attachProductCardListeners(product, (productId) => {
-                        showProductDetail = productId;
-                        renderApp();
-                    }, addToCart);
-                });
-
-                // Check and show scroll hint
-                const categoriesContainer = document.getElementById('categories-container');
-                const scrollHint = document.getElementById('scroll-hint');
-                if (categoriesContainer && scrollHint) {
-                    const checkScroll = () => {
-                        if (categoriesContainer.scrollWidth > categoriesContainer.clientWidth) {
-                            scrollHint.classList.remove('hidden');
-                        } else {
-                            scrollHint.classList.add('hidden');
-                        }
-                    };
-                    checkScroll();
-                    categoriesContainer.onscroll = checkScroll; // Re-check on scroll
-                    window.addEventListener('resize', checkScroll); // Re-check on resize
-                }
-            };
-
-            renderContent(); // Initial render
-        };
-
-        /**
-         * Renders the Product Detail Screen.
-         * @param {object} product - The product object to display.
-         */
-        const renderProductDetailScreen = (product) => {
-            const mainContent = document.getElementById('main-content');
-            if (!product) {
-                mainContent.innerHTML = `
-                    <div class="p-4 text-center">
-                        <p>Product not found.</p>
-                        <button id="back-to-home-btn" class="mt-4 text-pink-500 flex items-center mx-auto">
-                            ${renderLucideIcon('ChevronRight', 20, 'transform rotate-180 mr-1')} Back to Home
-                        </button>
-                    </div>
-                `;
-                document.getElementById('back-to-home-btn').onclick = () => {
-                    showProductDetail = null;
-                    renderApp();
-                };
-                return;
-            }
-
-            mainContent.innerHTML = `
-                <div class="min-h-full bg-white flex flex-col">
-                    <div class="relative">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-80 object-cover" />
-                        <button id="product-detail-back-btn" class="absolute top-4 left-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors" aria-label="Back to previous screen">
-                            ${renderLucideIcon('X', 24)}
-                        </button>
-                    </div>
-
-                    <div class="p-4 flex-grow">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-2">${product.name}</h1>
-                        <div class="flex items-center text-sm text-gray-600 mb-3">
-                            ${renderLucideIcon('Star', 18, 'text-yellow-400 mr-1', 2, 'currentColor')}
-                            <span>${product.rating.toFixed(1)} (${product.reviews} reviews)</span>
-                        </div>
-                        <p class="text-3xl font-bold text-pink-600 mb-4">₱${product.price.toFixed(2)}</p>
-                        <p class="text-gray-700 leading-relaxed mb-6">${product.description}</p>
-
-                        <div class="bg-gray-100 p-4 rounded-lg mb-6">
-                            <h2 class="font-semibold text-lg mb-2">Product Details</h2>
-                            <ul class="text-gray-600 text-sm space-y-1">
-                                <li class="flex items-center">${renderLucideIcon('Tag', 16, 'mr-2 text-gray-500')}Category: <span class="font-medium ml-1">${product.category}</span></li>
-                                <li class="flex items-center">${renderLucideIcon('MapPin', 16, 'mr-2 text-gray-500')}Ships from: <span class="font-medium ml-1">Metro Manila</span></li>
-                                <li class="flex items-center">${renderLucideIcon('Truck', 16, 'mr-2 text-gray-500')}Delivery: <span class="font-medium ml-1">2-5 business days</span></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="p-4 border-t border-gray-200 bg-white sticky bottom-0 left-0 right-0" style="max-width: 480px; margin: 0 auto;">
-                        <button id="product-detail-add-to-cart-btn" class="w-full bg-pink-500 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-pink-600 transition-colors flex items-center justify-center">
-                            ${renderLucideIcon('ShoppingCart', 24, 'mr-2')} Add to Cart
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('product-detail-back-btn').onclick = () => {
-                showProductDetail = null;
-                renderApp();
-            };
-            document.getElementById('product-detail-add-to-cart-btn').onclick = () => {
-                addToCart(product);
-            };
-        };
-
-        let liveScreenHearts = []; // State for hearts in LiveScreen
-        let liveScreenComments = [
-            { user: 'Maria Clara', text: 'Ganda ng color! 😍' },
-            { user: 'Crisostomo Ibarra', text: 'How much po?' },
-            { user: 'Sisa', text: 'Available pa po ba ito?' },
-        ];
-
-        /**
-         * Renders the Live Stream Screen.
-         */
-        const renderLiveScreen = () => {
-            const mainContent = document.getElementById('main-content');
-
-            const liveScreenHtml = `
-                <div class="relative w-full h-full bg-black flex flex-col" id="live-screen-container">
-                    <!-- Mock Video Background -->
-                    <div class="absolute inset-0 bg-gray-800 flex items-center justify-center overflow-hidden">
-                        <img src="https://placehold.co/480x854/333333/ffffff?text=Live+Selling+Now!" class="w-full h-full object-cover" alt="Live Stream" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    </div>
-
-                    <!-- Floating Hearts Container -->
-                    <div id="hearts-container" class="absolute inset-0 pointer-events-none">
-                        ${liveScreenHearts.map(heart => `
-                            <div style="left: ${heart.x - 12}px; top: ${heart.y - 12}px;" class="absolute text-pink-500 animate-float">
-                                ${renderLucideIcon('Heart', 24, '', 2, 'currentColor')}
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <!-- Top Bar: Seller Info and Live Badge -->
-                    <div class="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent z-10">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <img src="https://placehold.co/100x100/f2e8e3/4a4a4a?text=Seller" alt="Seller" class="w-12 h-12 rounded-full border-2 border-pink-400" />
-                                <div class="ml-3">
-                                    <h2 class="font-bold text-white text-lg">Pinoy-Preneur Live</h2>
-                                    <p class="text-sm text-gray-200 flex items-center">${renderLucideIcon('Clock', 14, 'mr-1')} Live Now</p>
-                                </div>
-                            </div>
-                            <button class="bg-red-500 text-white text-xs px-3 py-1 rounded-full flex items-center">
-                                ${renderLucideIcon('Video', 14, 'mr-1')} LIVE
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Bar: Featured Product, Comments, and Input -->
-                    <div class="absolute bottom-0 left-0 right-0 p-4 pt-10 bg-gradient-to-t from-black/80 to-transparent z-10">
-                        <!-- Featured Product -->
-                        <div class="bg-white/90 backdrop-blur-sm p-3 rounded-lg mb-3 flex items-center shadow-lg">
-                            <img src="${mockLiveProduct.image}" alt="${mockLiveProduct.name}" class="w-20 h-20 rounded-md object-cover border border-gray-200" />
-                            <div class="ml-3 flex-grow">
-                                <p class="font-bold text-gray-800 text-lg">${mockLiveProduct.name}</p>
-                                ${mockLiveProduct.originalPrice ? `<p class="text-gray-500 text-sm line-through">₱${mockLiveProduct.originalPrice.toFixed(2)}</p>` : ''}
-                                <p class="text-pink-600 font-semibold text-xl">₱${mockLiveProduct.price.toFixed(2)}</p>
-                                ${mockLiveProduct.discount ? `<span class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block">${mockLiveProduct.discount} OFF!</span>` : ''}
-                            </div>
-                            <button id="live-add-to-cart-btn" class="bg-pink-500 text-white rounded-full p-3 hover:bg-pink-600 transition-transform duration-200 active:scale-95 shadow-md" aria-label="Add to cart">
-                                ${renderLucideIcon('PlusCircle', 28)}
-                            </button>
-                        </div>
-
-                        <!-- Comments Section -->
-                        <div id="comments-section" class="h-40 overflow-y-auto mb-3 text-white text-sm pr-2 custom-scrollbar-vertical">
-                            ${liveScreenComments.map((comment) => `
-                                <p class="mb-1 bg-black/30 p-2 rounded-lg max-w-[85%] break-words">
-                                    <span class="font-bold text-pink-300">${comment.user}: </span>
-                                    <span>${comment.text}</span>
-                                </p>
-                            `).join('')}
-                            <div id="comments-end-ref"></div>
-                        </div>
-
-                        <!-- Comment Input -->
-                        <div class="flex items-center">
-                            <input
-                                type="text"
-                                id="new-comment-input"
-                                placeholder="Say something nice..."
-                                class="flex-grow bg-gray-800/60 text-white placeholder-gray-300 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm"
-                                aria-label="Add a comment"
-                            />
-                            <button id="send-comment-btn" class="ml-2 text-white p-2 rounded-full hover:bg-gray-700/50 transition-colors" aria-label="Send comment">
-                                ${renderLucideIcon('MessageCircle', 28)}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            mainContent.innerHTML = liveScreenHtml;
-
-            // Attach event listeners
-            document.getElementById('live-screen-container').onclick = (e) => {
-                // Only add heart if click is not on input or button
-                if (!e.target.closest('button') && !e.target.closest('input')) {
-                    const newHeart = {
-                        id: Date.now(),
-                        x: e.clientX - mainContent.getBoundingClientRect().left, // Adjust x for container
-                        y: e.clientY - mainContent.getBoundingClientRect().top, // Adjust y for container
-                    };
-                    liveScreenHearts.push(newHeart);
-                    renderLiveScreen(); // Re-render to show new heart
-                    setTimeout(() => {
-                        liveScreenHearts = liveScreenHearts.filter(h => h.id !== newHeart.id);
-                        renderLiveScreen(); // Re-render to remove old heart
-                    }, 2000);
-                }
-            };
-
-            document.getElementById('live-add-to-cart-btn').onclick = () => addToCart(mockLiveProduct);
-
-            const newCommentInput = document.getElementById('new-comment-input');
-            const sendCommentBtn = document.getElementById('send-comment-btn');
-
-            if (sendCommentBtn) {
-                sendCommentBtn.onclick = () => {
-                    const commentText = newCommentInput.value.trim();
-                    if (commentText) {
-                        liveScreenComments.push({ user: 'You', text: commentText });
-                        newCommentInput.value = '';
-                        showToastMessage('Comment sent!');
-                        renderLiveScreen(); // Re-render to show new comment
-                    }
-                };
-            }
-
-            // Scroll to bottom of comments
-            const commentsEndRef = document.getElementById('comments-end-ref');
-            if (commentsEndRef) {
-                commentsEndRef.scrollIntoView({ behavior: 'smooth' });
-            }
-        };
-
-        /**
-         * Renders the Cart Screen.
-         */
-        const renderCartScreen = () => {
-            const mainContent = document.getElementById('main-content');
-            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            const shippingFee = subtotal > 0 ? 50.00 : 0;
-            const total = subtotal + shippingFee;
-
-            if (cart.length === 0) {
-                mainContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-center p-8 bg-white">
-                        ${renderLucideIcon('ShoppingCart', 80, 'text-gray-300 mb-4')}
-                        <h2 class="text-xl font-bold text-gray-700">Your Cart is Empty</h2>
-                        <p class="text-gray-500 mt-2">Looks like you haven't added anything to your cart yet. Start shopping now!</p>
-                        <button id="start-shopping-btn" class="mt-6 bg-pink-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-pink-600 transition-colors">
-                            Start Shopping
-                        </button>
-                    </div>
-                `;
-                document.getElementById('start-shopping-btn').onclick = () => {
-                    activeTab = 'Home';
-                    renderApp();
-                };
-                return;
-            }
-
-            mainContent.innerHTML = `
-                <div class="p-4 bg-gray-50 min-h-full">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-4">My Cart (${cart.length} items)</h1>
-                    <div class="space-y-3">
-                        ${cart.map(item => `
-                            <div class="flex items-center bg-white p-3 rounded-lg shadow-sm">
-                                <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-md object-cover border border-gray-200" />
-                                <div class="ml-4 flex-grow">
-                                    <p class="font-semibold text-gray-800 text-base">${item.name}</p>
-                                    <p class="text-pink-500 font-bold text-lg">₱${item.price.toFixed(2)}</p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button id="minus-btn-${item.id}" class="text-gray-500 p-1 rounded-full hover:bg-gray-100 ${item.quantity === 1 ? 'opacity-50 cursor-not-allowed' : ''}" ${item.quantity === 1 ? 'disabled' : ''} aria-label="Decrease quantity">
-                                        ${renderLucideIcon('MinusCircle', 20)}
-                                    </button>
-                                    <span class="w-8 text-center font-bold text-gray-700">${item.quantity}</span>
-                                    <button id="plus-btn-${item.id}" class="text-gray-500 p-1 rounded-full hover:bg-gray-100" aria-label="Increase quantity">
-                                        ${renderLucideIcon('PlusCircle', 20)}
-                                    </button>
-                                </div>
-                                <button id="remove-btn-${item.id}" class="ml-4 text-gray-400 hover:text-red-500 p-1 rounded-full" aria-label="Remove item">
-                                    ${renderLucideIcon('X', 20)}
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="mt-6 bg-white p-4 rounded-lg shadow-sm">
-                        <h2 class="text-lg font-semibold mb-3">Order Summary</h2>
-                        <div class="space-y-2 text-gray-600">
-                            <div class="flex justify-between"><span>Subtotal (${cart.reduce((sum, item) => sum + item.quantity, 0)} items)</span><span>₱${subtotal.toFixed(2)}</span></div>
-                            <div class="flex justify-between"><span>Shipping Fee</span><span>₱${shippingFee.toFixed(2)}</span></div>
-                            <div class="flex justify-between font-bold text-gray-800 text-lg border-t pt-2 mt-2"><span>Total</span><span>₱${total.toFixed(2)}</span></div>
-                        </div>
-                        <button id="proceed-to-checkout-btn" class="w-full bg-pink-500 text-white font-bold py-3 rounded-lg mt-4 hover:bg-pink-600 transition-colors shadow-md" ${cart.length === 0 ? 'disabled' : ''}>
-                            Proceed to Checkout
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            // Attach event listeners for quantity and remove buttons
-            cart.forEach(item => {
-                document.getElementById(`minus-btn-${item.id}`).onclick = () => {
-                    if (item.quantity === 1) {
-                        if (window.confirm(`Are you sure you want to remove ${item.name} from your cart?`)) {
-                            updateQuantity(item.id, 0);
-                        }
-                    } else {
-                        updateQuantity(item.id, item.quantity - 1);
-                    }
-                };
-                document.getElementById(`plus-btn-${item.id}`).onclick = () => updateQuantity(item.id, item.quantity + 1);
-                document.getElementById(`remove-btn-${item.id}`).onclick = () => {
-                    if (window.confirm(`Are you sure you want to remove ${item.name} from your cart?`)) {
-                        updateQuantity(item.id, 0);
-                    }
-                };
-            });
-
-            document.getElementById('proceed-to-checkout-btn').onclick = () => {
-                showCheckout = true;
-                renderApp();
-            };
-        };
-
-        let showOrders = false; // State for showing orders in MeScreen
-
-        /**
-         * Renders the Me Screen (User Profile).
-         */
-        const renderMeScreen = () => {
-            const mainContent = document.getElementById('main-content');
-
-            if (!user) {
-                mainContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full p-8 bg-white">
-                        ${renderLucideIcon('User', 80, 'text-gray-300 mb-6')}
-                        <h2 class="text-xl font-bold text-gray-700 mb-2">Welcome!</h2>
-                        <p class="text-gray-500 text-center mb-6">Log in or create an account to manage your orders and profile.</p>
-                        <div class="w-full max-w-xs">
-                            <button id="login-btn" class="w-full bg-pink-500 text-white font-bold py-3 rounded-lg mb-3 hover:bg-pink-600 transition-colors shadow-md">
-                                Log In
-                            </button>
-                            <button id="signup-btn" class="w-full bg-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-300 transition-colors">
-                                Sign Up
-                            </button>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('login-btn').onclick = login;
-                // document.getElementById('signup-btn').onclick = () => alert('Sign Up functionality not implemented.');
-                return;
-            }
-
-            if (showOrders) {
-                renderMyOrdersScreen();
-                return;
-            }
-
-            mainContent.innerHTML = `
-                <div class="p-4 bg-gray-50 min-h-full">
-                    <div class="flex items-center mb-6 bg-white p-4 rounded-lg shadow-sm">
-                        <img src="${user.avatar}" alt="User" class="w-20 h-20 rounded-full border-2 border-pink-400 object-cover" />
-                        <div class="ml-4">
-                            <h2 class="text-xl font-bold text-gray-800">${user.name}</h2>
-                            <p class="text-gray-500 text-sm">${user.email}</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-sm divide-y divide-gray-100">
-                        <button id="my-orders-menu-item" class="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center">
-                                ${renderLucideIcon('Package', 20, 'text-gray-500 mr-3')}
-                                <span class="text-gray-700 text-base">My Orders</span>
-                            </div>
-                            ${renderLucideIcon('ChevronRight', 20, 'text-gray-400')}
-                        </button>
-                        <button id="wishlist-menu-item" class="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center">
-                                ${renderLucideIcon('Heart', 20, 'text-gray-500 mr-3')}
-                                <span class="text-gray-700 text-base">Wishlist</span>
-                            </div>
-                            ${renderLucideIcon('ChevronRight', 20, 'text-gray-400')}
-                        </button>
-                        <button id="shipping-addresses-menu-item" class="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center">
-                                ${renderLucideIcon('MapPin', 20, 'text-gray-500 mr-3')}
-                                <span class="text-gray-700 text-base">Shipping Addresses</span>
-                            </div>
-                            ${renderLucideIcon('ChevronRight', 20, 'text-gray-400')}
-                        </button>
-                        <button id="payment-methods-menu-item" class="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center">
-                                ${renderLucideIcon('CreditCard', 20, 'text-gray-500 mr-3')}
-                                <span class="text-gray-700 text-base">Payment Methods</span>
-                            </div>
-                            ${renderLucideIcon('ChevronRight', 20, 'text-gray-400')}
-                        </button>
-                        <button id="settings-menu-item" class="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center">
-                                ${renderLucideIcon('User', 20, 'text-gray-500 mr-3')}
-                                <span class="text-gray-700 text-base">Settings</span>
-                            </div>
-                            ${renderLucideIcon('ChevronRight', 20, 'text-gray-400')}
-                        </button>
-                    </div>
-                    <div class="mt-6">
-                        <button id="logout-btn" class="w-full bg-white text-red-500 font-bold py-3 rounded-lg border border-red-200 hover:bg-red-50 transition-colors shadow-sm">
-                            Log Out
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('my-orders-menu-item').onclick = () => {
-                showOrders = true;
-                renderApp();
-            };
-            document.getElementById('wishlist-menu-item').onclick = () => showToastMessage('Wishlist functionality not implemented.');
-            document.getElementById('shipping-addresses-menu-item').onclick = () => showToastMessage('Shipping Addresses functionality not implemented.');
-            document.getElementById('payment-methods-menu-item').onclick = () => showToastMessage('Payment Methods functionality not implemented.');
-            document.getElementById('settings-menu-item').onclick = () => showToastMessage('Settings functionality not implemented.');
-            document.getElementById('logout-btn').onclick = logout;
-        };
-
-        /**
-         * Renders the My Orders Screen.
-         */
-        const renderMyOrdersScreen = () => {
-            const mainContent = document.getElementById('main-content');
-            let ordersContent = '';
-
-            if (mockOrders.length === 0) {
-                ordersContent = `
-                    <div class="flex flex-col items-center justify-center h-60 text-center text-gray-500">
-                        ${renderLucideIcon('Package', 60, 'mb-3')}
-                        <p>No orders yet.</p>
-                    </div>
-                `;
-            } else {
-                ordersContent = `
-                    <div class="space-y-4">
-                        ${mockOrders.map(order => `
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <div class="flex justify-between items-center mb-2 border-b pb-2">
-                                    <h3 class="font-semibold text-gray-800">Order ID: ${order.id}</h3>
-                                    <span class="text-sm font-medium px-2 py-1 rounded-full ${
-                                        order.status === 'Delivered' || order.status === 'Completed' ? 'bg-green-100 text-green-700' :
-                                        order.status === 'Processing' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-                                    }">
-                                        ${order.status}
-                                    </span>
-                                </div>
-                                <p class="text-sm text-gray-500 mb-3">Order Date: ${order.date}</p>
-                                <div class="space-y-2">
-                                    ${order.items.map((item, idx) => `
-                                        <div class="flex items-center">
-                                            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-md mr-3" />
-                                            <div class="flex-grow">
-                                                <p class="text-gray-700 text-sm">${item.name}</p>
-                                                <p class="text-gray-500 text-xs">Qty: ${item.quantity} | ₱${item.price.toFixed(2)} each</p>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <div class="border-t pt-3 mt-3 flex justify-between items-center">
-                                    <span class="font-bold text-lg text-gray-800">Total:</span>
-                                    <span class="font-bold text-lg text-pink-600">₱${order.total.toFixed(2)}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            mainContent.innerHTML = `
-                <div class="p-4 bg-gray-50 min-h-full">
-                    <div class="flex items-center mb-4">
-                        <button id="my-orders-back-btn" class="p-2 rounded-full hover:bg-gray-200" aria-label="Back to profile">
-                            ${renderLucideIcon('ChevronRight', 24, 'transform rotate-180')}
-                        </button>
-                        <h1 class="text-xl font-bold text-gray-800 mx-auto">My Orders</h1>
-                    </div>
-                    ${ordersContent}
-                </div>
-            `;
-            document.getElementById('my-orders-back-btn').onclick = () => {
-                showOrders = false;
-                renderApp();
-            };
-        };
-
-        let selectedPaymentMethod = ''; // State for selected payment method in CheckoutScreen
-        let isPlacingOrder = false; // State for loading indicator in CheckoutScreen
-
-        /**
-         * Renders the Checkout Screen.
-         */
-        const renderCheckoutScreen = () => {
-            const mainContent = document.getElementById('main-content');
-            const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            const shippingFee = subtotal > 0 ? 50.00 : 0;
-            const total = subtotal + shippingFee;
-
-            const paymentOptions = [
-                { id: 'gcash', name: 'GCash', icon: 'Smartphone', color: 'text-blue-500' },
-                { id: 'maya', name: 'Maya', icon: 'Smartphone', color: 'text-green-500' },
-                { id: 'card', name: 'Credit/Debit Card', icon: 'CreditCard', color: 'text-yellow-500' },
-                { id: 'cod', name: 'Cash on Delivery', icon: 'Package', color: 'text-gray-500' },
-            ];
-
-            mainContent.innerHTML = `
-                <div class="p-4 bg-gray-50 min-h-full">
-                    <div class="flex items-center mb-4">
-                        <button id="checkout-back-btn" class="p-2 rounded-full hover:bg-gray-200" aria-label="Back to cart">
-                            ${renderLucideIcon('ChevronRight', 24, 'transform rotate-180')}
-                        </button>
-                        <h1 class="text-xl font-bold text-gray-800 mx-auto">Checkout</h1>
-                    </div>
-
-                    <!-- Progress Indicator -->
-                    <div class="flex justify-around mb-6 text-sm text-gray-500 font-semibold">
-                        <div class="text-center text-pink-500">
-                            ${renderLucideIcon('CheckCircle', 20, 'inline-block mb-1 text-pink-500')}
-                            <p>Address</p>
-                        </div>
-                        <div class="text-center ${selectedPaymentMethod ? 'text-pink-500' : 'opacity-50'}">
-                            ${renderLucideIcon('CheckCircle', 20, `inline-block mb-1 ${selectedPaymentMethod ? 'text-pink-500' : 'text-gray-400'}`)}
-                            <p>Payment</p>
-                        </div>
-                        <div class="text-center ${isPlacingOrder ? 'text-pink-500' : 'opacity-50'}">
-                            ${renderLucideIcon('CheckCircle', 20, `inline-block mb-1 ${isPlacingOrder ? 'text-pink-500' : 'text-gray-400'}`)}
-                            <p>Summary</p>
-                        </div>
-                    </div>
-
-                    <!-- Shipping Address -->
-                    <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
-                        <h2 class="font-bold text-lg mb-2 flex items-center">${renderLucideIcon('MapPin', 20, 'mr-2 text-gray-600')} Shipping Address</h2>
-                        <div class="text-gray-600 text-sm">
-                            <p class="font-semibold">Juan Dela Cruz</p>
-                            <p>(+63) 917 123 4567</p>
-                            <p>123 Rizal St., Brgy. Poblacion</p>
-                            <p>Makati City, Metro Manila, 1210</p>
-                        </div>
-                        <button class="text-pink-500 text-sm mt-3 font-semibold hover:underline">Change Address</button>
-                    </div>
-
-                    <!-- Payment Method -->
-                    <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
-                        <h2 class="font-bold text-lg mb-3 flex items-center">${renderLucideIcon('CreditCard', 20, 'mr-2 text-gray-600')} Payment Method</h2>
-                        <div class="space-y-2">
-                            ${paymentOptions.map(option => `
-                                <label id="payment-option-${option.id}" class="flex items-center p-3 border rounded-lg cursor-pointer transition-all ${selectedPaymentMethod === option.id ? 'border-pink-500 bg-pink-50 ring-1 ring-pink-500' : 'border-gray-200 hover:bg-gray-50'}">
-                                    ${renderLucideIcon(option.icon, 24, `${option.color} mr-3`)}
-                                    <span class="font-semibold text-gray-700">${option.name}</span>
-                                    <input
-                                        type="radio"
-                                        name="payment"
-                                        value="${option.id}"
-                                        class="ml-auto h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
-                                        ${selectedPaymentMethod === option.id ? 'checked' : ''}
-                                    />
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Order Summary -->
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
-                        <h2 class="text-lg font-semibold mb-3 flex items-center">${renderLucideIcon('ShoppingCart', 20, 'mr-2 text-gray-600')} Order Summary</h2>
-                        <div class="space-y-2 text-gray-600 text-sm">
-                            ${cart.map(item => `
-                                <div class="flex justify-between items-center">
-                                    <span>${item.name} (x${item.quantity})</span>
-                                    <span>₱${(item.price * item.quantity).toFixed(2)}</span>
-                                </div>
-                            `).join('')}
-                            <div class="flex justify-between border-t pt-2 mt-2"><span>Subtotal</span><span>₱${subtotal.toFixed(2)}</span></div>
-                            <div class="flex justify-between"><span>Shipping Fee</span><span>₱${shippingFee.toFixed(2)}</span></div>
-                            <div class="flex justify-between font-bold text-gray-800 text-lg border-t pt-2 mt-2"><span>Total Payment</span><span>₱${total.toFixed(2)}</span></div>
-                        </div>
-                    </div>
-
-                    <div class="mt-6">
-                        <button id="place-order-btn" class="w-full bg-pink-500 text-white font-bold py-3 rounded-lg hover:bg-pink-600 transition-colors shadow-md flex items-center justify-center ${!selectedPaymentMethod || isPlacingOrder ? 'disabled:bg-gray-300 disabled:cursor-not-allowed' : ''}" ${!selectedPaymentMethod || isPlacingOrder ? 'disabled' : ''}>
-                            ${isPlacingOrder ? `
-                                <span class="animate-spin mr-2 h-5 w-5 border-t-2 border-r-2 border-white rounded-full"></span>
-                                Placing Order...
-                            ` : `
-                                Place Order (₱${total.toFixed(2)})
-                            `}
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('checkout-back-btn').onclick = () => {
-                showCheckout = false;
-                renderApp();
-            };
-
-            paymentOptions.forEach(option => {
-                const label = document.getElementById(`payment-option-${option.id}`);
-                if (label) {
-                    label.querySelector('input[type="radio"]').onchange = (e) => {
-                        selectedPaymentMethod = e.target.value;
-                        renderCheckoutScreen(); // Re-render to update UI based on selection
-                    };
-                }
-            });
-
-            document.getElementById('place-order-btn').onclick = () => {
-                if (!selectedPaymentMethod) {
-                    showToastMessage('Please select a payment method!');
-                    return;
-                }
-                isPlacingOrder = true;
-                renderCheckoutScreen(); // Show loading spinner
-                setTimeout(() => {
-                    showToastMessage(`Order placed successfully! Total: ₱${total.toFixed(2)}`);
-                    cart = []; // Clear cart after successful order
-                    showCheckout = false; // Go back to previous screen
-                    isPlacingOrder = false;
-                    renderApp();
-                }, 2000); // Simulate API call
-            };
-        };
-
-        // --- MAIN APP RENDERER ---
-
-        /**
-         * The main function to render the entire application based on current state.
-         */
-        const renderApp = () => {
-            const mainContent = document.getElementById('main-content');
-            const bottomNavContainer = document.getElementById('bottom-nav-container');
-
-            // Always render bottom nav unless checkout or product detail is active
-            if (!showCheckout && showProductDetail === null) {
-                renderBottomNav();
-                bottomNavContainer.classList.remove('hidden');
-            } else {
-                bottomNavContainer.innerHTML = ''; // Clear nav
-                bottomNavContainer.classList.add('hidden');
-            }
-
-            if (showProductDetail !== null) {
-                const product = mockProducts.find(p => p.id === showProductDetail);
-                renderProductDetailScreen(product);
-            } else if (showCheckout) {
-                renderCheckoutScreen();
-            } else {
-                switch (activeTab) {
-                    case 'Home':
-                        renderHomeScreen();
-                        break;
-                    case 'Live':
-                        renderLiveScreen();
-                        break;
-                    case 'Cart':
-                        renderCartScreen();
-                        break;
-                    case 'Me':
-                        renderMeScreen();
-                        break;
-                    default:
-                        renderHomeScreen();
-                }
-            }
-            // Re-initialize Lucide icons after DOM updates
-            lucide.createIcons();
-        };
-
-        // Initial render when the window loads
-        window.onload = renderApp;
-
-    </script>
 </body>
 </html>
+
 
 
 
