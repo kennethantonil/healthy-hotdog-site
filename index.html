@@ -1,169 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NearMe Jobs</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>NearMe Jobs — Find & Post Local Jobs</title>
+  <meta name="color-scheme" content="light" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind config (soft modern palette)
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"] },
+          colors: {
+            brand: {
+              50: "#eef2ff",
+              100: "#e0e7ff",
+              200: "#c7d2fe",
+              300: "#a5b4fc",
+              400: "#818cf8",
+              500: "#6366f1",
+              600: "#4f46e5",
+              700: "#4338ca",
+              800: "#3730a3",
+              900: "#312e81",
+            },
+          },
+          boxShadow: {
+            soft: "0 10px 30px -12px rgba(0,0,0,.15)",
+            card: "0 6px 20px -8px rgba(0,0,0,.12)",
+          },
+        },
+      },
+    };
+  </script>
   <style>
-    * { box-sizing: border-box; }
-    :root {
-      --bg: #0b0d10;
-      --card: #12161c;
-      --muted: #9aa4b2;
-      --text: #e6ebf2;
-      --primary: #4f46e5;
-      --danger: #ef4444;
-      --border: #1e2530;
-    }
-    html, body { margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
-    .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 16px; }
-    .hidden { display: none !important; }
-    .muted { color: var(--muted); }
-    a { color: inherit; }
-
-    .site-header { position: sticky; top: 0; backdrop-filter: blur(8px); background: rgba(11,13,16,0.7); border-bottom: 1px solid var(--border); z-index: 10; }
-    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; }
-    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .brand .logo { font-size: 22px; }
-    .brand h1 { margin: 0; font-size: 20px; letter-spacing: 0.3px; }
-    .brand h1 span { color: var(--primary); }
-    .nav { display: flex; align-items: center; gap: 10px; }
-
-    .btn { border: 1px solid var(--border); background: transparent; color: var(--text); padding: 10px 14px; border-radius: 10px; cursor: pointer; }
-    .btn:hover { border-color: #2a3442; }
-    .btn.primary { background: var(--primary); border-color: var(--primary); color: white; }
-    .btn.danger { background: var(--danger); border-color: var(--danger); color: white; }
-    .btn.small { padding: 6px 10px; border-radius: 8px; font-size: 12px; }
-    .btn.tiny { padding: 4px 8px; border-radius: 8px; font-size: 12px; }
-    .btn.outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-
-    .hero { padding: 24px 0; display: grid; gap: 10px; }
-    .search-bar { display: grid; grid-template-columns: 1fr 180px 160px 1fr auto auto; gap: 10px; }
-    .search-bar input, .search-bar select { width: 100%; padding: 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--text); }
-    .distance-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; display: grid; gap: 2px; }
-    .distance-wrap input[type="range"] { width: 100%; }
-    .results-header { display: flex; align-items: baseline; justify-content: space-between; margin: 10px 0; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: grid; gap: 8px; }
-    .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .card .job-title { margin: 0; font-size: 18px; }
-    .card .company { margin: 0; color: #cdd5df; }
-    .card .desc { margin: 0; color: #b8c1cc; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .card .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); }
-    .badge { background: #1b2130; color: #c7d2fe; border: 1px solid #293149; padding: 4px 8px; border-radius: 999px; font-size: 12px; }
-    .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .contact { text-decoration: none; }
-    .posted { font-size: 12px; }
-
-    .empty-state { text-align: center; padding: 26px; border: 1px dashed var(--border); border-radius: 12px; }
-
-    /* Forms & dialogs */
-    dialog { border: 1px solid var(--border); padding: 0; border-radius: 16px; background: var(--card); color: var(--text); max-width: 720px; width: 92vw; }
-    dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
-    form { padding: 18px; display: grid; gap: 14px; }
-    .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .form-grid .full { grid-column: 1 / -1; }
-    .field { display: grid; gap: 8px; }
-    .field input, .field select, .field textarea { background: #0d1219; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
-    .field .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    menu { display: flex; justify-content: end; gap: 8px; margin: 0; padding: 0; }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .search-bar { grid-template-columns: 1fr 1fr; }
-    }
+    /* Hide native dialog outline */
+    dialog::backdrop { background: rgba(0,0,0,.45); backdrop-filter: blur(3px); }
+    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .nice-scroll::-webkit-scrollbar { height: 10px; width: 10px; }
+    .nice-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+    .nice-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
   </style>
 </head>
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand" onclick="location.reload()">
-        <span class="logo">🧭</span>
-        <h1>NearMe <span>Jobs</span></h1>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+  <!-- Top bar -->
+  <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="flex items-center justify-between py-3">
+        <button class="flex items-center gap-2" onclick="location.reload()">
+          <span
+            class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white shadow-soft"
+            aria-hidden="true"
+          >🧭</span>
+          <div class="text-left">
+            <div class="text-lg font-bold leading-5">NearMe <span class="text-brand-600">Jobs</span></div>
+            <div class="text-xs text-slate-500 -mt-0.5">Find great work close by</div>
+          </div>
+        </button>
+
+        <nav class="flex items-center gap-2">
+          <button id="btn-open-post" class="hidden sm:inline-flex rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-brand-700 transition">
+            + Post a Job
+          </button>
+
+          <!-- Auth: logged out -->
+          <div id="auth-area" class="flex items-center gap-2">
+            <button id="btn-login" class="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Log in</button>
+            <button id="btn-signup" class="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800">Sign up</button>
+          </div>
+
+          <!-- Auth: logged in -->
+          <div id="user-area" class="hidden items-center gap-2">
+            <span id="user-email" class="hidden sm:inline text-sm text-slate-600"></span>
+            <button id="btn-dashboard" class="rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">My Jobs</button>
+            <button id="btn-open-post-2" class="inline-flex sm:hidden rounded-lg bg-brand-600 px-3 py-2 text-sm font-semibold text-white">+ Post</button>
+            <button id="btn-logout" class="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700">Log out</button>
+          </div>
+        </nav>
       </div>
-      <nav class="nav">
-        <button id="btn-open-post" class="btn primary">Post a Job</button>
-        <div id="auth-area">
-          <button id="btn-login" class="btn">Log in</button>
-          <button id="btn-signup" class="btn">Sign up</button>
-        </div>
-        <div id="user-area" class="hidden">
-          <span id="user-email" class="muted"></span>
-          <button id="btn-dashboard" class="btn">My Jobs</button>
-          <button id="btn-logout" class="btn danger">Log out</button>
-        </div>
-      </nav>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <h2>Find jobs near you</h2>
-      <p>Search by keyword, category, salary, and distance from your location.</p>
-
-      <div class="search-bar">
-        <input id="search-keyword" type="text" placeholder="Search job title, company, or keywords…" />
-        <select id="filter-category">
-          <option value="">All categories</option>
-          <option>Customer Service</option>
-          <option>Sales</option>
-          <option>Marketing</option>
-          <option>IT / Software</option>
-          <option>Design</option>
-          <option>Operations</option>
-          <option>Logistics</option>
-          <option>Healthcare</option>
-          <option>Education</option>
-          <option>Others</option>
-        </select>
-        <input id="filter-salary-min" type="number" min="0" placeholder="Min salary (monthly)" />
-        <div class="distance-wrap">
-          <label for="filter-distance">Max distance: <span id="distance-value">Any</span></label>
-          <input id="filter-distance" type="range" min="0" max="50" step="1" value="0" />
+  <!-- Search panel -->
+  <section class="border-b border-slate-200 bg-white">
+    <div class="mx-auto max-w-6xl px-4">
+      <div class="grid gap-3 py-4 md:grid-cols-12">
+        <div class="md:col-span-4">
+          <label class="sr-only" for="search-keyword">Keywords</label>
+          <input id="search-keyword" type="text" placeholder="Job title, company, or keywords…"
+                 class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-card focus:border-brand-400 focus:ring-2 focus:ring-brand-100" />
         </div>
-        <button id="btn-locate" class="btn">📍 Use my location</button>
-        <button id="btn-search" class="btn primary">Search</button>
-      </div>
-      <small id="geo-status" class="muted"></small>
-    </section>
-
-    <section>
-      <div class="results-header">
-        <h3>Job Listings</h3>
-        <span id="result-count" class="muted"></span>
-      </div>
-      <div id="jobs-list" class="grid"></div>
-      <div id="empty" class="empty-state hidden">
-        <p>No jobs found. Try adjusting your filters.</p>
-      </div>
-    </section>
-
-    <section id="dashboard" class="hidden">
-      <h3>My Posted Jobs</h3>
-      <div id="my-jobs" class="grid"></div>
-      <div id="my-empty" class="empty-state hidden"><p>You haven't posted any jobs yet.</p></div>
-    </section>
-  </main>
-
-  <!-- Post Job Modal -->
-  <dialog id="post-dialog">
-    <form id="post-form" method="dialog">
-      <h3>Post a Job</h3>
-      <div class="grid form-grid">
-        <div class="field">
-          <label>Job Title</label>
-          <input name="title" required placeholder="e.g., Sales Associate" />
-        </div>
-        <div class="field">
-          <label>Company</label>
-          <input name="company" required placeholder="Your company name" />
-        </div>
-        <div class="field">
-          <label>Category</label>
-          <select name="category" required>
+        <div class="md:col-span-3">
+          <label class="sr-only" for="filter-category">Category</label>
+          <select id="filter-category"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-card focus:border-brand-400 focus:ring-2 focus:ring-brand-100">
+            <option value="">All categories</option>
             <option>Customer Service</option>
             <option>Sales</option>
             <option>Marketing</option>
@@ -176,99 +117,191 @@
             <option>Others</option>
           </select>
         </div>
-        <div class="field">
-          <label>Monthly Salary Range (₱)</label>
-          <div class="two">
-            <input type="number" name="salaryMin" min="0" placeholder="Min" />
-            <input type="number" name="salaryMax" min="0" placeholder="Max" />
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold text-slate-500 mb-1" for="filter-salary-min">Min salary (monthly)</label>
+          <input id="filter-salary-min" type="number" min="0" placeholder="₱"
+                 class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 shadow-card focus:border-brand-400 focus:ring-2 focus:ring-brand-100" />
+        </div>
+        <div class="md:col-span-3">
+          <div class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 shadow-card">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
+              <label for="filter-distance">Max distance</label>
+              <span id="distance-value" class="text-slate-700">Any</span>
+            </div>
+            <input id="filter-distance" type="range" min="0" max="50" step="1" value="0" class="range w-full accent-brand-600" />
+            <div class="mt-2 flex items-center gap-2">
+              <button id="btn-locate" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2"/></svg>
+                Use my location
+              </button>
+              <small id="geo-status" class="text-xs text-slate-500"></small>
+            </div>
           </div>
         </div>
-        <div class="field full">
-          <label>Job Description</label>
-          <textarea name="description" rows="5" required placeholder="Responsibilities, requirements, schedule, benefits…"></textarea>
-        </div>
-        <div class="field">
-          <label>Contact Email</label>
-          <input type="email" name="contactEmail" required placeholder="hr@company.com" />
-        </div>
-        <div class="field">
-          <label>City / Area</label>
-          <input name="city" placeholder="e.g., Quezon City" />
-        </div>
-        <div class="field">
-          <label>Address (optional)</label>
-          <input name="address" placeholder="Street, building, etc." />
-        </div>
-        <div class="field">
-          <label>Latitude / Longitude</label>
-          <div class="two">
-            <input type="number" step="any" name="lat" placeholder="14.5995" />
-            <input type="number" step="any" name="lng" placeholder="120.9842" />
-          </div>
-          <small class="muted">Tip: Click “Use my location” to auto-fill.</small>
-          <button type="button" id="btn-job-use-location" class="btn small">📍 Use my location</button>
+        <div class="md:col-span-12 flex items-center justify-end gap-2">
+          <button id="btn-search" class="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-soft hover:bg-brand-700 transition">
+            <span>Search</span>
+          </button>
         </div>
       </div>
-      <menu>
-        <button type="reset" id="btn-cancel-post" class="btn">Cancel</button>
-        <button type="submit" class="btn primary">Publish Job</button>
-      </menu>
-      <p id="post-status" class="muted"></p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="mx-auto max-w-6xl px-4">
+    <!-- Stats / header -->
+    <div class="flex items-baseline justify-between py-5">
+      <h2 class="text-xl font-bold">Job Listings</h2>
+      <span id="result-count" class="text-sm text-slate-500"></span>
+    </div>
+
+    <!-- Job list -->
+    <div id="jobs-list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+    <div id="empty" class="hidden rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 shadow-card">
+      No jobs found. Try changing filters or location.
+    </div>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="hidden mt-10">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold">My Posted Jobs</h3>
+      </div>
+      <div id="my-jobs" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+      <div id="my-empty" class="hidden rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 shadow-card">You haven't posted any jobs yet.</div>
+    </section>
+  </main>
+
+  <!-- Post Job Modal -->
+  <dialog id="post-dialog" class="w-[min(720px,92vw)] rounded-2xl p-0">
+    <form id="post-form" method="dialog" class="grid gap-4 p-5">
+      <div class="flex items-start justify-between">
+        <h3 class="text-lg font-bold">Post a Job</h3>
+        <button type="reset" id="btn-cancel-post" class="rounded-lg px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100">✕</button>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Job Title</label>
+          <input name="title" required placeholder="e.g., Sales Associate" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Company</label>
+          <input name="company" required placeholder="Your company name" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Category</label>
+          <select name="category" required class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card">
+            <option>Customer Service</option>
+            <option>Sales</option>
+            <option>Marketing</option>
+            <option>IT / Software</option>
+            <option>Design</option>
+            <option>Operations</option>
+            <option>Logistics</option>
+            <option>Healthcare</option>
+            <option>Education</option>
+            <option>Others</option>
+          </select>
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Monthly Salary Range (₱)</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" name="salaryMin" min="0" placeholder="Min" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+            <input type="number" name="salaryMax" min="0" placeholder="Max" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+          </div>
+        </div>
+        <div class="sm:col-span-2 grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Job Description</label>
+          <textarea name="description" rows="5" required placeholder="Responsibilities, requirements, schedule, benefits…"
+                    class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card"></textarea>
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Contact Email</label>
+          <input type="email" name="contactEmail" required placeholder="hr@company.com" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">City / Area</label>
+          <input name="city" placeholder="e.g., Quezon City" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Address (optional)</label>
+          <input name="address" placeholder="Street, building, etc." class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+        </div>
+        <div class="grid gap-1.5">
+          <label class="text-xs font-semibold text-slate-500">Latitude / Longitude</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" step="any" name="lat" placeholder="14.5995" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+            <input type="number" step="any" name="lng" placeholder="120.9842" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <button type="button" id="btn-job-use-location" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800">📍 Use my location</button>
+            <small class="text-xs text-slate-500">Auto-fill coordinates from your device.</small>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button type="reset" id="btn-cancel-post-2" class="rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">Cancel</button>
+        <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">Publish Job</button>
+      </div>
+      <p id="post-status" class="text-xs text-slate-500"></p>
     </form>
   </dialog>
 
   <!-- Auth Modal -->
-  <dialog id="auth-dialog">
-    <form id="auth-form" method="dialog">
-      <h3 id="auth-title">Log in</h3>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" name="email" required placeholder="you@example.com" />
+  <dialog id="auth-dialog" class="w-[min(460px,92vw)] rounded-2xl p-0">
+    <form id="auth-form" method="dialog" class="grid gap-4 p-5">
+      <div class="flex items-start justify-between">
+        <h3 id="auth-title" class="text-lg font-bold">Log in</h3>
+        <button type="reset" id="btn-cancel-auth" class="rounded-lg px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100">✕</button>
       </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" name="password" required placeholder="••••••••" />
+      <div class="grid gap-2">
+        <label class="text-xs font-semibold text-slate-500">Email</label>
+        <input type="email" name="email" required placeholder="you@example.com" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
       </div>
-      <menu>
-        <button type="reset" id="btn-cancel-auth" class="btn">Cancel</button>
-        <button type="submit" class="btn primary" id="btn-auth-submit">Continue</button>
-      </menu>
-      <p class="muted">No account yet? <a href="#" id="link-switch-auth">Sign up</a></p>
-      <p id="auth-status" class="muted"></p>
+      <div class="grid gap-2">
+        <label class="text-xs font-semibold text-slate-500">Password</label>
+        <input type="password" name="password" required placeholder="••••••••" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-card" />
+      </div>
+      <div class="flex items-center justify-between">
+        <p class="text-xs text-slate-500">No account yet?
+          <a href="#" id="link-switch-auth" class="font-semibold text-brand-600 hover:underline">Sign up</a>
+        </p>
+        <button id="btn-auth-submit" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Continue</button>
+      </div>
+      <p id="auth-status" class="text-xs text-slate-500"></p>
     </form>
   </dialog>
 
+  <!-- Job Card Template -->
   <template id="job-card-tpl">
-    <article class="card">
-      <div class="card-head">
-        <h4 class="job-title"></h4>
-        <span class="badge category"></span>
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-card hover:shadow-soft transition">
+      <div class="mb-2 flex items-start justify-between gap-3">
+        <h4 class="job-title text-lg font-semibold"></h4>
+        <span class="badge category rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700 ring-1 ring-inset ring-brand-200"></span>
       </div>
-      <p class="company"></p>
-      <p class="desc"></p>
-      <div class="meta">
-        <span class="salary"></span>
-        <span class="distance"></span>
-        <span class="city"></span>
+      <p class="company text-sm font-medium text-slate-600"></p>
+      <p class="desc line-clamp-3 mt-2 text-sm text-slate-600"></p>
+      <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+        <span class="salary inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1"></span>
+        <span class="distance inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1"></span>
+        <span class="city inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1"></span>
       </div>
-      <div class="actions">
-        <a class="contact" target="_blank" rel="noopener">Contact</a>
-        <button class="btn tiny outline edit hidden">Edit</button>
-        <button class="btn tiny danger delete hidden">Delete</button>
+      <div class="mt-4 flex flex-wrap items-center gap-2">
+        <a class="contact inline-flex items-center justify-center rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800" target="_blank" rel="noopener">Contact</a>
+        <button class="btn tiny outline edit hidden rounded-lg border border-brand-600 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">Edit</button>
+        <button class="btn tiny danger delete hidden rounded-lg bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Delete</button>
+        <small class="posted ml-auto text-xs text-slate-500"></small>
       </div>
-      <small class="posted muted"></small>
     </article>
   </template>
 
   <!-- App Logic -->
   <script type="module">
-    // Firebase + Job Portal logic — single-file version
+    // Firebase — modular v10
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
     import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-    // === FIREBASE CONFIG ===
-    // Replace with your Firebase project config (Console → Project settings → Web app).
+    // === PASTE YOUR FIREBASE CONFIG HERE ===
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_AUTH_DOMAIN",
@@ -283,7 +316,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // UI Elements
+    // UI refs
     const jobsListEl = document.getElementById('jobs-list');
     const emptyEl = document.getElementById('empty');
     const resultCountEl = document.getElementById('result-count');
@@ -292,6 +325,7 @@
     const dashboardSection = document.getElementById('dashboard');
 
     const btnOpenPost = document.getElementById('btn-open-post');
+    const btnOpenPost2 = document.getElementById('btn-open-post-2');
     const postDialog = document.getElementById('post-dialog');
     const postForm = document.getElementById('post-form');
     const postStatus = document.getElementById('post-status');
@@ -325,9 +359,10 @@
     let currentUser = null;
     let allJobs = [];
     let userLocation = null; // {lat, lng}
+    let authMode = 'login';
 
     // Helpers
-    function toRad(v) { return v * Math.PI / 180; }
+    const toRad = v => v * Math.PI / 180;
     function haversine(lat1, lon1, lat2, lon2) {
       const R = 6371; // km
       const dLat = toRad(lat2 - lat1);
@@ -336,12 +371,7 @@
       const c = 2 * Math.asin(Math.sqrt(a));
       return R * c;
     }
-
-    function fmtPeso(x) {
-      if (x == null || x === '') return '';
-      return '₱' + Number(x).toLocaleString();
-    }
-
+    const fmtPeso = x => (x == null || x === '') ? '' : '₱' + Number(x).toLocaleString();
     function timeAgo(ts) {
       const now = new Date();
       const d = ts?.toDate?.() ?? ts ?? now;
@@ -350,6 +380,14 @@
       if (diff < 3600) return Math.floor(diff/60) + 'm ago';
       if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
       return Math.floor(diff/86400) + 'd ago';
+    }
+
+    function toast(msg, type='info') {
+      const el = document.createElement('div');
+      el.className = `fixed left-1/2 top-4 z-[100] -translate-x-1/2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-soft ${type==='error' ? 'bg-red-600' : type==='ok' ? 'bg-emerald-600' : 'bg-slate-900'}`;
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(()=>{ el.remove(); }, 2000);
     }
 
     function renderJobs(list, targetEl, emptyEl) {
@@ -366,7 +404,7 @@
         frag.querySelector('.company').textContent = job.company || '';
         frag.querySelector('.desc').textContent = job.description || '';
         const salaryStr = (job.salaryMin || job.salaryMax)
-          ? `${fmtPeso(job.salaryMin)}${job.salaryMax? ' - '+fmtPeso(job.salaryMax): ''}`
+          ? `${fmtPeso(job.salaryMin)}${job.salaryMax? ' – '+fmtPeso(job.salaryMax): ''}`
           : 'Salary: Not specified';
         frag.querySelector('.salary').textContent = salaryStr;
         frag.querySelector('.city').textContent = job.city ? job.city : (job.address || '');
@@ -384,7 +422,6 @@
         const contact = frag.querySelector('.contact');
         const mailto = `mailto:${encodeURIComponent(job.contactEmail || '')}?subject=${encodeURIComponent('Application: ' + (job.title||'Job'))}`;
         contact.href = mailto;
-        contact.textContent = 'Contact';
 
         // Owner controls
         if (currentUser && job.uid === currentUser.uid) {
@@ -397,7 +434,6 @@
         }
 
         frag.querySelector('.posted').textContent = 'Posted ' + timeAgo(job.createdAt);
-
         targetEl.appendChild(frag);
       }
     }
@@ -409,14 +445,10 @@
       const maxDist = Number(distanceRange.value || 0);
 
       let list = allJobs.filter(j => {
-        // keyword
         const text = (j.title + ' ' + j.company + ' ' + j.description).toLowerCase();
         if (kw && !text.includes(kw)) return false;
-        // category
         if (cat && j.category !== cat) return false;
-        // salary
         if (minSal && (!j.salaryMin || j.salaryMin < minSal)) return false;
-        // distance
         if (maxDist > 0 && userLocation && j.lat && j.lng) {
           const d = haversine(userLocation.lat, userLocation.lng, j.lat, j.lng);
           if (d > maxDist) return false;
@@ -424,7 +456,6 @@
         return true;
       });
 
-      // sort by distance if userLocation known
       if (userLocation) {
         list = list.slice().sort((a,b) => {
           const da = (a.lat && a.lng) ? haversine(userLocation.lat, userLocation.lng, a.lat, a.lng) : Infinity;
@@ -458,14 +489,13 @@
       if (!confirm('Delete this job?')) return;
       try {
         await deleteDoc(doc(db, 'jobs', job.id));
-        alert('Deleted.');
+        toast('Deleted', 'ok');
       } catch (e) {
-        alert('Error: ' + e.message);
+        toast(e.message, 'error');
       }
     }
 
     // Auth modal logic
-    let authMode = 'login';
     btnLogin?.addEventListener('click', () => { authMode = 'login'; authTitle.textContent = 'Log in'; authDialog.showModal(); });
     btnSignup?.addEventListener('click', () => { authMode = 'signup'; authTitle.textContent = 'Sign up'; authDialog.showModal(); });
     linkSwitchAuth?.addEventListener('click', (e) => {
@@ -488,12 +518,17 @@
         }
         authStatus.textContent = 'Success!';
         authDialog.close();
+        toast('Welcome 👋', 'ok');
       } catch (err) {
         authStatus.textContent = err.message;
+        toast(err.message, 'error');
       }
     });
 
-    btnLogout?.addEventListener('click', () => signOut(auth));
+    btnLogout?.addEventListener('click', async () => {
+      await signOut(auth);
+      toast('Logged out', 'ok');
+    });
 
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
@@ -501,31 +536,30 @@
         authArea.classList.add('hidden');
         userArea.classList.remove('hidden');
         userEmailEl.textContent = user.email;
-        btnOpenPost.disabled = false;
-        btnDashboard.disabled = false;
-        loadMyJobs();
+        btnOpenPost?.classList.remove('hidden');
       } else {
         authArea.classList.remove('hidden');
         userArea.classList.add('hidden');
         userEmailEl.textContent = '';
-        btnOpenPost.disabled = true;
         dashboardSection.classList.add('hidden');
       }
     });
 
     // Post job modal
-    btnOpenPost?.addEventListener('click', () => {
+    function openPost() {
       if (!currentUser) { authMode='login'; authTitle.textContent='Log in'; authDialog.showModal(); return; }
       postForm.reset();
       postForm.dataset.editId = '';
       postStatus.textContent = '';
       if (currentUser?.email) postForm.contactEmail.value = currentUser.email;
       postDialog.showModal();
-    });
-
+    }
+    btnOpenPost?.addEventListener('click', openPost);
+    btnOpenPost2?.addEventListener('click', openPost);
     document.getElementById('btn-cancel-post')?.addEventListener('click', () => postDialog.close());
+    document.getElementById('btn-cancel-post-2')?.addEventListener('click', () => postDialog.close());
 
-    document.getElementById('btn-job-use-location')?.addEventListener('click', async () => {
+    btnJobUseLocation?.addEventListener('click', async () => {
       const coords = await getUserLocation();
       if (coords) {
         postForm.lat.value = coords.lat.toFixed(6);
@@ -536,7 +570,7 @@
 
     postForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!currentUser) { alert('Please log in.'); return; }
+      if (!currentUser) { toast('Please log in to post.', 'error'); return; }
       const data = {
         title: postForm.title.value.trim(),
         company: postForm.company.value.trim(),
@@ -556,14 +590,14 @@
       try {
         if (postForm.dataset.editId) {
           await updateDoc(doc(db, 'jobs', postForm.dataset.editId), data);
-          postStatus.textContent = 'Updated!';
+          toast('Job updated', 'ok');
         } else {
           await addDoc(collection(db, 'jobs'), data);
-          postStatus.textContent = 'Posted!';
+          toast('Job posted', 'ok');
         }
         postDialog.close();
       } catch (err) {
-        postStatus.textContent = err.message;
+        toast(err.message, 'error');
       }
     });
 
@@ -575,7 +609,8 @@
     btnLocate?.addEventListener('click', async () => {
       const coords = await getUserLocation();
       if (coords) {
-        geoStatus.textContent = `Location set (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}).`;
+        geoStatus.textContent = `Location set (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)})`;
+        toast('Location set ✅', 'ok');
         filterJobs();
       }
     });
@@ -583,6 +618,7 @@
     async function getUserLocation() {
       if (!('geolocation' in navigator)) {
         geoStatus.textContent = 'Geolocation not supported.';
+        toast('Geolocation not supported', 'error');
         return null;
       }
       geoStatus.textContent = 'Getting location…';
@@ -593,6 +629,7 @@
           resolve(userLocation);
         }, (err) => {
           geoStatus.textContent = err.message;
+          toast(err.message, 'error');
           resolve(null);
         }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
       });
@@ -605,11 +642,14 @@
     filterSalaryMin?.addEventListener('change', filterJobs);
     distanceRange?.addEventListener('change', filterJobs);
 
-    // Load jobs (live)
+    // Live jobs
     const jobsQ = query(collection(db, 'jobs'), orderBy('createdAt', 'desc'));
     onSnapshot(jobsQ, (snap) => {
       allJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       filterJobs();
+      if (dashboardSection && !dashboardSection.classList.contains('hidden')) {
+        loadMyJobs();
+      }
     });
 
     // Dashboard
@@ -626,6 +666,7 @@
   </script>
 </body>
 </html>
+
 
 
 
