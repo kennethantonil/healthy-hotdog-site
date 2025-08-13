@@ -2,226 +2,631 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CreatorBoost | Grow Your Audience</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NearMe Jobs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #0b0d10;
+      --card: #12161c;
+      --muted: #9aa4b2;
+      --text: #e6ebf2;
+      --primary: #4f46e5;
+      --danger: #ef4444;
+      --border: #1e2530;
     }
-    body {
-      background: #0e0e0e;
-      color: #fff;
-      line-height: 1.6;
-    }
-    header {
-      text-align: center;
-      padding: 1rem;
-      background: linear-gradient(135deg, #ff4d6d, #ff7f50);
-    }
-    header h1 {
-      font-size: 2rem;
-      font-weight: 700;
-    }
-    header p {
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-    nav {
-      background: rgba(255,255,255,0.05);
-      display: flex; justify-content: center; flex-wrap: wrap;
-      backdrop-filter: blur(10px);
-    }
-    nav a {
-      color: #fff; padding: 0.8rem 1rem; text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-    nav a:hover {
-      color: #ff4d6d;
-    }
-    .hero {
-      background: linear-gradient(135deg, #ff4d6d, #ff7f50);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      height: 60vh; text-align: center; padding: 1rem;
-    }
-    .hero h2 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-    .hero p {
-      max-width: 600px;
-      opacity: 0.9;
-    }
-    section {
-      padding: 2rem; max-width: 1200px; margin: auto;
-    }
-    h3 {
-      text-align: center;
-      margin-bottom: 2rem;
-      font-size: 1.8rem;
-      color: #ff7f50;
-    }
-    .grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-    .card {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(15px);
-      padding: 1.5rem;
-      border-radius: 15px;
-      text-align: center;
-      transition: transform 0.3s, background 0.3s;
-    }
-    .card:hover {
-      transform: translateY(-8px);
-      background: rgba(255,255,255,0.1);
-    }
-    .card h4 {
-      margin-bottom: 0.5rem;
-      color: #ff4d6d;
-    }
-    .card p {
-      font-size: 0.9rem;
-      opacity: 0.85;
-    }
-    img {
-      width: 100%; border-radius: 10px; margin-bottom: 0.8rem;
-    }
-    .cta {
-      text-align: center;
-      background: linear-gradient(135deg, #ff4d6d, #ff7f50);
-      padding: 2rem;
-      border-radius: 15px;
-      margin-top: 2rem;
-    }
-    .cta h3 {
-      color: #fff;
-    }
-    .cta p {
-      opacity: 0.9; margin: 0.5rem 0;
-    }
-    .cta button {
-      background: #fff;
-      color: #ff4d6d;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 25px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .cta button:hover {
-      background: #ffe1e7;
-      box-shadow: 0 0 10px rgba(255,77,109,0.7);
-    }
-    .contact-form input, .contact-form textarea {
-      width: 100%; padding: 0.8rem;
-      margin: 0.5rem 0; border: none;
-      border-radius: 8px;
-    }
-    .contact-form button {
-      background: #ff4d6d; color: #fff;
-      border: none; padding: 0.8rem 1.5rem;
-      cursor: pointer; border-radius: 8px;
-      transition: background 0.3s;
-    }
-    .contact-form button:hover {
-      background: #ff7f50;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-      margin-top: 2rem;
-      font-size: 0.85rem;
+    html, body { margin: 0; padding: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
+    .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); }
+    a { color: inherit; }
+
+    .site-header { position: sticky; top: 0; backdrop-filter: blur(8px); background: rgba(11,13,16,0.7); border-bottom: 1px solid var(--border); z-index: 10; }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .brand .logo { font-size: 22px; }
+    .brand h1 { margin: 0; font-size: 20px; letter-spacing: 0.3px; }
+    .brand h1 span { color: var(--primary); }
+    .nav { display: flex; align-items: center; gap: 10px; }
+
+    .btn { border: 1px solid var(--border); background: transparent; color: var(--text); padding: 10px 14px; border-radius: 10px; cursor: pointer; }
+    .btn:hover { border-color: #2a3442; }
+    .btn.primary { background: var(--primary); border-color: var(--primary); color: white; }
+    .btn.danger { background: var(--danger); border-color: var(--danger); color: white; }
+    .btn.small { padding: 6px 10px; border-radius: 8px; font-size: 12px; }
+    .btn.tiny { padding: 4px 8px; border-radius: 8px; font-size: 12px; }
+    .btn.outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+    .hero { padding: 24px 0; display: grid; gap: 10px; }
+    .search-bar { display: grid; grid-template-columns: 1fr 180px 160px 1fr auto auto; gap: 10px; }
+    .search-bar input, .search-bar select { width: 100%; padding: 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--text); }
+    .distance-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; display: grid; gap: 2px; }
+    .distance-wrap input[type="range"] { width: 100%; }
+    .results-header { display: flex; align-items: baseline; justify-content: space-between; margin: 10px 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: grid; gap: 8px; }
+    .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .card .job-title { margin: 0; font-size: 18px; }
+    .card .company { margin: 0; color: #cdd5df; }
+    .card .desc { margin: 0; color: #b8c1cc; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .card .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--muted); }
+    .badge { background: #1b2130; color: #c7d2fe; border: 1px solid #293149; padding: 4px 8px; border-radius: 999px; font-size: 12px; }
+    .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .contact { text-decoration: none; }
+    .posted { font-size: 12px; }
+
+    .empty-state { text-align: center; padding: 26px; border: 1px dashed var(--border); border-radius: 12px; }
+
+    /* Forms & dialogs */
+    dialog { border: 1px solid var(--border); padding: 0; border-radius: 16px; background: var(--card); color: var(--text); max-width: 720px; width: 92vw; }
+    dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
+    form { padding: 18px; display: grid; gap: 14px; }
+    .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .form-grid .full { grid-column: 1 / -1; }
+    .field { display: grid; gap: 8px; }
+    .field input, .field select, .field textarea { background: #0d1219; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
+    .field .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    menu { display: flex; justify-content: end; gap: 8px; margin: 0; padding: 0; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .search-bar { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
-
-<header>
-  <h1>CreatorBoost</h1>
-  <p>Helping Small Creators Become Big Voices 🚀</p>
-</header>
-
-<nav>
-  <a href="#services">Services</a>
-  <a href="#stories">Success Stories</a>
-  <a href="#contact">Contact</a>
-</nav>
-
-<section class="hero">
-  <h2>Grow Your Audience, Fast</h2>
-  <p>We help small content creators stand out, get more followers, and turn views into real growth.</p>
-</section>
-
-<section id="services">
-  <h3>How We Help You</h3>
-  <div class="grid">
-    <div class="card">
-      <h4>Content Coaching</h4>
-      <p>Learn to create engaging, viral content that connects with your audience.</p>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand" onclick="location.reload()">
+        <span class="logo">🧭</span>
+        <h1>NearMe <span>Jobs</span></h1>
+      </div>
+      <nav class="nav">
+        <button id="btn-open-post" class="btn primary">Post a Job</button>
+        <div id="auth-area">
+          <button id="btn-login" class="btn">Log in</button>
+          <button id="btn-signup" class="btn">Sign up</button>
+        </div>
+        <div id="user-area" class="hidden">
+          <span id="user-email" class="muted"></span>
+          <button id="btn-dashboard" class="btn">My Jobs</button>
+          <button id="btn-logout" class="btn danger">Log out</button>
+        </div>
+      </nav>
     </div>
-    <div class="card">
-      <h4>Brand Design</h4>
-      <p>Eye-catching visuals, thumbnails, and layouts to boost your online presence.</p>
-    </div>
-    <div class="card">
-      <h4>Growth Strategy</h4>
-      <p>We analyze your content and build a custom plan to grow your reach.</p>
-    </div>
-    <div class="card">
-      <h4>Ad Campaigns</h4>
-      <p>Smart targeting that puts your content in front of the right people.</p>
-    </div>
-  </div>
-</section>
+  </header>
 
-<section id="stories">
-  <h3>Success Stories</h3>
-  <div class="grid">
-    <div class="card">
-      <img src="https://source.unsplash.com/400x300/?youtuber" alt="">
-      <p>From 200 to 10,000 subscribers in 3 months!</p>
-    </div>
-    <div class="card">
-      <img src="https://source.unsplash.com/400x300/?tiktoker" alt="">
-      <p>1.5M views on a single TikTok with our strategy.</p>
-    </div>
-    <div class="card">
-      <img src="https://source.unsplash.com/400x300/?instagram" alt="">
-      <p>Reached 5,000 IG followers in just 6 weeks.</p>
-    </div>
-  </div>
-</section>
+  <main class="container">
+    <section class="hero">
+      <h2>Find jobs near you</h2>
+      <p>Search by keyword, category, salary, and distance from your location.</p>
 
-<div class="cta">
-  <h3>Ready to Start Growing?</h3>
-  <p>Book a free strategy call and let’s kickstart your creator journey!</p>
-  <button onclick="window.location.href='https://m.me/yourpage'">Message Us on Messenger</button>
-</div>
+      <div class="search-bar">
+        <input id="search-keyword" type="text" placeholder="Search job title, company, or keywords…" />
+        <select id="filter-category">
+          <option value="">All categories</option>
+          <option>Customer Service</option>
+          <option>Sales</option>
+          <option>Marketing</option>
+          <option>IT / Software</option>
+          <option>Design</option>
+          <option>Operations</option>
+          <option>Logistics</option>
+          <option>Healthcare</option>
+          <option>Education</option>
+          <option>Others</option>
+        </select>
+        <input id="filter-salary-min" type="number" min="0" placeholder="Min salary (monthly)" />
+        <div class="distance-wrap">
+          <label for="filter-distance">Max distance: <span id="distance-value">Any</span></label>
+          <input id="filter-distance" type="range" min="0" max="50" step="1" value="0" />
+        </div>
+        <button id="btn-locate" class="btn">📍 Use my location</button>
+        <button id="btn-search" class="btn primary">Search</button>
+      </div>
+      <small id="geo-status" class="muted"></small>
+    </section>
 
-<section id="contact">
-  <h3 style="color:#ff7f50;">Contact Us</h3>
-  <form class="contact-form">
-    <input type="text" placeholder="Your Name" required>
-    <input type="email" placeholder="Your Email" required>
-    <textarea placeholder="Your Message" rows="5" required></textarea>
-    <button type="submit">Send Message</button>
-  </form>
-</section>
+    <section>
+      <div class="results-header">
+        <h3>Job Listings</h3>
+        <span id="result-count" class="muted"></span>
+      </div>
+      <div id="jobs-list" class="grid"></div>
+      <div id="empty" class="empty-state hidden">
+        <p>No jobs found. Try adjusting your filters.</p>
+      </div>
+    </section>
 
-<footer>
-  <p>© 2025 CreatorBoost | Helping Small Creators Grow Big</p>
-</footer>
+    <section id="dashboard" class="hidden">
+      <h3>My Posted Jobs</h3>
+      <div id="my-jobs" class="grid"></div>
+      <div id="my-empty" class="empty-state hidden"><p>You haven't posted any jobs yet.</p></div>
+    </section>
+  </main>
 
+  <!-- Post Job Modal -->
+  <dialog id="post-dialog">
+    <form id="post-form" method="dialog">
+      <h3>Post a Job</h3>
+      <div class="grid form-grid">
+        <div class="field">
+          <label>Job Title</label>
+          <input name="title" required placeholder="e.g., Sales Associate" />
+        </div>
+        <div class="field">
+          <label>Company</label>
+          <input name="company" required placeholder="Your company name" />
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select name="category" required>
+            <option>Customer Service</option>
+            <option>Sales</option>
+            <option>Marketing</option>
+            <option>IT / Software</option>
+            <option>Design</option>
+            <option>Operations</option>
+            <option>Logistics</option>
+            <option>Healthcare</option>
+            <option>Education</option>
+            <option>Others</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Monthly Salary Range (₱)</label>
+          <div class="two">
+            <input type="number" name="salaryMin" min="0" placeholder="Min" />
+            <input type="number" name="salaryMax" min="0" placeholder="Max" />
+          </div>
+        </div>
+        <div class="field full">
+          <label>Job Description</label>
+          <textarea name="description" rows="5" required placeholder="Responsibilities, requirements, schedule, benefits…"></textarea>
+        </div>
+        <div class="field">
+          <label>Contact Email</label>
+          <input type="email" name="contactEmail" required placeholder="hr@company.com" />
+        </div>
+        <div class="field">
+          <label>City / Area</label>
+          <input name="city" placeholder="e.g., Quezon City" />
+        </div>
+        <div class="field">
+          <label>Address (optional)</label>
+          <input name="address" placeholder="Street, building, etc." />
+        </div>
+        <div class="field">
+          <label>Latitude / Longitude</label>
+          <div class="two">
+            <input type="number" step="any" name="lat" placeholder="14.5995" />
+            <input type="number" step="any" name="lng" placeholder="120.9842" />
+          </div>
+          <small class="muted">Tip: Click “Use my location” to auto-fill.</small>
+          <button type="button" id="btn-job-use-location" class="btn small">📍 Use my location</button>
+        </div>
+      </div>
+      <menu>
+        <button type="reset" id="btn-cancel-post" class="btn">Cancel</button>
+        <button type="submit" class="btn primary">Publish Job</button>
+      </menu>
+      <p id="post-status" class="muted"></p>
+    </form>
+  </dialog>
+
+  <!-- Auth Modal -->
+  <dialog id="auth-dialog">
+    <form id="auth-form" method="dialog">
+      <h3 id="auth-title">Log in</h3>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="you@example.com" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="••••••••" />
+      </div>
+      <menu>
+        <button type="reset" id="btn-cancel-auth" class="btn">Cancel</button>
+        <button type="submit" class="btn primary" id="btn-auth-submit">Continue</button>
+      </menu>
+      <p class="muted">No account yet? <a href="#" id="link-switch-auth">Sign up</a></p>
+      <p id="auth-status" class="muted"></p>
+    </form>
+  </dialog>
+
+  <template id="job-card-tpl">
+    <article class="card">
+      <div class="card-head">
+        <h4 class="job-title"></h4>
+        <span class="badge category"></span>
+      </div>
+      <p class="company"></p>
+      <p class="desc"></p>
+      <div class="meta">
+        <span class="salary"></span>
+        <span class="distance"></span>
+        <span class="city"></span>
+      </div>
+      <div class="actions">
+        <a class="contact" target="_blank" rel="noopener">Contact</a>
+        <button class="btn tiny outline edit hidden">Edit</button>
+        <button class="btn tiny danger delete hidden">Delete</button>
+      </div>
+      <small class="posted muted"></small>
+    </article>
+  </template>
+
+  <!-- App Logic -->
+  <script type="module">
+    // Firebase + Job Portal logic — single-file version
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    // === FIREBASE CONFIG ===
+    // Replace with your Firebase project config (Console → Project settings → Web app).
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Init
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // UI Elements
+    const jobsListEl = document.getElementById('jobs-list');
+    const emptyEl = document.getElementById('empty');
+    const resultCountEl = document.getElementById('result-count');
+    const myJobsEl = document.getElementById('my-jobs');
+    const myEmptyEl = document.getElementById('my-empty');
+    const dashboardSection = document.getElementById('dashboard');
+
+    const btnOpenPost = document.getElementById('btn-open-post');
+    const postDialog = document.getElementById('post-dialog');
+    const postForm = document.getElementById('post-form');
+    const postStatus = document.getElementById('post-status');
+    const btnJobUseLocation = document.getElementById('btn-job-use-location');
+
+    const btnLogin = document.getElementById('btn-login');
+    const btnSignup = document.getElementById('btn-signup');
+    const authDialog = document.getElementById('auth-dialog');
+    const authForm = document.getElementById('auth-form');
+    const authTitle = document.getElementById('auth-title');
+    const linkSwitchAuth = document.getElementById('link-switch-auth');
+    const authStatus = document.getElementById('auth-status');
+    const btnCancelAuth = document.getElementById('btn-cancel-auth');
+    const authArea = document.getElementById('auth-area');
+    const userArea = document.getElementById('user-area');
+    const userEmailEl = document.getElementById('user-email');
+    const btnLogout = document.getElementById('btn-logout');
+    const btnDashboard = document.getElementById('btn-dashboard');
+
+    const btnLocate = document.getElementById('btn-locate');
+    const geoStatus = document.getElementById('geo-status');
+    const distanceRange = document.getElementById('filter-distance');
+    const distanceValue = document.getElementById('distance-value');
+    const filterCategory = document.getElementById('filter-category');
+    const filterSalaryMin = document.getElementById('filter-salary-min');
+    const searchKeyword = document.getElementById('search-keyword');
+    const btnSearch = document.getElementById('btn-search');
+
+    const jobCardTpl = document.getElementById('job-card-tpl');
+
+    let currentUser = null;
+    let allJobs = [];
+    let userLocation = null; // {lat, lng}
+
+    // Helpers
+    function toRad(v) { return v * Math.PI / 180; }
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+      const c = 2 * Math.asin(Math.sqrt(a));
+      return R * c;
+    }
+
+    function fmtPeso(x) {
+      if (x == null || x === '') return '';
+      return '₱' + Number(x).toLocaleString();
+    }
+
+    function timeAgo(ts) {
+      const now = new Date();
+      const d = ts?.toDate?.() ?? ts ?? now;
+      const diff = (now - d) / 1000;
+      if (diff < 60) return 'just now';
+      if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+      return Math.floor(diff/86400) + 'd ago';
+    }
+
+    function renderJobs(list, targetEl, emptyEl) {
+      targetEl.innerHTML = '';
+      if (!list.length) {
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+      for (const job of list) {
+        const frag = jobCardTpl.content.cloneNode(true);
+        frag.querySelector('.job-title').textContent = job.title;
+        frag.querySelector('.category').textContent = job.category || 'Others';
+        frag.querySelector('.company').textContent = job.company || '';
+        frag.querySelector('.desc').textContent = job.description || '';
+        const salaryStr = (job.salaryMin || job.salaryMax)
+          ? `${fmtPeso(job.salaryMin)}${job.salaryMax? ' - '+fmtPeso(job.salaryMax): ''}`
+          : 'Salary: Not specified';
+        frag.querySelector('.salary').textContent = salaryStr;
+        frag.querySelector('.city').textContent = job.city ? job.city : (job.address || '');
+
+        // Distance
+        const distanceEl = frag.querySelector('.distance');
+        if (userLocation && job.lat && job.lng) {
+          const d = haversine(userLocation.lat, userLocation.lng, job.lat, job.lng);
+          distanceEl.textContent = d.toFixed(1) + ' km';
+        } else {
+          distanceEl.textContent = '';
+        }
+
+        // Contact
+        const contact = frag.querySelector('.contact');
+        const mailto = `mailto:${encodeURIComponent(job.contactEmail || '')}?subject=${encodeURIComponent('Application: ' + (job.title||'Job'))}`;
+        contact.href = mailto;
+        contact.textContent = 'Contact';
+
+        // Owner controls
+        if (currentUser && job.uid === currentUser.uid) {
+          const editBtn = frag.querySelector('.edit');
+          const delBtn = frag.querySelector('.delete');
+          editBtn.classList.remove('hidden');
+          delBtn.classList.remove('hidden');
+          editBtn.addEventListener('click', () => openEdit(job));
+          delBtn.addEventListener('click', () => deleteJob(job));
+        }
+
+        frag.querySelector('.posted').textContent = 'Posted ' + timeAgo(job.createdAt);
+
+        targetEl.appendChild(frag);
+      }
+    }
+
+    function filterJobs() {
+      const kw = (searchKeyword.value || '').toLowerCase().trim();
+      const cat = filterCategory.value;
+      const minSal = Number(filterSalaryMin.value || 0);
+      const maxDist = Number(distanceRange.value || 0);
+
+      let list = allJobs.filter(j => {
+        // keyword
+        const text = (j.title + ' ' + j.company + ' ' + j.description).toLowerCase();
+        if (kw && !text.includes(kw)) return false;
+        // category
+        if (cat && j.category !== cat) return false;
+        // salary
+        if (minSal && (!j.salaryMin || j.salaryMin < minSal)) return false;
+        // distance
+        if (maxDist > 0 && userLocation && j.lat && j.lng) {
+          const d = haversine(userLocation.lat, userLocation.lng, j.lat, j.lng);
+          if (d > maxDist) return false;
+        }
+        return true;
+      });
+
+      // sort by distance if userLocation known
+      if (userLocation) {
+        list = list.slice().sort((a,b) => {
+          const da = (a.lat && a.lng) ? haversine(userLocation.lat, userLocation.lng, a.lat, a.lng) : Infinity;
+          const db = (b.lat && b.lng) ? haversine(userLocation.lat, userLocation.lng, b.lat, b.lng) : Infinity;
+          return da - db;
+        });
+      }
+
+      resultCountEl.textContent = list.length ? `${list.length} result(s)` : '';
+      renderJobs(list, jobsListEl, emptyEl);
+    }
+
+    function openEdit(job) {
+      postDialog.showModal();
+      postStatus.textContent = 'Editing…';
+      postForm.dataset.editId = job.id;
+      postForm.title.value = job.title || '';
+      postForm.company.value = job.company || '';
+      postForm.category.value = job.category || 'Others';
+      postForm.salaryMin.value = job.salaryMin || '';
+      postForm.salaryMax.value = job.salaryMax || '';
+      postForm.description.value = job.description || '';
+      postForm.contactEmail.value = job.contactEmail || currentUser?.email || '';
+      postForm.city.value = job.city || '';
+      postForm.address.value = job.address || '';
+      postForm.lat.value = job.lat || '';
+      postForm.lng.value = job.lng || '';
+    }
+
+    async function deleteJob(job) {
+      if (!confirm('Delete this job?')) return;
+      try {
+        await deleteDoc(doc(db, 'jobs', job.id));
+        alert('Deleted.');
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    // Auth modal logic
+    let authMode = 'login';
+    btnLogin?.addEventListener('click', () => { authMode = 'login'; authTitle.textContent = 'Log in'; authDialog.showModal(); });
+    btnSignup?.addEventListener('click', () => { authMode = 'signup'; authTitle.textContent = 'Sign up'; authDialog.showModal(); });
+    linkSwitchAuth?.addEventListener('click', (e) => {
+      e.preventDefault();
+      authMode = (authMode === 'login') ? 'signup' : 'login';
+      authTitle.textContent = authMode === 'login' ? 'Log in' : 'Sign up';
+    });
+    btnCancelAuth?.addEventListener('click', () => authDialog.close());
+
+    authForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = authForm.email.value;
+      const password = authForm.password.value;
+      authStatus.textContent = 'Please wait…';
+      try {
+        if (authMode === 'login') {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          await createUserWithEmailAndPassword(auth, email, password);
+        }
+        authStatus.textContent = 'Success!';
+        authDialog.close();
+      } catch (err) {
+        authStatus.textContent = err.message;
+      }
+    });
+
+    btnLogout?.addEventListener('click', () => signOut(auth));
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        authArea.classList.add('hidden');
+        userArea.classList.remove('hidden');
+        userEmailEl.textContent = user.email;
+        btnOpenPost.disabled = false;
+        btnDashboard.disabled = false;
+        loadMyJobs();
+      } else {
+        authArea.classList.remove('hidden');
+        userArea.classList.add('hidden');
+        userEmailEl.textContent = '';
+        btnOpenPost.disabled = true;
+        dashboardSection.classList.add('hidden');
+      }
+    });
+
+    // Post job modal
+    btnOpenPost?.addEventListener('click', () => {
+      if (!currentUser) { authMode='login'; authTitle.textContent='Log in'; authDialog.showModal(); return; }
+      postForm.reset();
+      postForm.dataset.editId = '';
+      postStatus.textContent = '';
+      if (currentUser?.email) postForm.contactEmail.value = currentUser.email;
+      postDialog.showModal();
+    });
+
+    document.getElementById('btn-cancel-post')?.addEventListener('click', () => postDialog.close());
+
+    document.getElementById('btn-job-use-location')?.addEventListener('click', async () => {
+      const coords = await getUserLocation();
+      if (coords) {
+        postForm.lat.value = coords.lat.toFixed(6);
+        postForm.lng.value = coords.lng.toFixed(6);
+        postStatus.textContent = 'Location filled.';
+      }
+    });
+
+    postForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentUser) { alert('Please log in.'); return; }
+      const data = {
+        title: postForm.title.value.trim(),
+        company: postForm.company.value.trim(),
+        category: postForm.category.value,
+        salaryMin: postForm.salaryMin.value ? Number(postForm.salaryMin.value) : null,
+        salaryMax: postForm.salaryMax.value ? Number(postForm.salaryMax.value) : null,
+        description: postForm.description.value.trim(),
+        contactEmail: postForm.contactEmail.value.trim(),
+        city: postForm.city.value.trim(),
+        address: postForm.address.value.trim(),
+        lat: postForm.lat.value ? Number(postForm.lat.value) : null,
+        lng: postForm.lng.value ? Number(postForm.lng.value) : null,
+        uid: currentUser.uid,
+        posterEmail: currentUser.email,
+        createdAt: serverTimestamp()
+      };
+      try {
+        if (postForm.dataset.editId) {
+          await updateDoc(doc(db, 'jobs', postForm.dataset.editId), data);
+          postStatus.textContent = 'Updated!';
+        } else {
+          await addDoc(collection(db, 'jobs'), data);
+          postStatus.textContent = 'Posted!';
+        }
+        postDialog.close();
+      } catch (err) {
+        postStatus.textContent = err.message;
+      }
+    });
+
+    // Geolocation
+    distanceRange?.addEventListener('input', () => {
+      distanceValue.textContent = distanceRange.value === '0' ? 'Any' : (distanceRange.value + ' km');
+    });
+
+    btnLocate?.addEventListener('click', async () => {
+      const coords = await getUserLocation();
+      if (coords) {
+        geoStatus.textContent = `Location set (${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}).`;
+        filterJobs();
+      }
+    });
+
+    async function getUserLocation() {
+      if (!('geolocation' in navigator)) {
+        geoStatus.textContent = 'Geolocation not supported.';
+        return null;
+      }
+      geoStatus.textContent = 'Getting location…';
+      return new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          geoStatus.textContent = 'Location ready.';
+          resolve(userLocation);
+        }, (err) => {
+          geoStatus.textContent = err.message;
+          resolve(null);
+        }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 });
+      });
+    }
+
+    // Search
+    btnSearch?.addEventListener('click', filterJobs);
+    searchKeyword?.addEventListener('keydown', (e) => (e.key === 'Enter') && filterJobs());
+    filterCategory?.addEventListener('change', filterJobs);
+    filterSalaryMin?.addEventListener('change', filterJobs);
+    distanceRange?.addEventListener('change', filterJobs);
+
+    // Load jobs (live)
+    const jobsQ = query(collection(db, 'jobs'), orderBy('createdAt', 'desc'));
+    onSnapshot(jobsQ, (snap) => {
+      allJobs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      filterJobs();
+    });
+
+    // Dashboard
+    btnDashboard?.addEventListener('click', () => {
+      dashboardSection.classList.toggle('hidden');
+      loadMyJobs();
+    });
+
+    function loadMyJobs() {
+      if (!currentUser) return;
+      const mine = allJobs.filter(j => j.uid === currentUser.uid);
+      renderJobs(mine, myJobsEl, myEmptyEl);
+    }
+  </script>
 </body>
 </html>
+
 
 
 
