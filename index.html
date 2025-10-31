@@ -60,6 +60,13 @@
     .stop-btn:hover {
       background-color: #e04848;
     }
+    .restart-btn {
+      background-color: #2979ff;
+      margin-left: 5px;
+    }
+    .restart-btn:hover {
+      background-color: #1565c0;
+    }
     .info {
       text-align: left;
       margin-top: 15px;
@@ -81,12 +88,13 @@
 </head>
 <body>
 
-  <!-- Generate 4 PCs -->
+  <!-- Container for PCs -->
   <div id="pcs"></div>
 
 <script>
-  const pcCount = 4; // number of PCs
+  const pcCount = 4; // Number of PCs
   const timers = {};
+  const savedData = {}; // Store last session info for restart
 
   function createPCBoxes() {
     const container = document.getElementById('pcs');
@@ -99,6 +107,7 @@
         <div>
           <button onclick="startTimer(${i})">Start</button>
           <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
+          <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
         </div>
         <div class="info">
           <p><b>Name:</b> <span id="displayName${i}">-</span></p>
@@ -114,7 +123,7 @@
 
   createPCBoxes();
 
-  // Function to update all current times
+  // Update current time every second for all PCs
   setInterval(() => {
     const now = new Date();
     const current = now.toLocaleTimeString();
@@ -134,8 +143,11 @@
       return;
     }
 
-    let totalSeconds = amount * 4 * 60; // 1 peso = 4 mins
+    let totalSeconds = amount * 4 * 60; // 1 peso = 4 minutes
     const endTime = new Date(Date.now() + totalSeconds * 1000);
+
+    // Save data for restart
+    savedData[pcNumber] = { name, amount };
 
     document.getElementById(`displayName${pcNumber}`).textContent = name;
     document.getElementById(`displayAmount${pcNumber}`).textContent = amount.toFixed(2);
@@ -159,8 +171,20 @@
   function stopTimer(pcNumber) {
     clearInterval(timers[pcNumber]);
   }
+
+  function restartTimer(pcNumber) {
+    if (!savedData[pcNumber]) {
+      alert("No previous session found for this PC.");
+      return;
+    }
+    const { name, amount } = savedData[pcNumber];
+    document.getElementById(`name${pcNumber}`).value = name;
+    document.getElementById(`amount${pcNumber}`).value = amount;
+    startTimer(pcNumber);
+  }
 </script>
 
 </body>
 </html>
+
 
