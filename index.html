@@ -20,7 +20,7 @@
       background: #1f1f1f;
       border-radius: 20px;
       box-shadow: 0 0 15px rgba(0,0,0,0.4);
-      width: 300px;
+      width: 320px;
       padding: 20px;
       text-align: center;
       transition: transform 0.2s ease;
@@ -67,6 +67,13 @@
     .restart-btn:hover {
       background-color: #1565c0;
     }
+    .addtime-btn {
+      background-color: #ffb300;
+      margin-top: 10px;
+    }
+    .addtime-btn:hover {
+      background-color: #ffa000;
+    }
     .info {
       text-align: left;
       margin-top: 15px;
@@ -94,7 +101,8 @@
 <script>
   const pcCount = 4; // Number of PCs
   const timers = {};
-  const savedData = {}; // Store last session info for restart
+  const savedData = {};
+  const remainingSeconds = {}; // track remaining time for each PC
 
   function createPCBoxes() {
     const container = document.getElementById('pcs');
@@ -109,9 +117,12 @@
           <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
           <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
         </div>
+        <input type="number" id="addAmount${i}" placeholder="Add ₱ (for extra time)" min="1">
+        <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
+
         <div class="info">
           <p><b>Name:</b> <span id="displayName${i}">-</span></p>
-          <p><b>Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
+          <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
           <p><b>Time Remaining:</b></p>
           <div class="timer" id="timeRemaining${i}">00:00</div>
           <p class="time-label">🕒 Current Time: <span id="currentTime${i}">--:--:--</span></p>
@@ -123,7 +134,7 @@
 
   createPCBoxes();
 
-  // Update current time every second for all PCs
+  // Update current time every second
   setInterval(() => {
     const now = new Date();
     const current = now.toLocaleTimeString();
@@ -143,10 +154,10 @@
       return;
     }
 
-    let totalSeconds = amount * 4 * 60; // 1 peso = 4 minutes
-    const endTime = new Date(Date.now() + totalSeconds * 1000);
+    let totalSeconds = amount * 4 * 60;
+    remainingSeconds[pcNumber] = totalSeconds;
 
-    // Save data for restart
+    const endTime = new Date(Date.now() + totalSeconds * 1000);
     savedData[pcNumber] = { name, amount };
 
     document.getElementById(`displayName${pcNumber}`).textContent = name;
@@ -154,17 +165,15 @@
     document.getElementById(`endTime${pcNumber}`).textContent = endTime.toLocaleTimeString();
 
     timers[pcNumber] = setInterval(() => {
-      let minutes = Math.floor(totalSeconds / 60);
-      let seconds = totalSeconds % 60;
-      document.getElementById(`timeRemaining${pcNumber}`).textContent =
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-      if (totalSeconds <= 0) {
+      if (remainingSeconds[pcNumber] <= 0) {
         clearInterval(timers[pcNumber]);
         document.getElementById(`timeRemaining${pcNumber}`).textContent = "00:00";
         alert(`Time is up for ${name} (PC ${pcNumber})!`);
+        return;
       }
-      totalSeconds--;
+
+      remainingSeconds[pcNumber]--;
+      updateDisplay(pcNumber);
     }, 1000);
   }
 
@@ -182,9 +191,42 @@
     document.getElementById(`amount${pcNumber}`).value = amount;
     startTimer(pcNumber);
   }
+
+  function addTime(pcNumber) {
+    const addAmount = parseFloat(document.getElementById(`addAmount${pcNumber}`).value);
+    if (isNaN(addAmount) || addAmount <= 0) {
+      alert("Please enter a valid additional amount.");
+      return;
+    }
+
+    // Add time (1 peso = 4 mins)
+    const addedSeconds = addAmount * 4 * 60;
+    remainingSeconds[pcNumber] += addedSeconds;
+
+    // Update total amount
+    const currentAmount = parseFloat(document.getElementById(`displayAmount${pcNumber}`).textContent);
+    const newAmount = currentAmount + addAmount;
+    document.getElementById(`displayAmount${pcNumber}`).textContent = newAmount.toFixed(2);
+
+    // Update end time display
+    const newEndTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
+    document.getElementById(`endTime${pcNumber}`).textContent = newEndTime.toLocaleTimeString();
+
+    document.getElementById(`addAmount${pcNumber}`).value = "";
+
+    alert(`Added ₱${addAmount.toFixed(2)} (${addedSeconds / 60} mins) to PC ${pcNumber}`);
+  }
+
+  function updateDisplay(pcNumber) {
+    let minutes = Math.floor(remainingSeconds[pcNumber] / 60);
+    let seconds = remainingSeconds[pcNumber] % 60;
+    document.getElementById(`timeRemaining${pcNumber}`).textContent =
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
 </script>
 
 </body>
 </html>
+
 
 
