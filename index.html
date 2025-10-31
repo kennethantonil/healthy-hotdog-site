@@ -72,76 +72,56 @@
       text-align: center;
       margin-top: 10px;
     }
+    .time-label {
+      color: #aaa;
+      font-size: 0.9em;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="pc-box" id="pc1">
-    <h2>💻 PC 1</h2>
-    <input type="text" id="name1" placeholder="Customer Name">
-    <input type="number" id="amount1" placeholder="Amount (₱)" min="1">
-    <div>
-      <button onclick="startTimer(1)">Start</button>
-      <button class="stop-btn" onclick="stopTimer(1)">Stop</button>
-    </div>
-    <div class="info">
-      <p><b>Name:</b> <span id="displayName1">-</span></p>
-      <p><b>Amount:</b> ₱<span id="displayAmount1">0</span></p>
-      <p><b>Time Remaining:</b></p>
-      <div class="timer" id="timeRemaining1">00:00</div>
-    </div>
-  </div>
-
-  <div class="pc-box" id="pc2">
-    <h2>💻 PC 2</h2>
-    <input type="text" id="name2" placeholder="Customer Name">
-    <input type="number" id="amount2" placeholder="Amount (₱)" min="1">
-    <div>
-      <button onclick="startTimer(2)">Start</button>
-      <button class="stop-btn" onclick="stopTimer(2)">Stop</button>
-    </div>
-    <div class="info">
-      <p><b>Name:</b> <span id="displayName2">-</span></p>
-      <p><b>Amount:</b> ₱<span id="displayAmount2">0</span></p>
-      <p><b>Time Remaining:</b></p>
-      <div class="timer" id="timeRemaining2">00:00</div>
-    </div>
-  </div>
-
-  <div class="pc-box" id="pc3">
-    <h2>💻 PC 3</h2>
-    <input type="text" id="name3" placeholder="Customer Name">
-    <input type="number" id="amount3" placeholder="Amount (₱)" min="1">
-    <div>
-      <button onclick="startTimer(3)">Start</button>
-      <button class="stop-btn" onclick="stopTimer(3)">Stop</button>
-    </div>
-    <div class="info">
-      <p><b>Name:</b> <span id="displayName3">-</span></p>
-      <p><b>Amount:</b> ₱<span id="displayAmount3">0</span></p>
-      <p><b>Time Remaining:</b></p>
-      <div class="timer" id="timeRemaining3">00:00</div>
-    </div>
-  </div>
-
-  <div class="pc-box" id="pc4">
-    <h2>💻 PC 4</h2>
-    <input type="text" id="name4" placeholder="Customer Name">
-    <input type="number" id="amount4" placeholder="Amount (₱)" min="1">
-    <div>
-      <button onclick="startTimer(4)">Start</button>
-      <button class="stop-btn" onclick="stopTimer(4)">Stop</button>
-    </div>
-    <div class="info">
-      <p><b>Name:</b> <span id="displayName4">-</span></p>
-      <p><b>Amount:</b> ₱<span id="displayAmount4">0</span></p>
-      <p><b>Time Remaining:</b></p>
-      <div class="timer" id="timeRemaining4">00:00</div>
-    </div>
-  </div>
+  <!-- Generate 4 PCs -->
+  <div id="pcs"></div>
 
 <script>
+  const pcCount = 4; // number of PCs
   const timers = {};
+
+  function createPCBoxes() {
+    const container = document.getElementById('pcs');
+    for (let i = 1; i <= pcCount; i++) {
+      container.innerHTML += `
+      <div class="pc-box" id="pc${i}">
+        <h2>💻 PC ${i}</h2>
+        <input type="text" id="name${i}" placeholder="Customer Name">
+        <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
+        <div>
+          <button onclick="startTimer(${i})">Start</button>
+          <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
+        </div>
+        <div class="info">
+          <p><b>Name:</b> <span id="displayName${i}">-</span></p>
+          <p><b>Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
+          <p><b>Time Remaining:</b></p>
+          <div class="timer" id="timeRemaining${i}">00:00</div>
+          <p class="time-label">🕒 Current Time: <span id="currentTime${i}">--:--:--</span></p>
+          <p class="time-label">⏰ End Time: <span id="endTime${i}">--:--:--</span></p>
+        </div>
+      </div>`;
+    }
+  }
+
+  createPCBoxes();
+
+  // Function to update all current times
+  setInterval(() => {
+    const now = new Date();
+    const current = now.toLocaleTimeString();
+    for (let i = 1; i <= pcCount; i++) {
+      document.getElementById(`currentTime${i}`).textContent = current;
+    }
+  }, 1000);
 
   function startTimer(pcNumber) {
     stopTimer(pcNumber);
@@ -155,9 +135,11 @@
     }
 
     let totalSeconds = amount * 4 * 60; // 1 peso = 4 mins
+    const endTime = new Date(Date.now() + totalSeconds * 1000);
 
     document.getElementById(`displayName${pcNumber}`).textContent = name;
     document.getElementById(`displayAmount${pcNumber}`).textContent = amount.toFixed(2);
+    document.getElementById(`endTime${pcNumber}`).textContent = endTime.toLocaleTimeString();
 
     timers[pcNumber] = setInterval(() => {
       let minutes = Math.floor(totalSeconds / 60);
@@ -167,6 +149,7 @@
 
       if (totalSeconds <= 0) {
         clearInterval(timers[pcNumber]);
+        document.getElementById(`timeRemaining${pcNumber}`).textContent = "00:00";
         alert(`Time is up for ${name} (PC ${pcNumber})!`);
       }
       totalSeconds--;
@@ -180,3 +163,4 @@
 
 </body>
 </html>
+
