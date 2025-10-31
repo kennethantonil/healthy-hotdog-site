@@ -1,169 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PC Rental Timer System</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
-        url("IMG_1856_converted.jpg") no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 25px;
-      min-height: 100vh;
-    }
-
-    /* Dashboard */
-    .dashboard {
-      background: rgba(30, 30, 30, 0.9);
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      padding: 20px 40px;
-      width: 90%;
-      max-width: 800px;
-      text-align: center;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .dashboard-item {
-      flex: 1 1 200px;
-      margin: 10px;
-    }
-
-    .dashboard h1 {
-      font-size: 1.2em;
-      color: #aaa;
-      margin-bottom: 5px;
-    }
-
-    .dashboard .value {
-      font-size: 2em;
-      font-weight: bold;
-      color: #00e676;
-    }
-
-    /* PC Box Styling */
-    #pcs {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      width: 100%;
-    }
-
-    .pc-box {
-      background: rgba(31, 31, 31, 0.92);
-      border-radius: 20px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-      width: 320px;
-      padding: 20px;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-    }
-
-    .pc-box:hover { 
-      transform: scale(1.03); 
-      box-shadow: 0 0 25px rgba(0,0,0,0.8);
-    }
-
-    h2 { margin-bottom: 10px; font-size: 1.3em; }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      margin: 6px 0;
-      font-size: 1em;
-    }
-
-    button {
-      background-color: #00c853;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 10px;
-      transition: 0.2s;
-    }
-
-    button:hover { background-color: #00a843; }
-
-    .stop-btn { background-color: #ff5252; margin-left: 5px; }
-    .stop-btn:hover { background-color: #e04848; }
-
-    .restart-btn { background-color: #2979ff; margin-left: 5px; }
-    .restart-btn:hover { background-color: #1565c0; }
-
-    .addtime-btn { background-color: #ffb300; margin-top: 10px; }
-    .addtime-btn:hover { background-color: #ffa000; }
-
-    .reset-btn {
-      background-color: #d500f9;
-      border-radius: 12px;
-      padding: 10px 25px;
-      font-weight: bold;
-      color: white;
-      border: none;
-      margin-top: 10px;
-      transition: 0.2s;
-    }
-
-    .reset-btn:hover { background-color: #aa00ff; }
-
-    .info { text-align: left; margin-top: 15px; font-size: 1em; }
-
-    .timer {
-      font-size: 2em;
-      font-weight: bold;
-      color: #ff5252;
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .time-label { color: #ccc; font-size: 0.9em; margin-top: 8px; }
-  </style>
-</head>
-<body>
-
-  <!-- Dashboard Summary -->
-  <div class="dashboard">
-    <div class="dashboard-item">
-      <h1>🖥️ Active PCs</h1>
-      <div class="value" id="activePCs">0</div>
-    </div>
-    <div class="dashboard-item">
-      <h1>💰 Total Earnings</h1>
-      <div class="value" id="totalEarnings">₱0.00</div>
-    </div>
-    <div class="dashboard-item">
-      <h1>🕒 Current Time</h1>
-      <div class="value" id="dashboardTime">--:--:--</div>
-    </div>
-  </div>
-
-  <button class="reset-btn" onclick="resetAll()">🔄 Reset All</button>
-
-  <div id="pcs"></div>
-
 <script>
   const pcCount = 4;
   const timers = {};
   const remainingSeconds = {};
   let totalEarnings = 0;
+
+  // --- 🔊 Load alert tone ---
+  const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+  alertSound.volume = 0.8;
 
   function createPCBoxes() {
     const container = document.getElementById('pcs');
@@ -195,6 +38,7 @@
 
   createPCBoxes();
 
+  // --- 🕒 Update time display ---
   setInterval(() => {
     const now = new Date().toLocaleTimeString();
     document.getElementById("dashboardTime").textContent = now;
@@ -204,6 +48,7 @@
     updateDashboard();
   }, 1000);
 
+  // --- 💾 Save and Load Data ---
   function saveData() {
     const data = {};
     for (let i = 1; i <= pcCount; i++) {
@@ -236,6 +81,7 @@
     updateDashboard();
   }
 
+  // --- 🕹️ Core Functions ---
   function startTimer(pcNumber) {
     stopTimer(pcNumber);
     const name = document.getElementById(`name${pcNumber}`).value;
@@ -260,6 +106,10 @@
       if (remainingSeconds[pcNumber] <= 0) {
         clearInterval(timers[pcNumber]);
         document.getElementById(`timeRemaining${pcNumber}`).textContent = "00:00";
+
+        // 🔔 Play alert tone when time is up
+        alertSound.play().catch(err => console.log("Autoplay prevented:", err));
+
         alert(`Time is up for ${document.getElementById(`displayName${pcNumber}`).textContent} (PC ${pcNumber})!`);
         saveData();
         updateDashboard();
@@ -299,6 +149,7 @@
     updateDashboard();
   }
 
+  // --- ➕ Add Time Feature ---
   function addTime(pcNumber) {
     const addAmount = parseFloat(document.getElementById(`addAmount${pcNumber}`).value);
     if (isNaN(addAmount) || addAmount <= 0) {
@@ -320,12 +171,14 @@
     alert(`Added ₱${addAmount.toFixed(2)} (${addedSeconds / 60} mins) to PC ${pcNumber}`);
   }
 
+  // --- 🔄 Reset All PCs ---
   function resetAll() {
     if (!confirm("Are you sure you want to reset all data and timers?")) return;
     localStorage.removeItem("pcRentalData");
     location.reload();
   }
 
+  // --- ⏱️ Helper Functions ---
   function updateDisplay(pcNumber) {
     let minutes = Math.floor(remainingSeconds[pcNumber] / 60);
     let seconds = remainingSeconds[pcNumber] % 60;
@@ -345,7 +198,5 @@
   window.onload = loadData;
 </script>
 
-</body>
-</html>
 
 
