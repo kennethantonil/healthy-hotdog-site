@@ -3,74 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PC Rental Timer System</title>
+  <title>💻 PC Rental Timer System</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #121212;
-      color: white;
+      background: radial-gradient(circle at top, #101010, #000);
+      color: #f5f5f5;
       margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 25px;
+      padding: 25px;
+      text-align: center;
     }
 
-    /* Dashboard */
+    h1 {
+      font-size: 2em;
+      font-weight: bold;
+      color: #00e676;
+      text-shadow: 0 0 10px #00e676;
+    }
+
     .dashboard {
-      background: #1e1e1e;
+      background: #1b1b1b;
       border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      padding: 20px 40px;
-      width: 90%;
-      max-width: 800px;
-      text-align: center;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      padding: 20px;
+      margin-bottom: 25px;
       display: flex;
       justify-content: space-around;
-      align-items: center;
       flex-wrap: wrap;
+      gap: 20px;
     }
 
     .dashboard-item {
+      background: #212121;
+      padding: 15px 25px;
+      border-radius: 15px;
       flex: 1 1 200px;
-      margin: 10px;
+      min-width: 200px;
+      text-align: center;
     }
 
-    .dashboard h1 {
+    .dashboard-item h2 {
       font-size: 1.2em;
       color: #aaa;
       margin-bottom: 5px;
     }
 
     .dashboard .value {
-      font-size: 2em;
+      font-size: 1.8em;
       font-weight: bold;
       color: #00e676;
     }
 
-    /* PC Box Styling */
+    .settings {
+      margin-bottom: 20px;
+    }
+
     #pcs {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
-      width: 100%;
     }
 
     .pc-box {
       background: #1f1f1f;
       border-radius: 20px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
       width: 320px;
       padding: 20px;
-      text-align: center;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.3s;
     }
 
-    .pc-box:hover { transform: scale(1.03); }
+    .pc-box:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px #00e67640;
+    }
 
-    h2 { margin-bottom: 10px; font-size: 1.3em; }
+    .timer-bar {
+      width: 100%;
+      height: 8px;
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .timer-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00e676, #ff5252);
+      transition: width 1s linear;
+    }
 
     input {
       width: 90%;
@@ -89,448 +112,218 @@
       padding: 10px 20px;
       cursor: pointer;
       font-weight: bold;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     button:hover { background-color: #00a843; }
 
-    .stop-btn { background-color: #ff5252; margin-left: 5px; }
+    .stop-btn { background-color: #ff5252; }
     .stop-btn:hover { background-color: #e04848; }
 
-    .restart-btn { background-color: #2979ff; margin-left: 5px; }
+    .restart-btn { background-color: #2979ff; }
     .restart-btn:hover { background-color: #1565c0; }
 
-    .addtime-btn { background-color: #ffb300; margin-top: 10px; }
+    .addtime-btn { background-color: #ffb300; }
     .addtime-btn:hover { background-color: #ffa000; }
 
     .info { text-align: left; margin-top: 15px; font-size: 1em; }
 
     .timer {
-      font-size: 2em;
+      font-size: 1.8em;
       font-weight: bold;
       color: #ff5252;
-      text-align: center;
       margin-top: 10px;
     }
 
-    .time-label { color: #aaa; font-size: 0.9em; margin-top: 8px; }
+    #resetBtn, #exportBtn {
+      background-color: #444;
+      margin-top: 10px;
+    }
+    #resetBtn:hover { background-color: #666; }
+    #exportBtn:hover { background-color: #666; }
   </style>
 </head>
 <body>
 
-  <!-- Dashboard Summary -->
-  <div class="dashboard">
-    <div class="dashboard-item">
-      <h1>🖥️ Active PCs</h1>
-      <div class="value" id="activePCs">0</div>
-    </div>
-    <div class="dashboard-item">
-      <h1>💰 Total Earnings</h1>
-      <div class="value" id="totalEarnings">₱0.00</div>
-    </div>
-    <div class="dashboard-item">
-      <h1>🕒 Current Time</h1>
-      <div class="value" id="dashboardTime">--:--:--</div>
-    </div>
-  </div>
+<h1>💻 PC RENTAL TIMER SYSTEM</h1>
 
-  <div id="pcs"></div>
+<div class="settings">
+  <label>💵 Rate per ₱5 = 
+    <input type="number" id="rateInput" value="25" style="width:60px;"> minutes
+  </label>
+</div>
+
+<div class="dashboard">
+  <div class="dashboard-item">
+    <h2>🖥️ Active PCs</h2>
+    <div class="value" id="activePCs">0</div>
+  </div>
+  <div class="dashboard-item">
+    <h2>💰 Total Earnings</h2>
+    <div class="value" id="totalEarnings">₱0.00</div>
+  </div>
+  <div class="dashboard-item">
+    <h2>🕒 Current Time</h2>
+    <div class="value" id="dashboardTime">--:--:--</div>
+  </div>
+  <div class="dashboard-item">
+    <button id="resetBtn" onclick="resetAll()">♻ Reset All</button>
+    <button id="exportBtn" onclick="exportLogs()">📤 Export Logs</button>
+  </div>
+</div>
+
+<div id="pcs"></div>
 
 <script>
-  const pcCount = 4;
-  const timers = {};
-  const remainingSeconds = {};
-  let totalEarnings = 0;
+const pcCount = 4;
+let totalEarnings = 0;
+const timers = {}, remainingSeconds = {}, logs = JSON.parse(localStorage.getItem("sessionLogs")||"[]");
+const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 
-  function createPCBoxes() {
-    const container = document.getElementById('pcs');
-    for (let i = 1; i <= pcCount; i++) {
-      container.innerHTML += `
-      <div class="pc-box" id="pc${i}">
-        <h2>💻 PC ${i}</h2>
-        <input type="text" id="name${i}" placeholder="Customer Name">
-        <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
-        <div>
-          <button onclick="startTimer(${i})">Start</button>
-          <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
-          <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
-        </div>
-        <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
-        <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
+function createPCBoxes() {
+  const container = document.getElementById("pcs");
+  for (let i = 1; i <= pcCount; i++) {
+    container.innerHTML += `
+    <div class="pc-box" id="pc${i}">
+      <h2>💻 PC ${i}</h2>
+      <input type="text" id="name${i}" placeholder="Customer Name">
+      <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
+      <div>
+        <button onclick="startTimer(${i})">Start</button>
+        <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
+        <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
+      </div>
+      <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
+      <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
 
-        <div class="info">
-          <p><b>Name:</b> <span id="displayName${i}">-</span></p>
-          <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
-          <p><b>Time Remaining:</b></p>
-          <div class="timer" id="timeRemaining${i}">00:00</div>
-          <p class="time-label">🕒 Current Time: <span id="currentTime${i}">--:--:--</span></p>
-          <p class="time-label">⏰ End Time: <span id="endTime${i}">--:--:--</span></p>
-        </div>
-      </div>`;
-    }
+      <div class="info">
+        <p><b>Name:</b> <span id="displayName${i}">-</span></p>
+        <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
+        <p><b>Time Remaining:</b></p>
+        <div class="timer" id="timeRemaining${i}">00:00</div>
+        <div class="timer-bar"><div class="timer-fill" id="fill${i}"></div></div>
+        <p>🕒 <small>Current: <span id="currentTime${i}">--:--:--</span></small></p>
+        <p>⏰ <small>End: <span id="endTime${i}">--:--:--</span></small></p>
+      </div>
+    </div>`;
   }
+}
+createPCBoxes();
 
-  createPCBoxes();
+function getRate() {
+  return Number(document.getElementById("rateInput").value) || 25;
+}
 
-  // Update time for all PCs + dashboard
-  setInterval(() => {
-    const now = new Date().toLocaleTimeString();
-    document.getElementById("dashboardTime").textContent = now;
-    for (let i = 1; i <= pcCount; i++) {
-      document.getElementById(`currentTime${i}`).textContent = now;
-    }
-    updateDashboard();
-  }, 1000);
+setInterval(() => {
+  const now = new Date().toLocaleTimeString();
+  document.getElementById("dashboardTime").textContent = now;
+  for (let i = 1; i <= pcCount; i++)
+    document.getElementById(`currentTime${i}`).textContent = now;
+  updateDashboard();
+}, 1000);
 
-  function saveData() {
-    const data = {};
-    for (let i = 1; i <= pcCount; i++) {
-      data[i] = {
-        name: document.getElementById(`displayName${i}`).textContent,
-        amount: document.getElementById(`displayAmount${i}`).textContent,
-        remaining: remainingSeconds[i] || 0,
-        endTime: document.getElementById(`endTime${i}`).textContent
-      };
-    }
-    data.totalEarnings = totalEarnings;
-    localStorage.setItem("pcRentalData", JSON.stringify(data));
-  }
+function startTimer(pc) {
+  stopTimer(pc);
+  const name = document.getElementById(`name${pc}`).value;
+  const amt = parseFloat(document.getElementById(`amount${pc}`).value);
+  if (!name || isNaN(amt) || amt <= 0) return alert("Enter valid name & amount");
+  const minutes = amt * (getRate()/5);
+  remainingSeconds[pc] = minutes * 60;
+  const endTime = new Date(Date.now() + remainingSeconds[pc]*1000);
+  document.getElementById(`displayName${pc}`).textContent = name;
+  document.getElementById(`displayAmount${pc}`).textContent = amt.toFixed(2);
+  document.getElementById(`endTime${pc}`).textContent = endTime.toLocaleTimeString();
+  totalEarnings += amt;
+  runTimer(pc);
+  saveData();
+}
 
-  function loadData() {
-    const data = JSON.parse(localStorage.getItem("pcRentalData"));
-    if (!data) return;
-    totalEarnings = data.totalEarnings || 0;
-
-    for (let i = 1; i <= pcCount; i++) {
-      if (data[i]) {
-        const pcData = data[i];
-        document.getElementById(`displayName${i}`).textContent = pcData.name || "-";
-        document.getElementById(`displayAmount${i}`).textContent = pcData.amount || "0";
-        document.getElementById(`endTime${i}`).textContent = pcData.endTime || "--:--:--";
-        remainingSeconds[i] = pcData.remaining;
-        if (remainingSeconds[i] > 0) resumeTimer(i);
-      }
-    }
-    updateDashboard();
-  }
-
-  function startTimer(pcNumber) {
-    stopTimer(pcNumber);
-
-    const name = document.getElementById(`name${pcNumber}`).value;
-    const amount = parseFloat(document.getElementById(`amount${pcNumber}`).value);
-
-    if (!name || isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid name and amount.");
-      return;
-    }
-
-    totalEarnings += amount;
-    remainingSeconds[pcNumber] = amount * 4 * 60;
-
-    const endTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
-    document.getElementById(`displayName${pcNumber}`).textContent = name;
-    document.getElementById(`displayAmount${pcNumber}`).textContent = amount.toFixed(2);
-    document.getElementById(`endTime${pcNumber}`).textContent = endTime.toLocaleTimeString();
-
-    runTimer(pcNumber);
-    saveData();
-    updateDashboard();
-  }
-
-  function runTimer(pcNumber) {
-    timers[pcNumber] = setInterval(() => {
-      if (remainingSeconds[pcNumber] <= 0) {
-        clearInterval(timers[pcNumber]);
-        document.getElementById(`timeRemaining${pcNumber}`).textContent = "00:00";
-        alert(`Time is up for ${document.getElementById(`displayName${pcNumber}`).textContent} (PC ${pcNumber})!`);
-        saveData();
-        updateDashboard();
-        return;
-      }
-      remainingSeconds[pcNumber]--;
-      updateDisplay(pcNumber);
+function runTimer(pc) {
+  timers[pc] = setInterval(() => {
+    if (remainingSeconds[pc] <= 0) {
+      clearInterval(timers[pc]);
+      document.getElementById(`timeRemaining${pc}`).textContent = "00:00";
+      document.getElementById(`fill${pc}`).style.width = "0%";
+      alertSound.play();
+      notifyUser(`PC ${pc}: Time is up!`);
+      logs.push({ pc, name: document.getElementById(`displayName${pc}`).textContent, 
+        amount: document.getElementById(`displayAmount${pc}`).textContent, 
+        end: new Date().toLocaleTimeString() });
       saveData();
-      updateDashboard();
-    }, 1000);
-  }
-
-  function resumeTimer(pcNumber) {
-    runTimer(pcNumber);
-    updateDisplay(pcNumber);
-  }
-
-  function stopTimer(pcNumber) {
-    clearInterval(timers[pcNumber]);
-    saveData();
-    updateDashboard();
-  }
-
-  function restartTimer(pcNumber) {
-    const name = document.getElementById(`displayName${pcNumber}`).textContent;
-    const amount = parseFloat(document.getElementById(`displayAmount${pcNumber}`).textContent);
-
-    if (!name || !amount) {
-      alert("No previous session found for this PC.");
       return;
     }
-
-    stopTimer(pcNumber);
-    remainingSeconds[pcNumber] = amount * 4 * 60;
-    const endTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
-    document.getElementById(`endTime${pcNumber}`).textContent = endTime.toLocaleTimeString();
-
-    runTimer(pcNumber);
+    remainingSeconds[pc]--;
+    updateDisplay(pc);
     saveData();
-    updateDashboard();
-  }
-
-  function addTime(pcNumber) {
-    const addAmount = parseFloat(document.getElementById(`addAmount${pcNumber}`).value);
-    if (isNaN(addAmount) || addAmount <= 0) {
-      alert("Please enter a valid additional amount.");
-      return;
-    }
-
-    const addedSeconds = addAmount * 4 * 60;
-    remainingSeconds[pcNumber] = (remainingSeconds[pcNumber] || 0) + addedSeconds;
-
-    const currentAmount = parseFloat(document.getElementById(`displayAmount${pcNumber}`).textContent);
-    const newAmount = currentAmount + addAmount;
-    document.getElementById(`displayAmount${pcNumber}`).textContent = newAmount.toFixed(2);
-
-    totalEarnings += addAmount;
-
-    const newEndTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
-    document.getElementById(`endTime${pcNumber}`).textContent = newEndTime.toLocaleTimeString();
-    document.getElementById(`addAmount${pcNumber}`).value = "";
-
-    updateDisplay(pcNumber);
-    saveData();
-    updateDashboard();
-
-    alert(`Added ₱${addAmount.toFixed(2)} (${addedSeconds / 60} mins) to PC ${pcNumber}`);
-  }
-
-  function updateDisplay(pcNumber) {
-    let minutes = Math.floor(remainingSeconds[pcNumber] / 60);
-    let seconds = remainingSeconds[pcNumber] % 60;
-    document.getElementById(`timeRemaining${pcNumber}`).textContent =
-      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
-
-  function updateDashboard() {
-    let active = 0;
-    for (let i = 1; i <= pcCount; i++) {
-      if (remainingSeconds[i] > 0) active++;
-    }
-    document.getElementById("activePCs").textContent = active;
-    document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
-  }
-
-  window.onload = loadData;
-</script>
-  <script>
-  const pcCount = 4;
-  const timers = {};
-  const remainingSeconds = {};
-  let totalEarnings = 0;
-
-  // --- 🔊 Load alert tone ---
-  const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-  alertSound.volume = 0.8;
-
-  function createPCBoxes() {
-    const container = document.getElementById('pcs');
-    for (let i = 1; i <= pcCount; i++) {
-      container.innerHTML += `
-      <div class="pc-box" id="pc${i}">
-        <h2>💻 PC ${i}</h2>
-        <input type="text" id="name${i}" placeholder="Customer Name">
-        <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
-        <div>
-          <button onclick="startTimer(${i})">Start</button>
-          <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
-          <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
-        </div>
-        <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
-        <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
-
-        <div class="info">
-          <p><b>Name:</b> <span id="displayName${i}">-</span></p>
-          <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
-          <p><b>Time Remaining:</b></p>
-          <div class="timer" id="timeRemaining${i}">00:00</div>
-          <p class="time-label">🕒 Current Time: <span id="currentTime${i}">--:--:--</span></p>
-          <p class="time-label">⏰ End Time: <span id="endTime${i}">--:--:--</span></p>
-        </div>
-      </div>`;
-    }
-  }
-
-  createPCBoxes();
-
-  // --- 🕒 Update time display ---
-  setInterval(() => {
-    const now = new Date().toLocaleTimeString();
-    document.getElementById("dashboardTime").textContent = now;
-    for (let i = 1; i <= pcCount; i++) {
-      document.getElementById(`currentTime${i}`).textContent = now;
-    }
-    updateDashboard();
   }, 1000);
+}
 
-  // --- 💾 Save and Load Data ---
-  function saveData() {
-    const data = {};
-    for (let i = 1; i <= pcCount; i++) {
-      data[i] = {
-        name: document.getElementById(`displayName${i}`).textContent,
-        amount: document.getElementById(`displayAmount${i}`).textContent,
-        remaining: remainingSeconds[i] || 0,
-        endTime: document.getElementById(`endTime${i}`).textContent
-      };
+function updateDisplay(pc) {
+  let m = Math.floor(remainingSeconds[pc]/60);
+  let s = remainingSeconds[pc]%60;
+  document.getElementById(`timeRemaining${pc}`).textContent = 
+    `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  const startAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent);
+  const total = startAmt * (getRate()/5)*60;
+  document.getElementById(`fill${pc}`).style.width = `${(remainingSeconds[pc]/total)*100}%`;
+}
+
+function addTime(pc) {
+  const addAmt = parseFloat(document.getElementById(`addAmount${pc}`).value);
+  if (isNaN(addAmt) || addAmt <= 0) return alert("Invalid additional amount");
+  const extra = addAmt*(getRate()/5)*60;
+  remainingSeconds[pc]=(remainingSeconds[pc]||0)+extra;
+  totalEarnings += addAmt;
+  const newAmt=parseFloat(document.getElementById(`displayAmount${pc}`).textContent)+addAmt;
+  document.getElementById(`displayAmount${pc}`).textContent=newAmt.toFixed(2);
+  document.getElementById(`addAmount${pc}`).value="";
+  updateDisplay(pc);
+  alert(`Added ₱${addAmt.toFixed(2)} to PC ${pc}`);
+  saveData();
+}
+
+function stopTimer(pc){clearInterval(timers[pc]);saveData();}
+function restartTimer(pc){if(remainingSeconds[pc]>0)runTimer(pc);}
+function updateDashboard(){
+  let active=Object.values(remainingSeconds).filter(v=>v>0).length;
+  document.getElementById("activePCs").textContent=active;
+  document.getElementById("totalEarnings").textContent="₱"+totalEarnings.toFixed(2);
+}
+function notifyUser(msg){
+  if(Notification.permission==="granted"){new Notification("PC Timer",{body:msg});}
+}
+Notification.requestPermission();
+
+function saveData(){
+  localStorage.setItem("pcRentalData",JSON.stringify({remainingSeconds,totalEarnings}));
+  localStorage.setItem("sessionLogs",JSON.stringify(logs));
+}
+function loadData(){
+  const data=JSON.parse(localStorage.getItem("pcRentalData")||"{}");
+  if(data.remainingSeconds){
+    Object.assign(remainingSeconds,data.remainingSeconds);
+    totalEarnings=data.totalEarnings||0;
+    for(let i=1;i<=pcCount;i++){
+      if(remainingSeconds[i]>0)runTimer(i);
     }
-    data.totalEarnings = totalEarnings;
-    localStorage.setItem("pcRentalData", JSON.stringify(data));
   }
-
-  function loadData() {
-    const data = JSON.parse(localStorage.getItem("pcRentalData"));
-    if (!data) return;
-    totalEarnings = data.totalEarnings || 0;
-
-    for (let i = 1; i <= pcCount; i++) {
-      if (data[i]) {
-        const pcData = data[i];
-        document.getElementById(`displayName${i}`).textContent = pcData.name || "-";
-        document.getElementById(`displayAmount${i}`).textContent = pcData.amount || "0";
-        document.getElementById(`endTime${i}`).textContent = pcData.endTime || "--:--:--";
-        remainingSeconds[i] = pcData.remaining;
-        if (remainingSeconds[i] > 0) resumeTimer(i);
-      }
-    }
-    updateDashboard();
-  }
-
-  // --- 🕹️ Core Functions ---
-  function startTimer(pcNumber) {
-    stopTimer(pcNumber);
-    const name = document.getElementById(`name${pcNumber}`).value;
-    const amount = parseFloat(document.getElementById(`amount${pcNumber}`).value);
-    if (!name || isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid name and amount.");
-      return;
-    }
-    totalEarnings += amount;
-    remainingSeconds[pcNumber] = amount * 4 * 60;
-    const endTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
-    document.getElementById(`displayName${pcNumber}`).textContent = name;
-    document.getElementById(`displayAmount${pcNumber}`).textContent = amount.toFixed(2);
-    document.getElementById(`endTime${pcNumber}`).textContent = endTime.toLocaleTimeString();
-    runTimer(pcNumber);
-    saveData();
-    updateDashboard();
-  }
-
-  function runTimer(pcNumber) {
-    timers[pcNumber] = setInterval(() => {
-      if (remainingSeconds[pcNumber] <= 0) {
-        clearInterval(timers[pcNumber]);
-        document.getElementById(`timeRemaining${pcNumber}`).textContent = "00:00";
-
-        // 🔔 Play alert tone when time is up
-        alertSound.play().catch(err => console.log("Autoplay prevented:", err));
-
-        alert(`Time is up for ${document.getElementById(`displayName${pcNumber}`).textContent} (PC ${pcNumber})!`);
-        saveData();
-        updateDashboard();
-        return;
-      }
-      remainingSeconds[pcNumber]--;
-      updateDisplay(pcNumber);
-      saveData();
-      updateDashboard();
-    }, 1000);
-  }
-
-  function resumeTimer(pcNumber) {
-    runTimer(pcNumber);
-    updateDisplay(pcNumber);
-  }
-
-  function stopTimer(pcNumber) {
-    clearInterval(timers[pcNumber]);
-    saveData();
-    updateDashboard();
-  }
-
-  function restartTimer(pcNumber) {
-    const name = document.getElementById(`displayName${pcNumber}`).textContent;
-    const amount = parseFloat(document.getElementById(`displayAmount${pcNumber}`).textContent);
-    if (!name || !amount) {
-      alert("No previous session found for this PC.");
-      return;
-    }
-    stopTimer(pcNumber);
-    remainingSeconds[pcNumber] = amount * 4 * 60;
-    const endTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
-    document.getElementById(`endTime${pcNumber}`).textContent = endTime.toLocaleTimeString();
-    runTimer(pcNumber);
-    saveData();
-    updateDashboard();
-  }
-
-  // --- ➕ Add Time Feature ---
-  function addTime(pcNumber) {
-    const addAmount = parseFloat(document.getElementById(`addAmount${pcNumber}`).value);
-    if (isNaN(addAmount) || addAmount <= 0) {
-      alert("Please enter a valid additional amount.");
-      return;
-    }
-    const addedSeconds = addAmount * 4 * 60;
-    remainingSeconds[pcNumber] = (remainingSeconds[pcNumber] || 0) + addedSeconds;
-    const currentAmount = parseFloat(document.getElementById(`displayAmount${pcNumber}`).textContent);
-    const newAmount = currentAmount + addAmount;
-    document.getElementById(`displayAmount${pcNumber}`).textContent = newAmount.toFixed(2);
-    totalEarnings += addAmount;
-    const newEndTime = new Date(Date.now() + remainingSeconds[pcNumber] * 1000);
-    document.getElementById(`endTime${pcNumber}`).textContent = newEndTime.toLocaleTimeString();
-    document.getElementById(`addAmount${pcNumber}`).value = "";
-    updateDisplay(pcNumber);
-    saveData();
-    updateDashboard();
-    alert(`Added ₱${addAmount.toFixed(2)} (${addedSeconds / 60} mins) to PC ${pcNumber}`);
-  }
-
-  // --- 🔄 Reset All PCs ---
-  function resetAll() {
-    if (!confirm("Are you sure you want to reset all data and timers?")) return;
-    localStorage.removeItem("pcRentalData");
-    location.reload();
-  }
-
-  // --- ⏱️ Helper Functions ---
-  function updateDisplay(pcNumber) {
-    let minutes = Math.floor(remainingSeconds[pcNumber] / 60);
-    let seconds = remainingSeconds[pcNumber] % 60;
-    document.getElementById(`timeRemaining${pcNumber}`).textContent =
-      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
-
-  function updateDashboard() {
-    let active = 0;
-    for (let i = 1; i <= pcCount; i++) {
-      if (remainingSeconds[i] > 0) active++;
-    }
-    document.getElementById("activePCs").textContent = active;
-    document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
-  }
-
-  window.onload = loadData;
+}
+function resetAll(){
+  if(!confirm("Reset all data?"))return;
+  localStorage.clear();
+  location.reload();
+}
+function exportLogs(){
+  let csv="PC,Name,Amount,EndTime\n";
+  logs.forEach(l=>csv+=`${l.pc},${l.name},${l.amount},${l.end}\n`);
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="pc_rental_logs.csv";a.click();
+  URL.revokeObjectURL(url);
+}
+window.onload=loadData;
 </script>
-
 
 </body>
 </html>
-
