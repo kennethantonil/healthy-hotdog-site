@@ -117,21 +117,12 @@
       margin-top: 10px;
     }
     #resetBtn:hover, #exportBtn:hover { background-color: #666; }
-
-    /* Calculator styles */
-    .calc-input {
-      background: #2a2a2a;
-      color: #fff;
-      border-radius: 10px;
-      border: none;
-      padding: 8px;
-      text-align: center;
-      width: 80%;
-    }
-    .calc-result {
+    .rank-box {
+      background: #222;
+      border-radius: 15px;
+      padding: 10px;
+      margin-top: 10px;
       color: #00e676;
-      font-weight: bold;
-      margin-top: 5px;
     }
   </style>
 </head>
@@ -149,23 +140,13 @@
     <div class="value" id="totalEarnings">₱0.00</div>
   </div>
   <div class="dashboard-item">
+    <h2>🏆 Top Spender Today</h2>
+    <div class="value" id="topSpender">None</div>
+  </div>
+  <div class="dashboard-item">
     <h2>🕒 Current Time</h2>
     <div class="value" id="dashboardTime">--:--:--</div>
   </div>
-
-  <!-- Calculators -->
-  <div class="dashboard-item">
-    <h2>⏱️ Time Calculator</h2>
-    <input class="calc-input" type="number" id="moneyInput" placeholder="Enter ₱">
-    <div class="calc-result" id="timeResult">= 0 mins</div>
-  </div>
-
-  <div class="dashboard-item">
-    <h2>💵 Cost Calculator</h2>
-    <input class="calc-input" type="number" id="timeInput" placeholder="Enter minutes">
-    <div class="calc-result" id="costResult">= ₱0.00</div>
-  </div>
-
   <div class="dashboard-item">
     <button id="resetBtn" onclick="resetAll()">♻ Reset All</button>
     <button id="exportBtn" onclick="exportLogs()">📤 Export Logs</button>
@@ -178,6 +159,7 @@
 const pcCount = 4;
 let totalEarnings = 0;
 const timers = {}, remainingSeconds = {}, endTimes = {}, logs = JSON.parse(localStorage.getItem("sessionLogs")||"[]");
+let dailySpending = JSON.parse(localStorage.getItem("dailySpending") || "{}");
 const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 
 // Create PC boxes
@@ -226,7 +208,7 @@ function startTimer(pc) {
   const amt = parseFloat(document.getElementById(`amount${pc}`).value);
   if (!name || isNaN(amt) || amt <= 0) return alert("Enter valid name & amount");
 
-  const minutes = amt * 4; // ₱5 = 20 mins → ₱1 = 4 mins
+  const minutes = amt * 4;
   const totalSeconds = minutes * 60;
   const endTime = new Date(Date.now() + totalSeconds * 1000);
 
@@ -237,6 +219,13 @@ function startTimer(pc) {
   document.getElementById(`displayAmount${pc}`).textContent = amt.toFixed(2);
   document.getElementById(`endTime${pc}`).textContent = endTime.toLocaleTimeString();
   totalEarnings += amt;
+
+  // Log spending for ranking
+  const today = new Date().toLocaleDateString();
+  if (!dailySpending[today]) dailySpending[today] = {};
+  dailySpending[today][name] = (dailySpending[today][name] || 0) + amt;
+  updateTopSpender();
+
   runTimer(pc);
   saveData();
 }
@@ -253,11 +242,11 @@ function runTimer(pc) {
       document.getElementById(`timeRemaining${pc}`).textContent = "00:00";
       document.getElementById(`fill${pc}`).style.width = "0%";
       alertSound.play();
-      notifyUser(`PC ${pc}: Time is up!`);
       logs.push({
         pc,
         name: document.getElementById(`displayName${pc}`).textContent,
         amount: document.getElementById(`displayAmount${pc}`).textContent,
+        rank: getRank(document.getElementById(`displayName${pc}`).textContent),
         end: new Date().toLocaleTimeString()
       });
       saveData();
@@ -287,230 +276,17 @@ function addTime(pc) {
   remainingSeconds[pc] = Math.floor((endTimes[pc] - Date.now()) / 1000);
 
   totalEarnings += addAmt;
-  const newAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent) + addAmt;
-  document.getElementById(`displayAmount${pc}`).textContent = newAmt.toFixed(2);
-  document.getElementById(`addAmount${pc}`).value = "";
-  document.getElementById(`endTime${pc}`).textContent = new Date(endTimes[pc]).toLocaleTimeString();
-
-  alert(`Added ₱${addAmt.toFixed(2)} to PC ${pc}`);
-  saveData();
-}
-
-function stopTimer(pc) { clearInterval(timers[pc]); saveData(); }
-function restartTimer(pc) { if (remainingSeconds[pc] > 0) runTimer(pc); }
-
-function updateDashboard() {
-  const active = Object.values(remainingSeconds).filter(v => v > 0).length;
-  document.getElementById("activePCs").textContent = active;
-  document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
-}
-
-function notifyUser(msg) {
-  if (Notification.permission === "granted") new Notification("PC Timer", { body: msg });
-}
-Notification.requestPermission();
-
-function saveData() {
-  localStorage.setItem("pcRentalData", JSON.stringify({ endTimes, totalEarnings }));
-  localStorage.setItem("sessionLogs", JSON.stringify(logs));
-}
-
-function loadData() {
-  const data = JSON.parse(localStorage.getItem("pcRentalData") || "{}");
-  if (data.endTimes) {
-    Object.assign(endTimes, data.endTimes);
-    totalEarnings = data.totalEarnings || 0;
-
-    for (let i = 1; i <= pcCount; i++) {
-      if (endTimes[i]) {
-        const remaining = Math.floor((endTimes[i] - Date.now()) / 1000);
-        if (remaining > 0) {
-          remainingSeconds[i] = remaining;
-          document.getElementById(`endTime${i}`).textContent = new Date(endTimes[i]).toLocaleTimeString();
-          runTimer(i);
-        }
-      }
-    }
-  }
-}
-
-// --- Calculators ---
-document.getElementById("moneyInput").addEventListener("input", () => {
-  const money = parseFloat(document.getElementById("moneyInput").value) || 0;
-  const minutes = money * 4 * 5; // ₱5 = 20 mins, ₱1 = 4 mins
-  document.getElementById("timeResult").textContent = `= ${minutes} mins (${(minutes/60).toFixed(2)} hrs)`;
-});
-
-document.getElementById("timeInput").addEventListener("input", () => {
-  const mins = parseFloat(document.getElementById("timeInput").value) || 0;
-  const cost = mins / 20 * 5;
-  document.getElementById("costResult").textContent = `= ₱${cost.toFixed(2)}`;
-});
-
-function resetAll() {
-  if (!confirm("Reset all data?")) return;
-  localStorage.clear();
-  location.reload();
-}
-
-function exportLogs() {
-  let csv = "PC,Name,Amount,EndTime\n";
-  logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.end}\n`);
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "pc_rental_logs.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-window.onload = loadData;
-</script>
-  <script>
-const pcCount = 4;
-let totalEarnings = 0;
-let playerTotals = JSON.parse(localStorage.getItem("playerTotals")||"{}");
-let currentDate = new Date().toDateString();
-const timers = {}, remainingSeconds = {}, endTimes = {}, logs = JSON.parse(localStorage.getItem("sessionLogs")||"[]");
-const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-
-// Create PC boxes
-function createPCBoxes() {
-  const container = document.getElementById("pcs");
-  for (let i = 1; i <= pcCount; i++) {
-    container.innerHTML += `
-      <div class="pc-box" id="pc${i}">
-        <h2>💻 PC ${i}</h2>
-        <input type="text" id="name${i}" placeholder="Customer Name">
-        <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
-        <div>
-          <button onclick="startTimer(${i})">Start</button>
-          <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
-          <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
-        </div>
-        <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
-        <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
-        <div class="info">
-          <p><b>Name:</b> <span id="displayName${i}">-</span></p>
-          <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
-          <p><b>Time Remaining:</b></p>
-          <div class="timer" id="timeRemaining${i}">00:00</div>
-          <div class="timer-bar"><div class="timer-fill" id="fill${i}"></div></div>
-          <p>🕒 <small>Current: <span id="currentTime${i}">--:--:--</span></small></p>
-          <p>⏰ <small>End: <span id="endTime${i}">--:--:--</span></small></p>
-        </div>
-      </div>`;
-  }
-}
-createPCBoxes();
-
-// 🆕 Add new dashboard item for top spender
-document.querySelector(".dashboard").innerHTML += `
-  <div class="dashboard-item">
-    <h2>🏆 Top Spender Today</h2>
-    <div class="value" id="topSpender">--</div>
-  </div>
-`;
-
-setInterval(() => {
-  const now = new Date();
-  document.getElementById("dashboardTime").textContent = now.toLocaleTimeString();
-  for (let i = 1; i <= pcCount; i++) {
-    const el = document.getElementById(`currentTime${i}`);
-    if (el) el.textContent = now.toLocaleTimeString();
-  }
-  updateDashboard();
-}, 1000);
-
-function startTimer(pc) {
-  stopTimer(pc);
-  const name = document.getElementById(`name${pc}`).value.trim();
-  const amt = parseFloat(document.getElementById(`amount${pc}`).value);
-  if (!name || isNaN(amt) || amt <= 0) return alert("Enter valid name & amount");
-
-  const minutes = amt * 4; 
-  const totalSeconds = minutes * 60;
-  const endTime = new Date(Date.now() + totalSeconds * 1000);
-
-  remainingSeconds[pc] = totalSeconds;
-  endTimes[pc] = endTime.getTime();
-
-  document.getElementById(`displayName${pc}`).textContent = name;
-  document.getElementById(`displayAmount${pc}`).textContent = amt.toFixed(2);
-  document.getElementById(`endTime${pc}`).textContent = endTime.toLocaleTimeString();
-
-  totalEarnings += amt;
-  
-  // 🆕 Track player total for ranking
-  const today = new Date().toDateString();
-  if (currentDate !== today) { playerTotals = {}; currentDate = today; } // reset on new day
-  playerTotals[name] = (playerTotals[name] || 0) + amt;
-
-  runTimer(pc);
-  saveData();
-}
-
-function runTimer(pc) {
-  clearInterval(timers[pc]);
-  timers[pc] = setInterval(() => {
-    const now = Date.now();
-    const remaining = Math.floor((endTimes[pc] - now) / 1000);
-    remainingSeconds[pc] = remaining;
-
-    if (remaining <= 0) {
-      clearInterval(timers[pc]);
-      document.getElementById(`timeRemaining${pc}`).textContent = "00:00";
-      document.getElementById(`fill${pc}`).style.width = "0%";
-      alertSound.play();
-      notifyUser(`PC ${pc}: Time is up!`);
-
-      // 🆕 Determine rank when logging
-      const rankList = getRankings();
-      const player = document.getElementById(`displayName${pc}`).textContent;
-      const rank = rankList.findIndex(p => p.name === player) + 1;
-
-      logs.push({
-        pc,
-        name: player,
-        amount: document.getElementById(`displayAmount${pc}`).textContent,
-        end: new Date().toLocaleTimeString(),
-        rankToday: rank
-      });
-      saveData();
-      return;
-    }
-    updateDisplay(pc);
-  }, 1000);
-}
-
-function updateDisplay(pc) {
-  let m = Math.floor(remainingSeconds[pc] / 60);
-  let s = remainingSeconds[pc] % 60;
-  document.getElementById(`timeRemaining${pc}`).textContent =
-    `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-
-  const startAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent);
-  const total = startAmt * 4 * 60;
-  document.getElementById(`fill${pc}`).style.width = `${(remainingSeconds[pc] / total) * 100}%`;
-}
-
-function addTime(pc) {
-  const addAmt = parseFloat(document.getElementById(`addAmount${pc}`).value);
-  if (isNaN(addAmt) || addAmt <= 0) return alert("Invalid additional amount");
-
-  const extra = addAmt * 4 * 60;
-  endTimes[pc] = (endTimes[pc] || Date.now()) + extra * 1000;
-  remainingSeconds[pc] = Math.floor((endTimes[pc] - Date.now()) / 1000);
-
-  totalEarnings += addAmt;
-  const newAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent) + addAmt;
-  document.getElementById(`displayAmount${pc}`).textContent = newAmt.toFixed(2);
-  document.getElementById(`addAmount${pc}`).value = "";
-  document.getElementById(`endTime${pc}`).textContent = new Date(endTimes[pc]).toLocaleTimeString();
-
   const name = document.getElementById(`displayName${pc}`).textContent;
-  playerTotals[name] = (playerTotals[name] || 0) + addAmt;
+  const newAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent) + addAmt;
+  document.getElementById(`displayAmount${pc}`).textContent = newAmt.toFixed(2);
+
+  const today = new Date().toLocaleDateString();
+  if (!dailySpending[today]) dailySpending[today] = {};
+  dailySpending[today][name] = (dailySpending[today][name] || 0) + addAmt;
+  updateTopSpender();
+
+  document.getElementById(`addAmount${pc}`).value = "";
+  document.getElementById(`endTime${pc}`).textContent = new Date(endTimes[pc]).toLocaleTimeString();
 
   alert(`Added ₱${addAmt.toFixed(2)} to PC ${pc}`);
   saveData();
@@ -523,61 +299,35 @@ function updateDashboard() {
   const active = Object.values(remainingSeconds).filter(v => v > 0).length;
   document.getElementById("activePCs").textContent = active;
   document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
-
-  // 🆕 Update top spender display
-  const top = getRankings()[0];
-  document.getElementById("topSpender").textContent = top ? `${top.name} (₱${top.total.toFixed(2)})` : "--";
 }
 
-function getRankings() {
-  return Object.entries(playerTotals)
-    .map(([name, total]) => ({ name, total }))
-    .sort((a,b) => b.total - a.total);
+function getRank(name) {
+  const today = new Date().toLocaleDateString();
+  if (!dailySpending[today]) return "-";
+  const sorted = Object.entries(dailySpending[today]).sort((a,b)=>b[1]-a[1]);
+  const rank = sorted.findIndex(([n]) => n===name) + 1;
+  return rank || "-";
 }
 
-function notifyUser(msg) {
-  if (Notification.permission === "granted") new Notification("PC Timer", { body: msg });
+function updateTopSpender() {
+  const today = new Date().toLocaleDateString();
+  if (!dailySpending[today]) return;
+  const top = Object.entries(dailySpending[today]).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById("topSpender").textContent = top ? `${top[0]} (₱${top[1].toFixed(2)})` : "None";
 }
-Notification.requestPermission();
 
 function saveData() {
   localStorage.setItem("pcRentalData", JSON.stringify({ endTimes, totalEarnings }));
   localStorage.setItem("sessionLogs", JSON.stringify(logs));
-  localStorage.setItem("playerTotals", JSON.stringify(playerTotals));
+  localStorage.setItem("dailySpending", JSON.stringify(dailySpending));
 }
 
 function loadData() {
   const data = JSON.parse(localStorage.getItem("pcRentalData") || "{}");
-  playerTotals = JSON.parse(localStorage.getItem("playerTotals") || "{}");
-  if (data.endTimes) {
-    Object.assign(endTimes, data.endTimes);
-    totalEarnings = data.totalEarnings || 0;
-
-    for (let i = 1; i <= pcCount; i++) {
-      if (endTimes[i]) {
-        const remaining = Math.floor((endTimes[i] - Date.now()) / 1000);
-        if (remaining > 0) {
-          remainingSeconds[i] = remaining;
-          document.getElementById(`endTime${i}`).textContent = new Date(endTimes[i]).toLocaleTimeString();
-          runTimer(i);
-        }
-      }
-    }
-  }
+  if (data.endTimes) Object.assign(endTimes, data.endTimes);
+  totalEarnings = data.totalEarnings || 0;
+  updateTopSpender();
 }
-
-// --- Calculators ---
-document.getElementById("moneyInput").addEventListener("input", () => {
-  const money = parseFloat(document.getElementById("moneyInput").value) || 0;
-  const minutes = money * 4 * 5;
-  document.getElementById("timeResult").textContent = `= ${minutes} mins (${(minutes/60).toFixed(2)} hrs)`;
-});
-
-document.getElementById("timeInput").addEventListener("input", () => {
-  const mins = parseFloat(document.getElementById("timeInput").value) || 0;
-  const cost = mins / 20 * 5;
-  document.getElementById("costResult").textContent = `= ₱${cost.toFixed(2)}`;
-});
 
 function resetAll() {
   if (!confirm("Reset all data?")) return;
@@ -585,10 +335,9 @@ function resetAll() {
   location.reload();
 }
 
-// 🆕 Export logs include rank column
 function exportLogs() {
-  let csv = "PC,Name,Amount,EndTime,RankToday\n";
-  logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.end},${l.rankToday||""}\n`);
+  let csv = "PC,Name,Amount,Rank,EndTime\n";
+  logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.rank},${l.end}\n`);
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -600,9 +349,5 @@ function exportLogs() {
 
 window.onload = loadData;
 </script>
-
 </body>
 </html>
-
-
-
