@@ -1,3 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💻 PC Rental Timer System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #101010, #000);
+      color: #f5f5f5;
+      margin: 0;
+      padding: 25px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2em;
+      font-weight: bold;
+      color: #00e676;
+      text-shadow: 0 0 10px #00e676;
+    }
+    .dashboard {
+      background: #1b1b1b;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .dashboard-item {
+      background: #212121;
+      padding: 15px 25px;
+      border-radius: 15px;
+      flex: 1 1 200px;
+      min-width: 200px;
+      text-align: center;
+    }
+    .dashboard-item h2 {
+      font-size: 1.2em;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+    .dashboard .value {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #00e676;
+    }
+    .settings {
+      margin-bottom: 20px;
+    }
+    #pcs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .pc-box {
+      background: #1f1f1f;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      width: 320px;
+      padding: 20px;
+      transition: transform 0.2s ease, box-shadow 0.3s;
+    }
+    .pc-box:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px #00e67640;
+    }
+    .timer-bar {
+      width: 100%;
+      height: 8px;
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00e676, #ff5252);
+      transition: width 1s linear;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin: 6px 0;
+      font-size: 1em;
+    }
+    button {
+      background-color: #00c853;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    button:hover { background-color: #00a843; }
+    .stop-btn { background-color: #ff5252; }
+    .stop-btn:hover { background-color: #e04848; }
+    .restart-btn { background-color: #2979ff; }
+    .restart-btn:hover { background-color: #1565c0; }
+    .addtime-btn { background-color: #ffb300; }
+    .addtime-btn:hover { background-color: #ffa000; }
+    .info { text-align: left; margin-top: 15px; font-size: 1em; }
+    .timer {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #ff5252;
+      margin-top: 10px;
+    }
+    #resetBtn, #exportBtn {
+      background-color: #444;
+      margin-top: 10px;
+    }
+    #resetBtn:hover, #exportBtn:hover { background-color: #666; }
+  </style>
+</head>
+<body>
+
+<h1>💻 PC RENTAL TIMER SYSTEM</h1>
+
+<div class="settings">
+  <label>💵 Rate per ₱5 =
+    <input type="number" id="rateInput" value="25" style="width:60px;"> minutes
+  </label>
+</div>
+
+<div class="dashboard">
+  <div class="dashboard-item">
+    <h2>🖥️ Active PCs</h2>
+    <div class="value" id="activePCs">0</div>
+  </div>
+  <div class="dashboard-item">
+    <h2>💰 Total Earnings</h2>
+    <div class="value" id="totalEarnings">₱0.00</div>
+  </div>
+  <div class="dashboard-item">
+    <h2>🕒 Current Time</h2>
+    <div class="value" id="dashboardTime">--:--:--</div>
+  </div>
+  <div class="dashboard-item">
+    <button id="resetBtn" onclick="resetAll()">♻ Reset All</button>
+    <button id="exportBtn" onclick="exportLogs()">📤 Export Logs</button>
+  </div>
+</div>
+
+<div id="pcs"></div>
+
 <script>
 const pcCount = 4;
 let totalEarnings = 0;
@@ -8,28 +163,27 @@ function createPCBoxes() {
   const container = document.getElementById("pcs");
   for (let i = 1; i <= pcCount; i++) {
     container.innerHTML += `
-    <div class="pc-box" id="pc${i}">
-      <h2>💻 PC ${i}</h2>
-      <input type="text" id="name${i}" placeholder="Customer Name">
-      <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
-      <div>
-        <button onclick="startTimer(${i})">Start</button>
-        <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
-        <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
-      </div>
-      <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
-      <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
-
-      <div class="info">
-        <p><b>Name:</b> <span id="displayName${i}">-</span></p>
-        <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
-        <p><b>Time Remaining:</b></p>
-        <div class="timer" id="timeRemaining${i}">00:00</div>
-        <div class="timer-bar"><div class="timer-fill" id="fill${i}"></div></div>
-        <p>🕒 <small>Current: <span id="currentTime${i}">--:--:--</span></small></p>
-        <p>⏰ <small>End: <span id="endTime${i}">--:--:--</span></small></p>
-      </div>
-    </div>`;
+      <div class="pc-box" id="pc${i}">
+        <h2>💻 PC ${i}</h2>
+        <input type="text" id="name${i}" placeholder="Customer Name">
+        <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
+        <div>
+          <button onclick="startTimer(${i})">Start</button>
+          <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
+          <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
+        </div>
+        <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
+        <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
+        <div class="info">
+          <p><b>Name:</b> <span id="displayName${i}">-</span></p>
+          <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
+          <p><b>Time Remaining:</b></p>
+          <div class="timer" id="timeRemaining${i}">00:00</div>
+          <div class="timer-bar"><div class="timer-fill" id="fill${i}"></div></div>
+          <p>🕒 <small>Current: <span id="currentTime${i}">--:--:--</span></small></p>
+          <p>⏰ <small>End: <span id="endTime${i}">--:--:--</span></small></p>
+        </div>
+      </div>`;
   }
 }
 createPCBoxes();
@@ -38,11 +192,13 @@ function getRate() {
   return Number(document.getElementById("rateInput").value) || 25;
 }
 
+// Update dashboard time
 setInterval(() => {
   const now = new Date().toLocaleTimeString();
   document.getElementById("dashboardTime").textContent = now;
-  for (let i = 1; i <= pcCount; i++)
+  for (let i = 1; i <= pcCount; i++) {
     document.getElementById(`currentTime${i}`).textContent = now;
+  }
   updateDashboard();
 }, 1000);
 
@@ -122,25 +278,17 @@ function addTime(pc) {
   saveData();
 }
 
-function stopTimer(pc) {
-  clearInterval(timers[pc]);
-  saveData();
-}
-
-function restartTimer(pc) {
-  if (remainingSeconds[pc] > 0) runTimer(pc);
-}
+function stopTimer(pc) { clearInterval(timers[pc]); saveData(); }
+function restartTimer(pc) { if (remainingSeconds[pc] > 0) runTimer(pc); }
 
 function updateDashboard() {
-  let active = Object.values(remainingSeconds).filter(v => v > 0).length;
+  const active = Object.values(remainingSeconds).filter(v => v > 0).length;
   document.getElementById("activePCs").textContent = active;
   document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
 }
 
 function notifyUser(msg) {
-  if (Notification.permission === "granted") {
-    new Notification("PC Timer", { body: msg });
-  }
+  if (Notification.permission === "granted") new Notification("PC Timer", { body: msg });
 }
 Notification.requestPermission();
 
@@ -188,3 +336,5 @@ function exportLogs() {
 
 window.onload = loadData;
 </script>
+</body>
+</html>
