@@ -105,6 +105,17 @@
     .restart-btn:hover { background-color: #1565c0; }
     .addtime-btn { background-color: #ffb300; }
     .addtime-btn:hover { background-color: #ffa000; }
+    .stopAll-btn {
+      background-color: #ff1744;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .stopAll-btn:hover { background-color: #d50000; }
     .info { text-align: left; margin-top: 15px; font-size: 1em; }
     .timer {
       font-size: 1.8em;
@@ -112,11 +123,35 @@
       color: #ff5252;
       margin-top: 10px;
     }
-    #resetBtn, #exportBtn {
-      background-color: #444;
-      margin-top: 10px;
+    .leaderboard {
+      background: #1b1b1b;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      margin-top: 20px;
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
     }
-    #resetBtn:hover, #exportBtn:hover { background-color: #666; }
+    .leaderboard h3 {
+      color: #00e676;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .leaderboard ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .leaderboard li {
+      background: #212121;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
   </style>
 </head>
 <body>
@@ -129,7 +164,7 @@
     <div class="value" id="activePCs">0</div>
   </div>
   <div class="dashboard-item">
-    <h2>💰 Total Earnings</h2>
+    <h2>💰 Total Earnings (Today)</h2>
     <div class="value" id="totalEarnings">₱0.00</div>
   </div>
   <div class="dashboard-item">
@@ -141,6 +176,7 @@
     <div class="value" id="dashboardTime">--:--:--</div>
   </div>
   <div class="dashboard-item">
+    <button id="stopAllBtn" class="stopAll-btn" onclick="stopAll()">⛔ Stop All</button>
     <button id="resetBtn" onclick="resetAll()">♻ Reset All</button>
     <button id="exportBtn" onclick="exportLogs()">📤 Export Logs</button>
   </div>
@@ -148,24 +184,27 @@
 
 <div id="pcs"></div>
 
+<div class="leaderboard">
+  <h3>🏅 Weekly Top Spenders</h3>
+  <ol id="weeklyLeaderboard">
+    <li>No data yet</li>
+  </ol>
+</div>
+
 <script>
 const pcCount = 4;
 let totalEarnings = 0;
 const timers = {}, remainingSeconds = {}, endTimes = {}, logs = JSON.parse(localStorage.getItem("sessionLogs")||"[]");
 let dailySpending = JSON.parse(localStorage.getItem("dailySpending") || "{}");
+let weeklySpending = JSON.parse(localStorage.getItem("weeklySpending") || "{}");
 const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
 
-// 🔊 Function to speak which PC time is over
 function announce(pcNumber) {
   const message = new SpeechSynthesisUtterance(`Attention! PC ${pcNumber} time is over.`);
   message.lang = "en-US";
-  message.pitch = 1;
-  message.rate = 1;
-  message.volume = 1;
   speechSynthesis.speak(message);
 }
 
-// Create PC boxes
 function createPCBoxes() {
   const container = document.getElementById("pcs");
   for (let i = 1; i <= pcCount; i++) {
@@ -224,9 +263,14 @@ function startTimer(pc) {
   totalEarnings += amt;
 
   const today = new Date().toLocaleDateString();
-  if (!dailySpending[today]) dailySpending[today] = {};
+  const week = getWeekKey();
+  dailySpending[today] = dailySpending[today] || {};
+  weeklySpending[week] = weeklySpending[week] || {};
   dailySpending[today][name] = (dailySpending[today][name] || 0) + amt;
+  weeklySpending[week][name] = (weeklySpending[week][name] || 0) + amt;
+
   updateTopSpender();
+  updateWeeklyLeaderboard();
 
   runTimer(pc);
   saveData();
@@ -238,13 +282,13 @@ function runTimer(pc) {
     const now = Date.now();
     const remaining = Math.floor((endTimes[pc] - now) / 1000);
     remainingSeconds[pc] = remaining;
-
     if (remaining <= 0) {
       clearInterval(timers[pc]);
       document.getElementById(`timeRemaining${pc}`).textContent = "00:00";
       document.getElementById(`fill${pc}`).style.width = "0%";
       alertSound.play();
-      announce(pc); // 🔊 Voice announcement here
+      announce(pc);
+      document.getElementById(`pc${pc}`).style.boxShadow = "0 0 25px #ff5252";
       logs.push({
         pc,
         name: document.getElementById(`displayName${pc}`).textContent,
@@ -281,9 +325,12 @@ function addTime(pc) {
   document.getElementById(`displayAmount${pc}`).textContent = newAmt.toFixed(2);
 
   const today = new Date().toLocaleDateString();
-  if (!dailySpending[today]) dailySpending[today] = {};
+  const week = getWeekKey();
   dailySpending[today][name] = (dailySpending[today][name] || 0) + addAmt;
+  weeklySpending[week][name] = (weeklySpending[week][name] || 0) + addAmt;
+
   updateTopSpender();
+  updateWeeklyLeaderboard();
   document.getElementById(`addAmount${pc}`).value = "";
   document.getElementById(`endTime${pc}`).textContent = new Date(endTimes[pc]).toLocaleTimeString();
   alert(`Added ₱${addAmt.toFixed(2)} to PC ${pc}`);
@@ -291,34 +338,59 @@ function addTime(pc) {
 }
 
 function stopTimer(pc) { clearInterval(timers[pc]); saveData(); }
+function stopAll() { for (let i = 1; i <= pcCount; i++) stopTimer(i); alert("All PCs stopped."); }
+
 function restartTimer(pc) { if (remainingSeconds[pc] > 0) runTimer(pc); }
+
 function updateDashboard() {
   const active = Object.values(remainingSeconds).filter(v => v > 0).length;
   document.getElementById("activePCs").textContent = active;
   document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
 }
+
 function updateTopSpender() {
   const today = new Date().toLocaleDateString();
   if (!dailySpending[today]) return;
   const top = Object.entries(dailySpending[today]).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById("topSpender").textContent = top ? `${top[0]} (₱${top[1].toFixed(2)})` : "None";
 }
+
+function updateWeeklyLeaderboard() {
+  const week = getWeekKey();
+  const weekData = weeklySpending[week] || {};
+  const sorted = Object.entries(weekData).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const leaderboard = document.getElementById("weeklyLeaderboard");
+  leaderboard.innerHTML = sorted.length ? sorted.map(([n,v]) => `<li><b>${n}</b><span>₱${v.toFixed(2)}</span></li>`).join("") : "<li>No data yet</li>";
+}
+
+function getWeekKey() {
+  const now = new Date();
+  const oneJan = new Date(now.getFullYear(),0,1);
+  const week = Math.ceil((((now - oneJan) / 86400000) + oneJan.getDay()+1) / 7);
+  return `${now.getFullYear()}-W${week}`;
+}
+
 function saveData() {
   localStorage.setItem("pcRentalData", JSON.stringify({ endTimes, totalEarnings }));
   localStorage.setItem("sessionLogs", JSON.stringify(logs));
   localStorage.setItem("dailySpending", JSON.stringify(dailySpending));
+  localStorage.setItem("weeklySpending", JSON.stringify(weeklySpending));
 }
+
 function loadData() {
   const data = JSON.parse(localStorage.getItem("pcRentalData") || "{}");
   if (data.endTimes) Object.assign(endTimes, data.endTimes);
   totalEarnings = data.totalEarnings || 0;
   updateTopSpender();
+  updateWeeklyLeaderboard();
 }
+
 function resetAll() {
   if (!confirm("Reset all data?")) return;
   localStorage.clear();
   location.reload();
 }
+
 function exportLogs() {
   let csv = "PC,Name,Amount,EndTime\n";
   logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.end}\n`);
