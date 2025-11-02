@@ -117,13 +117,6 @@
       margin-top: 10px;
     }
     #resetBtn:hover, #exportBtn:hover { background-color: #666; }
-    .rank-box {
-      background: #222;
-      border-radius: 15px;
-      padding: 10px;
-      margin-top: 10px;
-      color: #00e676;
-    }
   </style>
 </head>
 <body>
@@ -161,6 +154,16 @@ let totalEarnings = 0;
 const timers = {}, remainingSeconds = {}, endTimes = {}, logs = JSON.parse(localStorage.getItem("sessionLogs")||"[]");
 let dailySpending = JSON.parse(localStorage.getItem("dailySpending") || "{}");
 const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
+
+// 🔊 Function to speak which PC time is over
+function announce(pcNumber) {
+  const message = new SpeechSynthesisUtterance(`Attention! PC ${pcNumber} time is over.`);
+  message.lang = "en-US";
+  message.pitch = 1;
+  message.rate = 1;
+  message.volume = 1;
+  speechSynthesis.speak(message);
+}
 
 // Create PC boxes
 function createPCBoxes() {
@@ -220,7 +223,6 @@ function startTimer(pc) {
   document.getElementById(`endTime${pc}`).textContent = endTime.toLocaleTimeString();
   totalEarnings += amt;
 
-  // Log spending for ranking
   const today = new Date().toLocaleDateString();
   if (!dailySpending[today]) dailySpending[today] = {};
   dailySpending[today][name] = (dailySpending[today][name] || 0) + amt;
@@ -242,11 +244,11 @@ function runTimer(pc) {
       document.getElementById(`timeRemaining${pc}`).textContent = "00:00";
       document.getElementById(`fill${pc}`).style.width = "0%";
       alertSound.play();
+      announce(pc); // 🔊 Voice announcement here
       logs.push({
         pc,
         name: document.getElementById(`displayName${pc}`).textContent,
         amount: document.getElementById(`displayAmount${pc}`).textContent,
-        rank: getRank(document.getElementById(`displayName${pc}`).textContent),
         end: new Date().toLocaleTimeString()
       });
       saveData();
@@ -261,7 +263,6 @@ function updateDisplay(pc) {
   let s = remainingSeconds[pc] % 60;
   document.getElementById(`timeRemaining${pc}`).textContent =
     `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-
   const startAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent);
   const total = startAmt * 4 * 60;
   document.getElementById(`fill${pc}`).style.width = `${(remainingSeconds[pc] / total) * 100}%`;
@@ -270,7 +271,6 @@ function updateDisplay(pc) {
 function addTime(pc) {
   const addAmt = parseFloat(document.getElementById(`addAmount${pc}`).value);
   if (isNaN(addAmt) || addAmt <= 0) return alert("Invalid additional amount");
-
   const extra = addAmt * 4 * 60;
   endTimes[pc] = (endTimes[pc] || Date.now()) + extra * 1000;
   remainingSeconds[pc] = Math.floor((endTimes[pc] - Date.now()) / 1000);
@@ -284,60 +284,44 @@ function addTime(pc) {
   if (!dailySpending[today]) dailySpending[today] = {};
   dailySpending[today][name] = (dailySpending[today][name] || 0) + addAmt;
   updateTopSpender();
-
   document.getElementById(`addAmount${pc}`).value = "";
   document.getElementById(`endTime${pc}`).textContent = new Date(endTimes[pc]).toLocaleTimeString();
-
   alert(`Added ₱${addAmt.toFixed(2)} to PC ${pc}`);
   saveData();
 }
 
 function stopTimer(pc) { clearInterval(timers[pc]); saveData(); }
 function restartTimer(pc) { if (remainingSeconds[pc] > 0) runTimer(pc); }
-
 function updateDashboard() {
   const active = Object.values(remainingSeconds).filter(v => v > 0).length;
   document.getElementById("activePCs").textContent = active;
   document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
 }
-
-function getRank(name) {
-  const today = new Date().toLocaleDateString();
-  if (!dailySpending[today]) return "-";
-  const sorted = Object.entries(dailySpending[today]).sort((a,b)=>b[1]-a[1]);
-  const rank = sorted.findIndex(([n]) => n===name) + 1;
-  return rank || "-";
-}
-
 function updateTopSpender() {
   const today = new Date().toLocaleDateString();
   if (!dailySpending[today]) return;
   const top = Object.entries(dailySpending[today]).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById("topSpender").textContent = top ? `${top[0]} (₱${top[1].toFixed(2)})` : "None";
 }
-
 function saveData() {
   localStorage.setItem("pcRentalData", JSON.stringify({ endTimes, totalEarnings }));
   localStorage.setItem("sessionLogs", JSON.stringify(logs));
   localStorage.setItem("dailySpending", JSON.stringify(dailySpending));
 }
-
 function loadData() {
   const data = JSON.parse(localStorage.getItem("pcRentalData") || "{}");
   if (data.endTimes) Object.assign(endTimes, data.endTimes);
   totalEarnings = data.totalEarnings || 0;
   updateTopSpender();
 }
-
 function resetAll() {
   if (!confirm("Reset all data?")) return;
   localStorage.clear();
   location.reload();
 }
-
 function exportLogs() {
-  let csv = "PC,Name,Amount,Rank,EndTime\n";
-  logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.rank},${l.end}\n`);
+  let csv = "PC,Name,Amount,EndTime\n";
+  logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.end}\n`);
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -346,7 +330,6 @@ function exportLogs() {
   a.click();
   URL.revokeObjectURL(url);
 }
-
 window.onload = loadData;
 </script>
 </body>
