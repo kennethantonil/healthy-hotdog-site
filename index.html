@@ -1,408 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💻 PC Rental Timer System</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: radial-gradient(circle at top, #101010, #000);
-      color: #f5f5f5;
-      margin: 0;
-      padding: 25px;
-      text-align: center;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Walang Pasok Rolling Text</title>
+<style>
+  body {
+    margin: 0;
+    background: #111;
+  }
+
+  .ticker-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #c00;
+    color: #fff;
+    padding: 10px 0;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .ticker {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 90s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
     }
-    h1 {
-      font-size: 2em;
-      font-weight: bold;
-      color: #00e676;
-      text-shadow: 0 0 10px #00e676;
+    100% {
+      transform: translateX(-100%);
     }
-    .dashboard {
-      background: #1b1b1b;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-      padding: 20px;
-      margin-bottom: 25px;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .dashboard-item {
-      background: #212121;
-      padding: 15px 25px;
-      border-radius: 15px;
-      flex: 1 1 200px;
-      min-width: 220px;
-      text-align: center;
-    }
-    .dashboard-item h2 {
-      font-size: 1.2em;
-      color: #aaa;
-      margin-bottom: 5px;
-    }
-    .dashboard .value {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #00e676;
-    }
-    #pcs {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
-    .pc-box {
-      background: #1f1f1f;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      width: 320px;
-      padding: 20px;
-      transition: transform 0.2s ease, box-shadow 0.3s;
-    }
-    .pc-box:hover {
-      transform: scale(1.03);
-      box-shadow: 0 0 25px #00e67640;
-    }
-    .timer-bar {
-      width: 100%;
-      height: 8px;
-      background: #333;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    .timer-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #00e676, #ff5252);
-      transition: width 1s linear;
-    }
-    input {
-      width: 90%;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      margin: 6px 0;
-      font-size: 1em;
-    }
-    button {
-      background-color: #00c853;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-    button:hover { background-color: #00a843; }
-    .stop-btn { background-color: #ff5252; }
-    .stop-btn:hover { background-color: #e04848; }
-    .restart-btn { background-color: #2979ff; }
-    .restart-btn:hover { background-color: #1565c0; }
-    .addtime-btn { background-color: #ffb300; }
-    .addtime-btn:hover { background-color: #ffa000; }
-    .stopAll-btn {
-      background-color: #ff1744;
-      color: white;
-      border: none;
-      border-radius: 15px;
-      padding: 12px 25px;
-      font-weight: bold;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    .stopAll-btn:hover { background-color: #d50000; }
-    .info { text-align: left; margin-top: 15px; font-size: 1em; }
-    .timer {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #ff5252;
-      margin-top: 10px;
-    }
-    .leaderboard {
-      background: #1b1b1b;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      margin-top: 20px;
-      width: 80%;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-    }
-    .leaderboard h3 {
-      color: #00e676;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .leaderboard ol {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .leaderboard li {
-      background: #212121;
-      margin: 5px 0;
-      padding: 10px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-  </style>
+  }
+
+  strong {
+    color: #ffeb3b;
+  }
+</style>
 </head>
 <body>
 
-<h1>💻 PC RENTAL TIMER SYSTEM</h1>
-
-<div class="dashboard">
-  <div class="dashboard-item">
-    <h2>🖥️ Active PCs</h2>
-    <div class="value" id="activePCs">0</div>
-  </div>
-  <div class="dashboard-item">
-    <h2>💰 Total Earnings (Today)</h2>
-    <div class="value" id="totalEarnings">₱0.00</div>
-  </div>
-  <div class="dashboard-item">
-    <h2>🏆 Top Spender Today</h2>
-    <div class="value" id="topSpender">None</div>
-  </div>
-  <div class="dashboard-item">
-    <h2>🕒 Current Time</h2>
-    <div class="value" id="dashboardTime">--:--:--</div>
-  </div>
-  <div class="dashboard-item">
-    <button id="stopAllBtn" class="stopAll-btn" onclick="stopAll()">⛔ Stop All</button>
-    <button id="resetBtn" onclick="resetAll()">♻ Reset All</button>
-    <button id="exportBtn" onclick="exportLogs()">📤 Export Logs</button>
+<div class="ticker-wrap">
+  <div class="ticker">
+    🚨 <strong>WALANG PASOK – NOVEMBER 4, 2025:</strong> 
+    Aklan – Malay (all levels, Nov 3–5); New Washington (all levels until Nov 4); Balete, Ibajay (all levels until Nov 4); Libertad (no face-to-face until Nov 5); Kalibo (face-to-face suspended Nov 4). 
+    Antique – Anini-y, Barbaza, Bugasong, Caluya, Culasi, Hamtic, Pandan, Patnongon, San Jose de Buenavista, Sibalom, Tibiao, Tobias Fornier, Valderrama (no face-to-face until Nov 4–5). 
+    Capiz – Roxas City, Dumarao, Ivisan, Jamindan, Maayon, Panitan, Pontevedra (all levels until Nov 4). 
+    Iloilo – Balasan, Batad, Carles, Concepcion, Estancia, Leon, Oton, Pavia, Pototan, San Dionisio, Sara, Iloilo City (face-to-face suspended until Nov 4–5). 
+    Bohol – all levels, public & private. 
+    Cebu – Alcantara, Alegria, Aloguinsan, Argao, Asturias, Badian, Barili, Carcar City, Carmen, Compostela, Consolacion, Cordova, Daanbantayan, Dalaguete, Ginatilan, Liloan, Malabuyoc, Naga City, Poro, Ronda, San Fernando, San Francisco, Sibonga, Talisay City, Cebu City, Lapu-Lapu City (face-to-face suspended until Nov 4–5). 
+    Biliran – Culaba, Cabucgayan, Almeria, Maripipi, Caibiran, Naval (all levels until Nov 4). 
+    Eastern Samar – all levels until Nov 4. 
+    Leyte – Abuyog, Bato, Burauen, Carigara, Tanauan, Tacloban City (all levels until Nov 4). 
+    Northern Samar, Samar, Southern Leyte – all levels until Nov 4. 
+    Negros Occidental – Bago City, Cadiz City, Don Salvador Benedicto, Enrique B. Magalona, La Carlota City, Manapla, Moises Padilla, Pulupandan, Sagay City, Toboso, Victorias City, Bacolod City, San Carlos City, Calatrava, Silay City, Talisay City, Murcia, Valladolid, Pontevedra, San Enrique, Isabela, Hinigaran, La Castellana, Binalbagan, Himamaylan City, Cauayan, Ilog, Kabankalan City, Candoni, Hinoba-an (all levels until Nov 4–6). 
+    📢 Stay safe everyone!
   </div>
 </div>
 
-<div id="pcs"></div>
-
-<div class="leaderboard">
-  <h3>🏅 Weekly Top Spenders</h3>
-  <ol id="weeklyLeaderboard">
-    <li>No data yet</li>
-  </ol>
-</div>
-
-<script>
-const pcCount = 4;
-let totalEarnings = 0;
-const timers = {}, remainingSeconds = {}, endTimes = {}, logs = JSON.parse(localStorage.getItem("sessionLogs")||"[]");
-let dailySpending = JSON.parse(localStorage.getItem("dailySpending") || "{}");
-let weeklySpending = JSON.parse(localStorage.getItem("weeklySpending") || "{}");
-const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg");
-
-function announce(pcNumber) {
-  const message = new SpeechSynthesisUtterance(`Attention! PC ${pcNumber} time is over.`);
-  message.lang = "en-US";
-  speechSynthesis.speak(message);
-}
-
-function createPCBoxes() {
-  const container = document.getElementById("pcs");
-  for (let i = 1; i <= pcCount; i++) {
-    container.innerHTML += `
-      <div class="pc-box" id="pc${i}">
-        <h2>💻 PC ${i}</h2>
-        <input type="text" id="name${i}" placeholder="Customer Name">
-        <input type="number" id="amount${i}" placeholder="Amount (₱)" min="1">
-        <div>
-          <button onclick="startTimer(${i})">Start</button>
-          <button class="stop-btn" onclick="stopTimer(${i})">Stop</button>
-          <button class="restart-btn" onclick="restartTimer(${i})">Restart</button>
-        </div>
-        <input type="number" id="addAmount${i}" placeholder="Add ₱ (extra time)" min="1">
-        <button class="addtime-btn" onclick="addTime(${i})">➕ Add Time</button>
-        <div class="info">
-          <p><b>Name:</b> <span id="displayName${i}">-</span></p>
-          <p><b>Total Amount:</b> ₱<span id="displayAmount${i}">0</span></p>
-          <p><b>Time Remaining:</b></p>
-          <div class="timer" id="timeRemaining${i}">00:00</div>
-          <div class="timer-bar"><div class="timer-fill" id="fill${i}"></div></div>
-          <p>🕒 <small>Current: <span id="currentTime${i}">--:--:--</span></small></p>
-          <p>⏰ <small>End: <span id="endTime${i}">--:--:--</span></small></p>
-        </div>
-      </div>`;
-  }
-}
-createPCBoxes();
-
-setInterval(() => {
-  const now = new Date().toLocaleTimeString();
-  document.getElementById("dashboardTime").textContent = now;
-  for (let i = 1; i <= pcCount; i++) {
-    const el = document.getElementById(`currentTime${i}`);
-    if (el) el.textContent = now;
-  }
-  updateDashboard();
-}, 1000);
-
-function startTimer(pc) {
-  stopTimer(pc);
-  const name = document.getElementById(`name${pc}`).value.trim();
-  const amt = parseFloat(document.getElementById(`amount${pc}`).value);
-  if (!name || isNaN(amt) || amt <= 0) return alert("Enter valid name & amount");
-
-  const minutes = amt * 4;
-  const totalSeconds = minutes * 60;
-  const endTime = new Date(Date.now() + totalSeconds * 1000);
-
-  remainingSeconds[pc] = totalSeconds;
-  endTimes[pc] = endTime.getTime();
-
-  document.getElementById(`displayName${pc}`).textContent = name;
-  document.getElementById(`displayAmount${pc}`).textContent = amt.toFixed(2);
-  document.getElementById(`endTime${pc}`).textContent = endTime.toLocaleTimeString();
-  totalEarnings += amt;
-
-  const today = new Date().toLocaleDateString();
-  const week = getWeekKey();
-  dailySpending[today] = dailySpending[today] || {};
-  weeklySpending[week] = weeklySpending[week] || {};
-  dailySpending[today][name] = (dailySpending[today][name] || 0) + amt;
-  weeklySpending[week][name] = (weeklySpending[week][name] || 0) + amt;
-
-  updateTopSpender();
-  updateWeeklyLeaderboard();
-
-  runTimer(pc);
-  saveData();
-}
-
-function runTimer(pc) {
-  clearInterval(timers[pc]);
-  timers[pc] = setInterval(() => {
-    const now = Date.now();
-    const remaining = Math.floor((endTimes[pc] - now) / 1000);
-    remainingSeconds[pc] = remaining;
-    if (remaining <= 0) {
-      clearInterval(timers[pc]);
-      document.getElementById(`timeRemaining${pc}`).textContent = "00:00";
-      document.getElementById(`fill${pc}`).style.width = "0%";
-      alertSound.play();
-      announce(pc);
-      document.getElementById(`pc${pc}`).style.boxShadow = "0 0 25px #ff5252";
-      logs.push({
-        pc,
-        name: document.getElementById(`displayName${pc}`).textContent,
-        amount: document.getElementById(`displayAmount${pc}`).textContent,
-        end: new Date().toLocaleTimeString()
-      });
-      saveData();
-      return;
-    }
-    updateDisplay(pc);
-  }, 1000);
-}
-
-function updateDisplay(pc) {
-  let m = Math.floor(remainingSeconds[pc] / 60);
-  let s = remainingSeconds[pc] % 60;
-  document.getElementById(`timeRemaining${pc}`).textContent =
-    `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  const startAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent);
-  const total = startAmt * 4 * 60;
-  document.getElementById(`fill${pc}`).style.width = `${(remainingSeconds[pc] / total) * 100}%`;
-}
-
-function addTime(pc) {
-  const addAmt = parseFloat(document.getElementById(`addAmount${pc}`).value);
-  if (isNaN(addAmt) || addAmt <= 0) return alert("Invalid additional amount");
-  const extra = addAmt * 4 * 60;
-  endTimes[pc] = (endTimes[pc] || Date.now()) + extra * 1000;
-  remainingSeconds[pc] = Math.floor((endTimes[pc] - Date.now()) / 1000);
-
-  totalEarnings += addAmt;
-  const name = document.getElementById(`displayName${pc}`).textContent;
-  const newAmt = parseFloat(document.getElementById(`displayAmount${pc}`).textContent) + addAmt;
-  document.getElementById(`displayAmount${pc}`).textContent = newAmt.toFixed(2);
-
-  const today = new Date().toLocaleDateString();
-  const week = getWeekKey();
-  dailySpending[today][name] = (dailySpending[today][name] || 0) + addAmt;
-  weeklySpending[week][name] = (weeklySpending[week][name] || 0) + addAmt;
-
-  updateTopSpender();
-  updateWeeklyLeaderboard();
-  document.getElementById(`addAmount${pc}`).value = "";
-  document.getElementById(`endTime${pc}`).textContent = new Date(endTimes[pc]).toLocaleTimeString();
-  alert(`Added ₱${addAmt.toFixed(2)} to PC ${pc}`);
-  saveData();
-}
-
-function stopTimer(pc) { clearInterval(timers[pc]); saveData(); }
-function stopAll() { for (let i = 1; i <= pcCount; i++) stopTimer(i); alert("All PCs stopped."); }
-
-function restartTimer(pc) { if (remainingSeconds[pc] > 0) runTimer(pc); }
-
-function updateDashboard() {
-  const active = Object.values(remainingSeconds).filter(v => v > 0).length;
-  document.getElementById("activePCs").textContent = active;
-  document.getElementById("totalEarnings").textContent = "₱" + totalEarnings.toFixed(2);
-}
-
-function updateTopSpender() {
-  const today = new Date().toLocaleDateString();
-  if (!dailySpending[today]) return;
-  const top = Object.entries(dailySpending[today]).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById("topSpender").textContent = top ? `${top[0]} (₱${top[1].toFixed(2)})` : "None";
-}
-
-function updateWeeklyLeaderboard() {
-  const week = getWeekKey();
-  const weekData = weeklySpending[week] || {};
-  const sorted = Object.entries(weekData).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const leaderboard = document.getElementById("weeklyLeaderboard");
-  leaderboard.innerHTML = sorted.length ? sorted.map(([n,v]) => `<li><b>${n}</b><span>₱${v.toFixed(2)}</span></li>`).join("") : "<li>No data yet</li>";
-}
-
-function getWeekKey() {
-  const now = new Date();
-  const oneJan = new Date(now.getFullYear(),0,1);
-  const week = Math.ceil((((now - oneJan) / 86400000) + oneJan.getDay()+1) / 7);
-  return `${now.getFullYear()}-W${week}`;
-}
-
-function saveData() {
-  localStorage.setItem("pcRentalData", JSON.stringify({ endTimes, totalEarnings }));
-  localStorage.setItem("sessionLogs", JSON.stringify(logs));
-  localStorage.setItem("dailySpending", JSON.stringify(dailySpending));
-  localStorage.setItem("weeklySpending", JSON.stringify(weeklySpending));
-}
-
-function loadData() {
-  const data = JSON.parse(localStorage.getItem("pcRentalData") || "{}");
-  if (data.endTimes) Object.assign(endTimes, data.endTimes);
-  totalEarnings = data.totalEarnings || 0;
-  updateTopSpender();
-  updateWeeklyLeaderboard();
-}
-
-function resetAll() {
-  if (!confirm("Reset all data?")) return;
-  localStorage.clear();
-  location.reload();
-}
-
-function exportLogs() {
-  let csv = "PC,Name,Amount,EndTime\n";
-  logs.forEach(l => csv += `${l.pc},${l.name},${l.amount},${l.end}\n`);
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "pc_rental_logs.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-window.onload = loadData;
-</script>
 </body>
 </html>
