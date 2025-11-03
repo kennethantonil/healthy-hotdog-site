@@ -1,314 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Healthy White Hotdog</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    html {
-      scroll-behavior: smooth;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Walang Pasok Rolling Text</title>
+<style>
+  body {
+    margin: 0;
+    background: #111;
+  }
+
+  .ticker-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #c00;
+    color: #fff;
+    padding: 10px 0;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+
+  .ticker {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 90s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
     }
-    body {
-      font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(to right, #dbecc1, #b6e2d3);
-      color: #2d3e2e;
-      margin: 0;
-      padding: 0;
+    100% {
+      transform: translateX(-100%);
     }
-    header {
-      background-color: #76c893;
-      color: white;
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 1.8rem;
-      border-bottom-left-radius: 30px;
-      border-bottom-right-radius: 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 999;
-    }
-    section {
-      scroll-margin-top: 100px;
-      padding: 1rem;
-    }
-    #cart {
-      background-color: #f3fdf6;
-      border: 2px solid #76c893;
-      padding: 1rem;
-      margin: 3rem auto;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 90%;
-      font-family: 'Quicksand', sans-serif;
-      text-align: center;
-    }
-    .sticky-cart-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #76c893;
-      color: white;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 50px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      z-index: 1000;
-      font-weight: bold;
-      cursor: pointer;
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .sticky-cart-btn {
-        display: block;
-      }
-      .card {
-        display: block;
-        width: 90%;
-        margin: 1rem auto;
-      }
-    }
-    .card {
-      background-color: #f3fdf6;
-      border: 2px solid #b6e2d3;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 1rem;
-      margin: 1rem;
-      max-width: 300px;
-      text-align: center;
-      font-family: 'Quicksand', sans-serif;
-      display: inline-block;
-      vertical-align: top;
-      transition: transform 0.3s ease;
-    }
-    .card:hover {
-      transform: scale(1.03);
-    }
-    .quantity-input {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 0.5rem;
-    }
-    .quantity-input input {
-      width: 60px;
-      padding: 0.3rem;
-      margin: 0 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #76c893;
-      text-align: center;
-      background-color: #ffffff;
-      font-size: 1rem;
-    }
-    .quantity-input button {
-      background-color: #76c893;
-      border: none;
-      color: white;
-      font-weight: bold;
-      font-size: 1.2rem;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .quantity-input button:hover {
-      background-color: #5ab07e;
-    }
-    button {
-      background-color: #76c893;
-      color: white;
-      border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    button:hover {
-      background-color: #5ab07e;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    input[type="text"] {
-      padding: 0.5rem;
-      width: 80%;
-      max-width: 250px;
-      margin-top: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #76c893;
-    }
-  </style>
+  }
+
+  strong {
+    color: #ffeb3b;
+  }
+</style>
 </head>
 <body>
-  <section id="homepage" style="padding: 2rem; text-align: center;">
-    <h1>Welcome to Healthy White Hotdog!</h1>
-    <p>Delicious and guilt-free hotdog packs for every occasion 🍴</p>
-    <button onclick="goToMain()">Explore Packs</button>
-  </section>
 
-  <header id="top">
-    🌭 Healthy White Hotdog
-  </header>
+<div class="ticker-wrap">
+  <div class="ticker">
+    🚨 <strong>WALANG PASOK – NOVEMBER 4, 2025:</strong> 
+    Aklan – Malay (all levels, Nov 3–5); New Washington (all levels until Nov 4); Balete, Ibajay (all levels until Nov 4); Libertad (no face-to-face until Nov 5); Kalibo (face-to-face suspended Nov 4). 
+    Antique – Anini-y, Barbaza, Bugasong, Caluya, Culasi, Hamtic, Pandan, Patnongon, San Jose de Buenavista, Sibalom, Tibiao, Tobias Fornier, Valderrama (no face-to-face until Nov 4–5). 
+    Capiz – Roxas City, Dumarao, Ivisan, Jamindan, Maayon, Panitan, Pontevedra (all levels until Nov 4). 
+    Iloilo – Balasan, Batad, Carles, Concepcion, Estancia, Leon, Oton, Pavia, Pototan, San Dionisio, Sara, Iloilo City (face-to-face suspended until Nov 4–5). 
+    Bohol – all levels, public & private. 
+    Cebu – Alcantara, Alegria, Aloguinsan, Argao, Asturias, Badian, Barili, Carcar City, Carmen, Compostela, Consolacion, Cordova, Daanbantayan, Dalaguete, Ginatilan, Liloan, Malabuyoc, Naga City, Poro, Ronda, San Fernando, San Francisco, Sibonga, Talisay City, Cebu City, Lapu-Lapu City (face-to-face suspended until Nov 4–5). 
+    Biliran – Culaba, Cabucgayan, Almeria, Maripipi, Caibiran, Naval (all levels until Nov 4). 
+    Eastern Samar – all levels until Nov 4. 
+    Leyte – Abuyog, Bato, Burauen, Carigara, Tanauan, Tacloban City (all levels until Nov 4). 
+    Northern Samar, Samar, Southern Leyte – all levels until Nov 4. 
+    Negros Occidental – Bago City, Cadiz City, Don Salvador Benedicto, Enrique B. Magalona, La Carlota City, Manapla, Moises Padilla, Pulupandan, Sagay City, Toboso, Victorias City, Bacolod City, San Carlos City, Calatrava, Silay City, Talisay City, Murcia, Valladolid, Pontevedra, San Enrique, Isabela, Hinigaran, La Castellana, Binalbagan, Himamaylan City, Cauayan, Ilog, Kabankalan City, Candoni, Hinoba-an (all levels until Nov 4–6). 
+    📢 Stay safe everyone!
+  </div>
+</div>
 
-  <button class="sticky-cart-btn" onclick="scrollToCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
-
-  <section id="cart">
-    <strong>🛒 Cart</strong>
-    <ul id="cart-items"></ul>
-    <div id="voucher-section">
-      <input id="voucher-input" type="text" placeholder="Enter voucher code" oninput="applyVoucher()">
-      <div id="voucher-message"></div>
-    </div>
-    <div id="total">Total: ₱0</div>
-    <button onclick="checkout()">Checkout</button>
-    <div class="nav-buttons">
-      <button onclick="goToMain()">🏠 Back to Main</button>
-      <button onclick="scrollToCart()">🛒 View Cart</button>
-    </div>
-  </section>
-
-  <section id="main">
-    <div class="card">
-      <h3>Solo Pack</h3>
-      <p>₱50</p>
-      <div class="quantity-input">
-        <button onclick="changeQuantity('qty-solo', -1)">-</button>
-        <input type="number" id="qty-solo" min="1" value="1" readonly>
-        <button onclick="changeQuantity('qty-solo', 1)">+</button>
-      </div>
-      <button onclick="addToCart('Solo Pack', 50, parseInt(document.getElementById('qty-solo').value))">Add to Cart</button>
-    </div>
-    <div class="card">
-      <h3>Family Pack</h3>
-      <p>₱180</p>
-      <div class="quantity-input">
-        <button onclick="changeQuantity('qty-family', -1)">-</button>
-        <input type="number" id="qty-family" min="1" value="1" readonly>
-        <button onclick="changeQuantity('qty-family', 1)">+</button>
-      </div>
-      <button onclick="addToCart('Family Pack', 180, parseInt(document.getElementById('qty-family').value))">Add to Cart</button>
-    </div>
-    <div class="card">
-      <h3>Party Pack</h3>
-      <p>₱350</p>
-      <div class="quantity-input">
-        <button onclick="changeQuantity('qty-party', -1)">-</button>
-        <input type="number" id="qty-party" min="1" value="1" readonly>
-        <button onclick="changeQuantity('qty-party', 1)">+</button>
-      </div>
-      <button onclick="addToCart('Party Pack', 350, parseInt(document.getElementById('qty-party').value))">Add to Cart</button>
-    </div>
-  </section>
-
-  <footer>
-    &copy; 2025 Healthy White Hotdog. All rights reserved.
-  </footer>
-
-  <script>
-    function changeQuantity(id, change) {
-      const input = document.getElementById(id);
-      let current = parseInt(input.value);
-      if (isNaN(current)) current = 1;
-      current += change;
-      if (current < 1) current = 1;
-      input.value = current;
-    }
-
-    let cart = [];
-    let discount = 0;
-    let discountMessage = '';
-
-    function renderCart() {
-      const cartItems = document.getElementById('cart-items');
-      cartItems.innerHTML = '';
-      let subtotal = 0;
-
-      cart.forEach((item, index) => {
-        subtotal += item.price * item.quantity;
-        const li = document.createElement('li');
-        li.innerHTML = `
-          ${item.name} x${item.quantity} - ₱${item.price * item.quantity}
-          <button class="remove-item" onclick="removeFromCart(${index})">✕</button>`;
-        cartItems.appendChild(li);
-      });
-
-      let finalTotal = subtotal - discount;
-      if (finalTotal < 0) finalTotal = 0;
-
-      document.getElementById('cart-count').textContent = cart.reduce((sum, i) => sum + i.quantity, 0);
-      document.getElementById('total').textContent = 'Total: ₱' + finalTotal;
-      document.getElementById('voucher-message').textContent = discountMessage;
-    }
-
-    function addToCart(name, price, quantity = 1) {
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.quantity += quantity;
-      } else {
-        cart.push({ name, price, quantity });
-      }
-      renderCart();
-      alert(name + " added to cart!");
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      renderCart();
-    }
-
-    function applyVoucher() {
-      const code = document.getElementById('voucher-input').value.trim().toUpperCase();
-      const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-      if (code === "HOTDOG10") {
-        discount = 10;
-        discountMessage = "Voucher 'HOTDOG10' applied: ₱10 off!";
-      } else if (code === "PARTY20") {
-        discount = 20;
-        discountMessage = "Voucher 'PARTY20' applied: ₱20 off!";
-      } else if (code === "SAVE10%") {
-        discount = subtotal * 0.10;
-        discountMessage = "Voucher 'SAVE10%' applied: 10% off!";
-      } else {
-        discount = 0;
-        discountMessage = "";
-      }
-      renderCart();
-    }
-
-    function checkout() {
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
-      const message = `Hello! I would like to order the following:\n\n` + cart.map((item, i) => `${i + 1}. ${item.name} x${item.quantity}`).join("\n") + `\n\nVoucher discount: ₱${discount.toFixed(2)}\nTotal after discount: ₱${(cart.reduce((sum, i) => sum + i.price * i.quantity, 0) - discount).toFixed(2)}`;
-      const fbLink = `https://www.facebook.com/messages/t/YourPageName?text=${encodeURIComponent(message)}`;
-      window.open(fbLink, '_blank');
-    }
-
-    function goToMain() {
-      const main = document.getElementById('main');
-      if (main) {
-        main.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function scrollToCart() {
-      const cart = document.getElementById('cart');
-      if (cart) {
-        cart.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  </script>
 </body>
 </html>
