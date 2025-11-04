@@ -3,475 +3,302 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=1920, initial-scale=1" />
-<title>OBS Lower Third — DZMM-style (Editable)</title>
+<title>DZMM Lower Third OBS</title>
+
 <style>
-  :root{
-    --width:1920px;
-    --height:250px;
-    --bg:#0b4ea2;           /* deep broadcast blue */
-    --panel:#f5c100;        /* yellow accent */
-    --accent:#d62828;       /* red bar */
-    --muted:#0f2b4b;        /* dark blue for panels */
-    --text:#ffffff;
-    --rounded:14px;
-    --right-width:360px;
-    --font-sans: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --ticker-height:56px;
-  }
+:root {
+  --width: 1920px;
+  --height: 250px;
+  --bg-main: #0b4ea2;
+  --bg-gradient: linear-gradient(90deg, #0b4ea2, #0d5fae);
+  --yellow: #f5c100;
+  --red: #d62828;
+  --text: #ffffff;
+  --rounded: 16px;
+  --right-width: 360px;
+  --font: "Segoe UI", Arial, sans-serif;
+}
 
-  html,body{
-    margin:0;
-    padding:0;
-    background:transparent;
-    height:100%;
-    font-family:var(--font-sans);
-  }
+/* Reset */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  font-family: var(--font);
+}
 
-  /* Canvas container sized for OBS */
-  .lower-third{
-    width:var(--width);
-    height:var(--height);
-    box-sizing:border-box;
-    position:relative;
-    overflow:hidden;
-    background:linear-gradient(90deg,#0b4ea2 0%, #0d5fae 100%);
-    padding:14px;
-  }
+/* MAIN CONTAINER */
+.lowerthird {
+  position: absolute;
+  bottom: -300px; /* hidden before animation */
+  left: 0;
+  width: var(--width);
+  height: var(--height);
+  background: var(--bg-gradient);
+  border-radius: var(--rounded) var(--rounded) 0 0;
+  color: var(--text);
+  padding: 10px 16px;
+  box-sizing: border-box;
+  animation: slideUp 0.8s cubic-bezier(.23,1,.32,1) forwards;
+}
 
-  /* Main left card (photo + host info) */
-  .main{
-    position:absolute;
-    left:14px;
-    top:14px;
-    bottom:14px;
-    right:calc(var(--right-width) + 28px);
-    background:rgba(255,255,255,0.03);
-    border-radius:var(--rounded);
-    display:flex;
-    gap:12px;
-    align-items:center;
-    padding:10px 18px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-  }
+/* Animation */
+@keyframes slideUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0%); opacity: 1; }
+}
 
-  /* Photo frame */
-  .photo{
-    width:160px;
-    height:120px;
-    min-width:160px;
-    border-radius:10px;
-    overflow:hidden;
-    background:linear-gradient(#fff,#eee);
-    border:4px solid rgba(0,0,0,0.25);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+/* Left panel */
+.left {
+  position: absolute;
+  left: 16px;
+  top: 10px;
+  bottom: 60px;
+  right: calc(var(--right-width) + 32px);
+  display: grid;
+  grid-template-columns: 160px auto;
+  grid-gap: 12px;
+  align-items: center;
+}
 
-  /* Info area (labels & red bar) */
-  .info{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    min-width:280px;
-  }
+/* Photo box */
+.photo {
+  width: 160px;
+  height: 120px;
+  background: #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 4px solid rgba(0,0,0,0.4);
+}
+.photo img { width: 100%; height: 100%; object-fit: cover; }
 
-  .segment{
-    background:var(--panel);
-    color:var(--muted);
-    padding:6px 10px;
-    border-radius:8px;
-    font-weight:700;
-    letter-spacing:0.6px;
-    display:inline-block;
-    width:max-content;
-    box-shadow:0 2px 0 rgba(0,0,0,0.12);
-  }
+/* Title content */
+.info { display: flex; flex-direction: column; }
 
-  .name-row{
-    margin-top:0px;
-    display:flex;
-    gap:12px;
-    align-items:center;
-  }
+.segment {
+  background: var(--yellow);
+  color: #0b2b4d;
+  padding: 6px 12px;
+  font-weight: 900;
+  border-radius: 10px;
+  width: fit-content;
+}
 
-  .name{
-    font-size:32px;
-    font-weight:800;
-    color:var(--text);
-    text-shadow:0 2px 2px rgba(0,0,0,0.4);
-  }
-  .position{
-    font-size:16px;
-    color:rgba(255,255,255,0.9);
-    margin-top:2px;
-  }
+.name {
+  font-size: 30px;
+  font-weight: 900;
+  text-shadow: 0 2px 4px #000;
+}
+.position {
+  font-size: 16px;
+  opacity: 0.9;
+}
 
-  .red-bar{
-    margin-top:8px;
-    background:var(--accent);
-    color:white;
-    border-radius:10px;
-    padding:8px 10px;
-    font-weight:700;
-    display:inline-flex;
-    gap:10px;
-    align-items:center;
-    width:100%;
-    box-sizing:border-box;
-  }
+/* Red bar */
+.red {
+  background: var(--red);
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
 
-  .left-small{
-    font-size:13px;
-    opacity:0.95;
-  }
+/* Right panel */
+.right {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  bottom: 60px;
+  width: var(--right-width);
+  background: linear-gradient(180deg,#0f6bbd,#093f79);
+  border-radius: 12px;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.right .title { font-size: 24px; font-weight: 900; }
+.right .small { font-size: 14px; }
 
-  /* Right panel */
-  .right{
-    position:absolute;
-    top:14px;
-    right:14px;
-    bottom:14px;
-    width:var(--right-width);
-    background:linear-gradient(180deg,#0f6bbd 0%, #0a4f8f 100%);
-    border-radius:var(--rounded);
-    padding:12px;
-    box-sizing:border-box;
-    color:var(--text);
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    justify-content:space-between;
-  }
+.rate {
+  display: flex;
+  background: rgba(255,255,255,0.1);
+  padding: 8px;
+  border-radius: 8px;
+  justify-content: space-between;
+  font-weight: 900;
+}
 
-  .right .title{
-    font-weight:800;
-    font-size:26px;
-    letter-spacing:0.6px;
-  }
-  .right .small{
-    font-size:14px;
-    opacity:0.95;
-  }
+/* Ticker */
+.ticker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38px;
+  background: #0a2e5c;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
 
-  .rate{
-    background:rgba(255,255,255,0.06);
-    padding:8px;
-    border-radius:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-weight:700;
-  }
+.ticker-label {
+  background: #142c51;
+  padding: 8px 14px;
+  color: var(--yellow);
+  font-weight: 900;
+  border-radius: 0 var(--rounded) 0 0;
+}
+.ticker-text {
+  white-space: nowrap;
+  display: inline-block;
+  padding-left: 20px;
+  animation: tickerMove 24s linear infinite;
+}
 
-  /* Ticker area (bottom) */
-  .ticker-wrap{
-    position:absolute;
-    left:14px;
-    right:calc(var(--right-width) + 28px);
-    bottom:14px;
-    height:var(--ticker-height);
-    border-radius:10px;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    border:4px solid rgba(0,0,0,0.12);
-    background:linear-gradient(90deg,#0b2f60,#0b2f60);
-  }
+@keyframes tickerMove {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
 
-  .ticker-left{
-    min-width:260px;
-    padding:12px 16px;
-    background:linear-gradient(90deg,#1a3e78,#16345f);
-    color:var(--panel);
-    font-weight:800;
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .ticker-left .bullet{ width:10px; height:10px; border-radius:50%; background:var(--panel); display:inline-block; }
+/* Sports + clock */
+.bottom-right {
+  position: absolute;
+  right: 100px;
+  bottom: 42px;
+  display: flex;
+  gap: 10px;
+}
+.sports {
+  background: rgba(0,0,0,0.45);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  max-width: 360px;
+}
+.clock {
+  background: rgba(255,255,255,0.1);
+  color: var(--yellow);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 900;
+}
 
-  .ticker{
-    flex:1;
-    overflow:hidden;
-    position:relative;
-    height:100%;
-  }
+/* Logo */
+#logo {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 70px;
+  height: 70px;
+}
+#logo img { width: 100%; height: 100%; object-fit: contain; }
 
-  .ticker-inner{
-    display:inline-block;
-    white-space:nowrap;
-    padding-left:20px;
-    position:absolute;
-    will-change:transform;
-    font-weight:700;
-    font-size:20px;
-    color:var(--text);
-    top:50%;
-    transform:translateY(-50%);
-  }
-
-  /* Bottom right small sports box and clock */
-  .bottom-right{
-    position:absolute;
-    right:var(--right-width);
-    bottom:14px;
-    transform:translateX(-14px);
-    display:flex;
-    gap:10px;
-    align-items:center;
-  }
-
-  .sports{
-    width:420px;
-    background:rgba(0,0,0,0.45);
-    padding:10px 14px;
-    border-radius:10px;
-    color:var(--text);
-    font-weight:700;
-  }
-
-  .clock{
-    min-width:140px;
-    background:rgba(255,255,255,0.06);
-    padding:8px 10px;
-    border-radius:10px;
-    text-align:center;
-    font-weight:800;
-    color:var(--panel);
-  }
-
-  /* logo */
-  #logo{
-    position:absolute;
-    bottom:8px;
-    right:8px;
-    width:64px;
-    height:64px;
-    border-radius:12px;
-    overflow:hidden;
-    background:linear-gradient(#fff,#ddd);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.4);
-  }
-  #logo img{ width:100%; height:100%; object-fit:contain; }
-
-  /* Edit toggle (visible only when opened directly) */
-  .edit-toggle{
-    position:absolute;
-    left:8px;
-    top:8px;
-    background:rgba(255,255,255,0.06);
-    color:var(--text);
-    padding:6px 10px;
-    border-radius:8px;
-    cursor:pointer;
-    z-index:999;
-    font-weight:700;
-    user-select:none;
-  }
-
-  /* small responsive tweaks if needed */
-  @media (max-width:1600px){
-    :root{ --right-width:300px; }
-    .photo{ width:140px; height:100px; }
-  }
+/* Edit button */
+.edit-btn {
+  position: absolute;
+  top: -30px;
+  left: 10px;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
-<div class="lower-third" id="root">
 
-  <div class="edit-toggle" id="editToggle" title="Toggle edit mode (contentEditable)">Edit</div>
+<div class="lowerthird" id="lt">
+<button class="edit-btn" id="editToggle">EDIT</button>
 
-  <div class="main" id="mainCard" role="region" aria-label="Main Guest Info">
-    <div class="photo" id="photo">
-      <!-- Replace the src to show guest image -->
-      <img id="photoImg" src="" alt="Guest photo (replace src)">
-    </div>
-
-    <div class="info">
-      <div class="segment" id="segmentLabel" contenteditable="false">ON THE PHONE</div>
-
-      <div class="name-row">
-        <div>
-          <div class="name" id="guestName" contenteditable="false">Sec. ROSALINDA BALDOZ</div>
-          <div class="position" id="guestPosition" contenteditable="false">Dept. of Labor and Employment</div>
-        </div>
-      </div>
-
-      <div class="red-bar" id="redBar">
-        <div class="left-small" id="leftSmall" contenteditable="false">ON THE PHONE</div>
-        <div style="flex:1"></div>
-        <div class="left-small" id="leftSmall2" contenteditable="false">LIVE</div>
-      </div>
+<!-- LEFT PANEL -->
+<div class="left">
+  <div class="photo"><img id="guestPhoto" src=""></div>
+  <div class="info">
+    <div class="segment" id="segment" contenteditable="false">ON THE PHONE</div>
+    <div class="name" id="name" contenteditable="false">SEC. SAMPLE NAME</div>
+    <div class="position" id="position" contenteditable="false">Dept. of Something</div>
+    <div class="red">
+      <span id="redLeft" contenteditable="false">BREAKING</span>
+      <span id="redRight" contenteditable="false">LIVE</span>
     </div>
   </div>
+</div>
 
-  <div class="right" id="rightPanel" role="complementary" aria-label="Right info panel">
-    <div>
-      <div class="title" id="rightTitle" contenteditable="false">DZMM TeleRadyo</div>
-      <div class="small" id="rightDate" contenteditable="false">1 FEB 2013 FRI</div>
-    </div>
-
-    <div>
-      <div class="rate">
-        <div style="font-size:14px;" id="rateLabel" contenteditable="false">SAUDI ARABIA RIAL</div>
-        <div style="font-size:20px;" id="rateValue" contenteditable="false">PhP 10.840</div>
-      </div>
-      <div style="margin-top:8px;font-size:14px;" id="sportsShort" contenteditable="false">SPORTS: Azkals at Myanmar, maghaharap sa Pebrero 6</div>
-    </div>
+<!-- RIGHT PANEL -->
+<div class="right">
+  <div>
+    <div class="title" id="rightTitle" contenteditable="false">DZMM TeleRadyo</div>
+    <div class="small" id="rightDate" contenteditable="false">NOV 2025</div>
   </div>
-
-  <div class="ticker-wrap" aria-hidden="false">
-    <div class="ticker-left"><span class="bullet"></span> <strong> BULLETIN BOARD</strong></div>
-    <div class="ticker" id="ticker">
-      <div class="ticker-inner" id="tickerInner">
-        <!-- ticker items will be injected here -->
-        MAHIGIT 20 PAMILYA, NASUNUGAN SA SAMPALOC, MAYNILA • BBC: HALOS 300, SUGATAN SA SALPUKAN NG 2 TREN SA AFRICA • SAMPLE TICKER ITEM
-      </div>
-    </div>
+  <div class="rate">
+    <span id="rateLabel" contenteditable="false">SAUDI RIAL</span>
+    <span id="rateValue" contenteditable="false">₱10.84</span>
   </div>
+</div>
 
-  <div class="bottom-right">
-    <div class="sports" id="sports" contenteditable="false">SPORTS: Azkals at Myanmar, maghaharap sa Pebrero 6</div>
-    <div class="clock" id="clock">8:11 AM</div>
-  </div>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-label">NEWS UPDATE</div>
+  <div class="ticker-text" id="ticker">Sample headline • Another news item • Breaking news scrolling</div>
+</div>
 
-  <div id="logo">
-    <!-- Replace logo.png with your logo -->
-    <img id="logoImg" src="" alt="Logo">
-  </div>
+<!-- SPORTS & CLOCK -->
+<div class="bottom-right">
+  <div class="sports" id="sports" contenteditable="false">SPORTS: Sample sports news here</div>
+  <div class="clock" id="clock">12:00 PM</div>
+</div>
+
+<!-- LOGO -->
+<div id="logo"><img id="logoImg" src=""></div>
 
 </div>
 
 <script>
-/*
-  Editable DZMM-style lower third for OBS (1920x250)
-  - Toggle Edit mode with the "Edit" button: makes text areas contentEditable
-  - You can also set values via query parameters in the URL (OBS Browser Source supports ?key=value)
-    Supported params: segment, name, position, leftSmall, leftSmall2, rightTitle, date, rateLabel, rateValue, sports, ticker, photo, logo
-    Ticker supports pipe-delimited items (ticker=One|Two|Three)
-*/
+/* Live Clock */
+function updateClock(){
+  let now = new Date();
+  let h = now.getHours();
+  let m = String(now.getMinutes()).padStart(2,"0");
+  let ampm = h>=12?"PM":"AM";
+  h = h%12||12;
+  document.getElementById("clock").innerText = `${h}:${m} ${ampm}`;
+}
+updateClock(); setInterval(updateClock, 10000);
 
-(function(){
-  const params = Object.fromEntries(new URLSearchParams(location.search));
-  const setText = (id, value) => {
-    if(!value) return;
-    const el = document.getElementById(id);
-    if(el) el.textContent = decodeURIComponent(value);
-  };
+/* Edit toggle */
+const toggle = document.getElementById("editToggle");
+toggle.onclick = () => {
+  const fields = document.querySelectorAll("[contenteditable]");
+  const on = fields[0].getAttribute("contenteditable")==="true";
+  fields.forEach(f=>f.setAttribute("contenteditable",!on));
+  toggle.textContent = on?"EDIT":"LOCK";
+}
 
-  // Map simple params to elements
-  setText('segmentLabel', params.segment);
-  setText('guestName', params.name);
-  setText('guestPosition', params.position);
-  setText('leftSmall', params.leftSmall);
-  setText('leftSmall2', params.leftSmall2);
-  setText('rightTitle', params.rightTitle);
-  setText('rightDate', params.date);
-  setText('rateLabel', params.rateLabel);
-  setText('rateValue', params.rateValue);
-  setText('sports', params.sports);
-  setText('sportsShort', params.sports);
-
-  // photo and logo
-  if(params.photo){
-    document.getElementById('photoImg').src = decodeURIComponent(params.photo);
-  } else {
-    // default placeholder - a subtle gradient block with initials could be used; keep empty
-    document.getElementById('photoImg').src = '';
+/* URL Param Support */
+const q = new URLSearchParams(location.search);
+const map = {
+  name:"name", segment:"segment", position:"position",
+  redLeft:"redLeft", redRight:"redRight",
+  rightTitle:"rightTitle", date:"rightDate",
+  rateLabel:"rateLabel", rateValue:"rateValue",
+  sports:"sports", ticker:"ticker",
+  photo:"guestPhoto", logo:"logoImg"
+}
+Object.keys(map).forEach(k=>{
+  if(q.get(k)){
+    const el = document.getElementById(map[k]);
+    if(el.tagName==="IMG") el.src = decodeURIComponent(q.get(k));
+    else el.textContent = decodeURIComponent(q.get(k));
   }
-  if(params.logo){
-    document.getElementById('logoImg').src = decodeURIComponent(params.logo);
-  } else {
-    document.getElementById('logoImg').src = '';
-  }
-
-  // Ticker setup: accepts pipe-separated items or raw string
-  const tickerInner = document.getElementById('tickerInner');
-  if(params.ticker){
-    const raw = decodeURIComponent(params.ticker);
-    // If pipe-delimited, join with separator bullet
-    const items = raw.includes('|') ? raw.split('|').map(s=>s.trim()) : [raw];
-    tickerInner.textContent = items.join(' • ');
-  }
-
-  // Simple scrolling magic
-  function startTicker(){
-    const el = tickerInner;
-    let w = el.offsetWidth;
-    let container = el.parentElement;
-    let containerW = container.offsetWidth;
-    // Starting offset: container width
-    let x = containerW;
-    // speed px per frame
-    const speed = (params.tickerspeed ? Number(params.tickerspeed) : 1.2);
-    function frame(){
-      x -= speed;
-      if(x < -w) x = containerW;
-      el.style.transform = 'translateX('+x+'px)';
-      requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  }
-  // Wait for layout then start
-  window.addEventListener('load', startTicker);
-  window.setTimeout(startTicker, 250);
-
-  // Clock
-  function updateClock(){
-    const c = document.getElementById('clock');
-    const now = new Date();
-    // Format e.g. 8:11 AM
-    let hh = now.getHours();
-    const ampm = hh >= 12 ? 'PM' : 'AM';
-    hh = hh % 12 || 12;
-    let mm = now.getMinutes();
-    mm = mm < 10 ? '0'+mm : mm;
-    c.textContent = hh + ':' + mm + ' ' + ampm;
-  }
-  updateClock();
-  setInterval(updateClock, 1000*30);
-
-  // Edit toggle to allow contentEditable (useful for quick tweaks)
-  const editToggle = document.getElementById('editToggle');
-  let editable = false;
-  editToggle.addEventListener('click', ()=>{
-    editable = !editable;
-    const els = root.querySelectorAll('[contenteditable]');
-    els.forEach(e => e.contentEditable = editable ? "true" : "false");
-    editToggle.style.background = editable ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.06)';
-    editToggle.textContent = editable ? 'Editing (Click to lock)' : 'Edit';
-  });
-
-  // Double-click to toggle edit on single element (for convenience)
-  document.addEventListener('dblclick', (ev)=>{
-    const t = ev.target;
-    if(t && t.hasAttribute('contenteditable')){
-      const cur = t.getAttribute('contenteditable') === 'true';
-      t.setAttribute('contenteditable', (!cur).toString());
-    }
-  });
-
-  // Prevent accidental drag-drop images into OBS interfering: intercept file drop
-  window.addEventListener('dragover', e=>e.preventDefault());
-  window.addEventListener('drop', e=>{ e.preventDefault(); });
-
-  // Resize handling to re-init ticker measurements if OBS resizes the source
-  let resizeTimeout;
-  new ResizeObserver(()=>{ clearTimeout(resizeTimeout); resizeTimeout = setTimeout(startTicker,120); }).observe(document.getElementById('root'));
-
-  // Accessibility: ensure focus styles are visible
-  document.querySelectorAll('[contenteditable]').forEach(el=>{
-    el.addEventListener('focus', ()=> el.style.outline = '2px dashed rgba(255,255,255,0.14)');
-    el.addEventListener('blur', ()=> el.style.outline = 'none');
-  });
-
-})();
+});
 </script>
+
 </body>
 </html>
