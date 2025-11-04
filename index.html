@@ -1,157 +1,55 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>DZMM Lower Third</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POS — Desktop</title>
+<meta name="theme-color" content="#0b5ed7">
+<link rel="manifest" href="manifest.json" crossorigin>
 <style>
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-}
+/* (styles identical to the original POS with small additions for the new UI) */
+:root{ --bg:#f4f6f8; --card:#fff; --accent:#0b5ed7; --ok:#198754; --danger:#dc3545; --muted:#6c757d; --shadow: 0 6px 18px rgba(15,23,42,0.08); }
+*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+body{margin:0;background:var(--bg);color:#0e1724}
+header{background:linear-gradient(90deg,#0b5ed7,#0a66c2);color:white;padding:12px 16px;display:flex;align-items:center;gap:12px}
+header h1{margin:0;font-size:16px}
+.container{max-width:1200px;margin:12px auto;padding:10px}
+.grid{display:grid;grid-template-columns:1fr 420px;gap:12px}
+.card{background:var(--card);border-radius:10px;padding:12px;box-shadow:var(--shadow)}
+.toolbar{display:flex;gap:8px;margin-bottom:8px}
+.toolbar input, .toolbar select, .toolbar button{padding:8px;border-radius:8px;border:1px solid #e6eef8}
+.inventory-list{max-height:300px;overflow:auto;border:1px solid #eef3fb;border-radius:8px;padding:6px}
+.item-row{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:6px}
+.item-row:nth-child(odd){background:#fbfdff}
+.cart{display:flex;flex-direction:column;gap:8px}
+.cart-items{max-height:340px;overflow:auto;border:1px dashed #e5eefc;padding:6px;border-radius:8px}
+.cart-row{display:flex;gap:8px;align-items:center;padding:8px;border-bottom:1px solid #f0f5fa}
+.cart-row:last-child{border-bottom:none}
+.muted{color:var(--muted)}
+.summary{display:flex;flex-direction:column;gap:8px}
+.summary .row{display:flex;justify-content:space-between;align-items:center}
+.big{font-size:22px;font-weight:800}
+.controls{display:flex;flex-direction:column;gap:8px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal .box{width:760px;max-width:96%;background:white;padding:12px;border-radius:10px}
+.btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.btn.secondary{background:#eef4ff;color:var(--accent)}
+.btn.warn{background:var(--danger)}
+input[type='number']{width:100px}
+.flex{display:flex;align-items:center;gap:8px}
+.right{text-align:right}
+.small{font-size:13px}
+footer{max-width:1200px;margin:12px auto;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.right-col{order:2}}
 
-#lowerthird {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
 
-/* Top card */
-#card {
-    display: flex;
-    width: 100%;
-    height: 120px;
-    background: #004B95; /* DZMM Blue */
-    border-radius: 18px 18px 0 0;
-}
-
-/* LEFT SECTION */
-#guest {
-    flex: 1;
-    padding: 12px 20px;
-    color: #fff;
-}
-
-#g_name {
-    font-size: 30px;
-    font-weight: bold;
-}
-
-#g_title {
-    font-size: 22px;
-    margin-top: -4px;
-    opacity: 0.9;
-}
-
-#segment {
-    background: #FFC600; /* DZMM Yellow */
-    color: #000;
-    font-weight: bold;
-    padding: 4px 12px;
-    margin-top: 8px;
-    display: inline-block;
-    border-radius: 8px;
-    font-size: 20px;
-}
-
-/* RIGHT PANEL */
-#panel {
-    width: 360px;
-    background: #D90000; /* DZMM Red */
-    border-radius: 18px 0 0 0;
-    color: #fff;
-    padding: 10px;
-    font-size: 20px;
-    text-align: center;
-}
-
-/* TICKER */
-#ticker {
-    width: 100%;
-    height: 50px;
-    background: #FFD000;
-    color: #000;
-    font-size: 24px;
-    font-weight: bold;
-    overflow: hidden;
-    line-height: 50px;
-    white-space: nowrap;
-}
-
-#scrolltext {
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 18s linear infinite;
-}
-
-@keyframes ticker {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
-}
-
-/* BOTTOM RIGHT BOXES */
-#sports {
-    position: absolute;
-    right: 140px;
-    bottom: 55px;
-    background: #004B95;
-    padding: 6px 10px;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 20px;
-}
-
-#clock {
-    position: absolute;
-    right: 55px;
-    bottom: 55px;
-    background: #000;
-    padding: 6px 10px;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 20px;
-}
-
-/* LOGO */
-#logo {
-    position: absolute;
-    right: 10px;
-    bottom: 6px;
-    width: 45px;
-    height: 45px;
-    background: #ccc;
-    border-radius: 6px;
-}
+/* Receipt template editor */
+.template-area{display:flex;gap:8px}
+.template-preview{border:1px solid #eef3fb;padding:12px;border-radius:8px;background:#fff;min-width:280px}
+.logo-preview{width:120px;height:80px;border:1px dashed #dfeaf7;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
-
-<div id="lowerthird">
-
-    <div id="card">
-        <div id="guest">
-            <div id="g_name">GUEST NAME HERE</div>
-            <div id="g_title">Guest Title / Location</div>
-            <div id="segment">ON THE PHONE</div>
-        </div>
-
-        <div id="panel">
-            DZMM TELE RADYO<br>
-            Headline Info Here<br>
-            Tue | Nov 5
-        </div>
-    </div>
-
-    <div id="ticker">
-        <div id="scrolltext">BREAKING NEWS: Sample ticker text scrolling continuously — Add your headlines here... • More headlines here... • DZMM TeleRadyo style ticker scrolling nonstop...</div>
-    </div>
-
-    <div id="sports">UAAP: Sports Headline Here</div>
-    <div id="clock">8:11 AM</div>
-    <div id="logo"></div>
-
-</div>
-
-</body>
+<header>
+<div style="width:36px;height:36px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;color:#0b5ed7;font-weight:800">POS</div>
 </html>
