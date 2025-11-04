@@ -3,246 +3,296 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>KRA NBC-style Lower Third (1920x1080)</title>
+<title>KRA NBC Hybrid — Advanced Lower Third (1920x1080)</title>
 <style>
-  /* Page */
   html,body{
-    margin:0;
-    padding:0;
     height:100%;
+    margin:0;
     background:transparent;
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-family: "Segoe UI", "Roboto", Arial, sans-serif;
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
     overflow:hidden;
   }
 
-  /* Lowerthird full-width container */
-  .lt-wrap{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:40px;
-    height:260px; /* tall for big type + ticker */
-    pointer-events:none; /* allow only control panel to be clickable */
+  /* Container sized for 1920x1080 canvas */
+  .stage {
+    position: absolute;
+    inset: 0;
+    pointer-events: none; /* panel will override */
   }
 
-  /* Banner area centered horizontally but full width */
-  .banner-outer{
-    position:relative;
-    width:100%;
-    height:200px;
+  /* Lower third block placement */
+  .lt-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 30px;
+    height: 300px;
     display:flex;
-    align-items:center;
+    align-items:flex-end;
     justify-content:center;
-    pointer-events:none;
+    pointer-events: none;
   }
 
-  /* Split panels container (the split animation comes from scaling each side) */
-  .split-banner{
+  /* Wide banner */
+  .banner {
+    width: 96%;
+    max-width: 1860px;
+    height: 220px;
     position:relative;
-    width:92%; /* wide across canvas */
-    max-width:1840px;
+    pointer-events: none;
+  }
+
+  .split {
+    display:flex;
     height:160px;
-    display:flex;
-    align-items:stretch;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
-    border-radius:8px;
+    border-radius:12px;
     overflow:visible;
-    box-shadow:0 18px 60px rgba(0,0,0,0.45);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    pointer-events: none;
+    transform-origin: center;
   }
 
-  .panel {
-    height:100%;
-    display:flex;
-    align-items:center;
-    box-sizing:border-box;
-    overflow:hidden;
-  }
-
-  /* Left panel (logo area) - NBC-like glossy blue + silver */
-  .panel-left{
-    width:360px;
+  /* Left logo column */
+  .left {
+    width:380px;
     min-width:260px;
-    background: linear-gradient(135deg, #0f4fa8 0%, #1a6bd8 60%, #9fb6d9 100%);
-    padding-left:28px;
-    padding-right:18px;
     position:relative;
     transform-origin: right center;
+    pointer-events: none;
   }
 
-  .logo-box{
+  /* glossy metallic gradient + red accent streak */
+  .left-bg{
+    position:absolute;
+    inset:0;
+    border-radius:10px 0 0 10px;
+    background: linear-gradient(135deg, #0e3f82 0%, #1d63b8 60%, #9fb6d9 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -10px 40px rgba(0,0,0,0.25);
+  }
+
+  .red-streak {
+    position:absolute;
+    left:8%;
+    top:4%;
+    width:36%;
+    height:92%;
+    background: linear-gradient(180deg, rgba(255,75,75,0.08), rgba(255,30,30,0.18));
+    transform: skewX(-18deg);
+    mix-blend-mode: overlay;
+    border-radius:6px;
+    pointer-events: none;
+  }
+
+  .logo-wrap {
+    position:absolute;
+    left:24px;
+    top:50%;
+    transform:translateY(-50%);
     width:320px;
-    max-width:100%;
+    height:120px;
     display:flex;
     align-items:center;
-    height:120px;
-    pointer-events:auto;
+    pointer-events: none;
   }
 
-  .logo-box img{
+  .logo-wrap img {
     max-height:120px;
     width:auto;
     display:block;
-    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.45));
+    transform-origin:center;
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,0.5));
   }
 
-  /* Right panel (text area) */
-  .panel-right{
+  /* thin silver divider between left and right */
+  .divider {
+    width:6px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(180,190,200,0.6));
+    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+    z-index:3;
+    pointer-events: none;
+    transform-origin: center;
+  }
+
+  /* Right text area */
+  .right {
     flex:1;
-    padding: 18px 36px;
     background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:22px 36px;
     display:flex;
     flex-direction:column;
     justify-content:center;
-    transform-origin: left center;
+    border-radius:0 10px 10px 0;
+    position:relative;
+    overflow:hidden;
+    pointer-events: none;
   }
 
-  /* thin silver divider down the center (accent) */
-  .center-divider{
-    width:6px;
-    background: linear-gradient(180deg,#ffffffaf,#c1c7ce55);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    z-index:5;
-  }
-
-  /* Headline and subheadline sizes for 1080 */
-  .headline{
-    color: #ffffff;
-    font-size:56px;
+  .headline {
+    color:#ffffff;
+    font-size: 56px;
     font-weight:800;
-    letter-spacing:1px;
-    line-height:1;
+    letter-spacing:0.6px;
     text-transform:uppercase;
+    line-height: 0.95;
+    transform-origin:left;
+    text-shadow: 0 6px 18px rgba(0,0,0,0.5);
   }
 
-  .subheadline{
-    color: #cfd8e3;
-    font-size:26px;
+  .subheadline {
     margin-top:8px;
+    color:#dbe9ff;
+    font-size: 26px;
     font-weight:600;
+    opacity:0.95;
+    transform-origin:left;
   }
 
-  /* glossy animated shine overlay */
-  .shine {
+  /* glossy highlight over banner */
+  .gloss {
     position:absolute;
-    top:-40%;
-    left:-60%;
-    width:40%;
+    top: -30%;
+    left:-40%;
+    width:50%;
     height:300%;
-    transform:skewX(-25deg);
-    background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.45), rgba(255,255,255,0.0));
-    pointer-events:none;
+    background: linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.6), rgba(255,255,255,0.0));
+    transform: skewX(-25deg);
+    filter: blur(6px);
+    pointer-events: none;
     z-index:4;
-    filter:blur(6px);
   }
 
-  /* Ticker bar (bottom) */
-  .ticker-wrap{
+  /* 3D logo shadow/flip helper */
+  .logo-3d {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    perspective: 800px;
+    pointer-events: none;
+  }
+
+  /* Ticker */
+  .ticker-wrap {
     position:absolute;
     left:0;
     right:0;
-    bottom:0;
-    height:60px;
+    bottom:-8px;
     display:flex;
-    align-items:center;
     justify-content:center;
     pointer-events:none;
   }
 
-  .ticker{
+  .ticker {
     width:96%;
-    max-width:1840px;
-    background: linear-gradient(90deg,#081025,#111827);
-    border-radius:6px;
-    padding:10px 18px;
+    max-width:1860px;
+    height:74px;
+    background: linear-gradient(90deg,#041827,#0c2030);
+    border-radius:10px;
+    padding:12px 20px;
     box-sizing:border-box;
-    color:#fff;
-    font-weight:700;
+    color:#f0f8ff;
+    font-weight:800;
     font-size:24px;
+    display:flex;
+    align-items:center;
     overflow:hidden;
-    border-top:3px solid rgba(200,220,255,0.06);
-    box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    box-shadow:0 16px 40px rgba(0,0,0,0.6);
+    border-top: 3px solid rgba(255,80,80,0.06); /* subtle red top accent */
+    pointer-events: none;
   }
 
-  .ticker .ticker-track {
+  .ticker-track {
     display:inline-block;
     white-space:nowrap;
     will-change:transform;
   }
 
-  .ticker .item {
+  .ticker-item {
     display:inline-block;
-    padding-right:120px;
-    color:#e6eefc;
+    padding-right:100px;
+    color:#e6f3ff;
   }
 
-  /* CONTROL PANEL (clickable) */
-  .control-panel{
-    position: absolute;
-    top:14px;
-    right:14px;
-    width:360px;
-    background: rgba(2,8,23,0.78);
+  /* ticker glass reflection */
+  .ticker-gloss {
+    position:absolute;
+    left:-20%;
+    top:-120%;
+    width:40%;
+    height:300%;
+    transform:skewX(-18deg);
+    background:linear-gradient(90deg, rgba(255,255,255,0.0), rgba(255,255,255,0.22), rgba(255,255,255,0.0));
+    filter: blur(4px);
+    pointer-events:none;
+    z-index:5;
+  }
+
+  /* Control panel (visible) */
+  .control-panel {
+    position:absolute;
+    right:18px;
+    top:18px;
+    width:380px;
+    background: rgba(3,9,22,0.82);
     border-radius:10px;
-    color:#e8f4ff;
     padding:14px;
+    color:#e6f8ff;
     z-index:999;
-    pointer-events:all; /* allow clicking */
-    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    box-shadow:0 12px 40px rgba(0,0,0,0.6);
     backdrop-filter: blur(6px);
+    pointer-events: all;
   }
 
-  .control-panel h4{
+  .control-panel h3 {
     margin:0 0 8px 0;
     font-size:15px;
-    color:#bfe1ff;
+    color:#bfe5ff;
     text-align:center;
   }
 
-  .control-panel label{
+  .control-panel label {
     display:block;
+    font-size:12.5px;
     margin-top:8px;
-    font-size:13px;
-    color:#cfe8ff;
+    color:#cfeaff;
   }
 
-  .control-panel input, .control-panel textarea{
+  .control-panel input, .control-panel textarea {
     width:100%;
     margin-top:6px;
     padding:8px;
     border-radius:6px;
-    border: none;
+    border:none;
+    background: rgba(255,255,255,0.04);
+    color:#fff;
     font-size:14px;
     box-sizing:border-box;
-    background: rgba(255,255,255,0.06);
-    color:#fff;
     outline:none;
   }
 
-  .control-row{
+  .controls-row {
     display:flex;
     gap:8px;
     margin-top:10px;
   }
 
-  .control-panel button{
+  .control-panel button {
     flex:1;
     padding:10px;
-    border-radius:6px;
+    border-radius:8px;
     border:none;
     cursor:pointer;
-    font-weight:700;
-    color:#032042;
-    background: linear-gradient(90deg,#bfe1ff,#57a9ff);
+    font-weight:800;
+    color:#03213a;
+    background: linear-gradient(90deg,#bfe6ff,#58a8ff);
   }
 
-  .control-panel .btn-danger{
+  .control-panel .danger {
     color:#fff;
-    background: linear-gradient(90deg,#ff7a7a,#ff3b3b);
+    background: linear-gradient(90deg,#ff8a8a,#ff4650);
   }
 
-  /* small responsive tweak for OBS window smaller */
+  /* small responsive scales for smaller OBS windows */
   @media (max-width:1400px){
     .headline{font-size:44px}
     .subheadline{font-size:20px}
@@ -250,188 +300,229 @@
 </style>
 </head>
 <body>
+  <div class="stage" aria-hidden="true">
+    <div class="lt-wrap">
+      <div class="banner">
 
-  <!-- LOWER THIRD -->
-  <div class="lt-wrap" aria-hidden="true">
-    <div class="banner-outer">
-      <div class="split-banner" id="splitBanner">
-        <!-- LEFT PANEL -->
-        <div class="panel panel-left" id="leftPanel">
-          <div class="logo-box">
-            <img src="KRA NEWS LOGO.png" alt="KRA NEWS Logo" id="kraLogo">
+        <!-- Split panels -->
+        <div class="split" id="split">
+          <!-- LEFT -->
+          <div class="left" id="left">
+            <div class="left-bg"></div>
+            <div class="red-streak" id="redStreak"></div>
+            <div class="logo-wrap logo-3d" id="logoWrap">
+              <img src="KRA NEWS LOGO.png" id="kraLogo" alt="KRA NEWS Logo">
+            </div>
           </div>
-        </div>
 
-        <!-- center divider (thin silver accent) -->
-        <div class="center-divider" aria-hidden="true"></div>
+          <!-- Divider -->
+          <div class="divider" id="divider"></div>
 
-        <!-- RIGHT PANEL -->
-        <div class="panel panel-right" id="rightPanel">
-          <div style="position:relative;">
+          <!-- RIGHT area -->
+          <div class="right" id="right">
             <div class="headline" id="headline">BREAKING: KRA NEWS</div>
             <div class="subheadline" id="subheadline">Live from Manila — Anchored by Kenneth Antonil</div>
+            <!-- small decorative red accent bar (bottom-right) -->
+            <div style="position:absolute;right:22px;bottom:12px;height:6px;width:160px;background:linear-gradient(90deg,#ff6b6b,#ff3b3b);opacity:0.12;border-radius:3px;pointer-events:none;"></div>
           </div>
         </div>
 
-        <!-- glossy shine -->
-        <div class="shine" id="shine"></div>
-      </div>
-    </div>
+        <!-- Gloss shine that sweeps -->
+        <div class="gloss" id="gloss"></div>
 
-    <!-- TICKER -->
-    <div class="ticker-wrap">
-      <div class="ticker" id="ticker">
-        <div class="ticker-track" id="tickerTrack">
-          <span class="item" id="tickerText">KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv</span>
+        <!-- Ticker bar -->
+        <div class="ticker-wrap" id="tickerWrap">
+          <div class="ticker" id="ticker">
+            <div class="ticker-track" id="tickerTrack">
+              <!-- items injected dynamically -->
+            </div>
+            <div class="ticker-gloss" id="tickerGloss"></div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 
-  <!-- CONTROL PANEL (visible and interactive inside OBS) -->
-  <div class="control-panel" id="controlPanel" title="Edit lower third text & show/hide overlay">
-    <h4>🎛 KRA NEWS — Lower Third Control</h4>
+  <!-- Control panel (visible in OBS) -->
+  <div class="control-panel" id="controlPanel" title="Edit lower third text & control animations">
+    <h3>🎛 KRA NEWS — Advanced Lower Third</h3>
 
-    <label for="inputHeadline">Headline</label>
-    <input id="inputHeadline" type="text" value="BREAKING: KRA NEWS">
+    <label for="inpHeadline">Headline</label>
+    <input id="inpHeadline" type="text" value="BREAKING: KRA NEWS">
 
-    <label for="inputSubheadline">Subheadline</label>
-    <input id="inputSubheadline" type="text" value="Live from Manila — Anchored by Kenneth Antonil">
+    <label for="inpSub">Subheadline</label>
+    <input id="inpSub" type="text" value="Live from Manila — Anchored by Kenneth Antonil">
 
-    <label for="inputTicker">Ticker text</label>
-    <textarea id="inputTicker" rows="2">KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv</textarea>
+    <label for="inpTicker">Ticker text</label>
+    <textarea id="inpTicker" rows="2">KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv</textarea>
 
-    <div class="control-row" style="margin-top:12px;">
+    <div class="controls-row" style="margin-top:12px;">
       <button id="btnShow">Show</button>
-      <button id="btnHide" class="btn-danger">Hide</button>
+      <button id="btnHide" class="danger">Hide</button>
     </div>
 
-    <div class="control-row" style="margin-top:8px;">
+    <div class="controls-row" style="margin-top:8px;">
       <button id="btnUpdate">Update Text</button>
-      <button id="btnReset" class="btn-danger">Reset</button>
+      <button id="btnReset" class="danger">Reset</button>
     </div>
   </div>
 
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script>
-    // Elements
-    const leftPanel = document.getElementById('leftPanel');
-    const rightPanel = document.getElementById('rightPanel');
-    const centerDivider = document.querySelector('.center-divider');
-    const shine = document.getElementById('shine');
-    const splitBanner = document.getElementById('splitBanner');
+    // ELEMENTS
+    const left = document.getElementById('left');
+    const right = document.getElementById('right');
+    const divider = document.getElementById('divider');
+    const kraLogo = document.getElementById('kraLogo');
+    const logoWrap = document.getElementById('logoWrap');
+    const gloss = document.getElementById('gloss');
     const tickerTrack = document.getElementById('tickerTrack');
-    const tickerText = document.getElementById('tickerText');
-
-    // Text elements
+    const tickerWrap = document.getElementById('ticker');
     const headlineEl = document.getElementById('headline');
-    const subheadlineEl = document.getElementById('subheadline');
+    const subEl = document.getElementById('subheadline');
 
-    // Controls
-    const inputHeadline = document.getElementById('inputHeadline');
-    const inputSubheadline = document.getElementById('inputSubheadline');
-    const inputTicker = document.getElementById('inputTicker');
+    const inpHeadline = document.getElementById('inpHeadline');
+    const inpSub = document.getElementById('inpSub');
+    const inpTicker = document.getElementById('inpTicker');
+
     const btnShow = document.getElementById('btnShow');
     const btnHide = document.getElementById('btnHide');
     const btnUpdate = document.getElementById('btnUpdate');
     const btnReset = document.getElementById('btnReset');
 
-    // Initial setup: panels squashed (split closed)
-    gsap.set(leftPanel, { scaleX: 0, transformOrigin: "right center" });
-    gsap.set(rightPanel, { scaleX: 0, transformOrigin: "left center" });
-    gsap.set(centerDivider, { scaleY: 0, transformOrigin: "center center", opacity: 0 });
-    gsap.set(splitBanner, { opacity: 1 });
-    gsap.set(shine, { x: "-150%" });
+    // INITIAL STATE: closed split + hidden text + logo small + ticker stopped
+    gsap.set([left, right], { scaleX: 0, transformOrigin: "center center" });
+    gsap.set(divider, { scaleY: 0, opacity: 0 });
+    gsap.set([headlineEl, subEl], { x: 40, opacity: 0 });
+    gsap.set(logoWrap, { rotationY: -90, scale: 0.7, transformOrigin: "center center" });
+    gsap.set(gloss, { x: "-120%", opacity: 0 });
 
-    // Shine continuous movement
-    gsap.to(shine, { x: "150%", duration: 2.8, repeat: -1, ease: "linear", delay: 0.6 });
+    // SHINE loop
+    gsap.to(gloss, { x: "120%", duration: 3.2, repeat: -1, ease: "linear", delay: 0.9, opacity: 0.9 });
 
-    // Ticker animation function (continuous left-moving loop)
+    // LOGO 3D pulse timeline (for show)
+    const logoIn = gsap.timeline({ paused:true });
+    logoIn.to(logoWrap, { rotationY: 10, duration: 0.35, ease: "back.out(1.2)" })
+          .to(logoWrap, { rotationY: 0, duration: 0.3, ease: "power2.out" }, "+=0.02")
+          .to(logoWrap, { scale: 1.02, duration: 0.2, yoyo:true, repeat:1, ease:"sine.inOut" }, "-=0.25");
+
+    // SPLIT open timeline
+    const openTL = gsap.timeline({ paused:true });
+    openTL
+      .to(left, { scaleX:1, duration:0.66, ease: "power3.out" }, 0)
+      .to(right, { scaleX:1, duration:0.66, ease: "power3.out" }, 0.03)
+      .to(divider, { scaleY:1, opacity:1, duration:0.42, ease:"power2.out" }, 0.06)
+      .add(logoIn.play(), 0.12)
+      .fromTo(headlineEl, { x:40, opacity:0 }, { x:0, opacity:1, duration:0.42, ease:"power3.out" }, 0.36)
+      .fromTo(subEl, { x:40, opacity:0 }, { x:0, opacity:1, duration:0.42, ease:"power3.out" }, 0.44)
+      .to(gloss, { opacity:0.9, duration:0.4, ease:"power2.out" }, 0.2);
+
+    // CLOSE timeline (reverse with nice timing)
+    const closeTL = gsap.timeline({ paused:true });
+    closeTL
+      .to([headlineEl, subEl], { x:40, opacity:0, duration:0.28, ease:"power2.in" }, 0)
+      .to(divider, { scaleY:0, opacity:0, duration:0.28, ease:"power2.in" }, 0.08)
+      .to([right, left], { scaleX:0, duration:0.6, ease:"power3.in", stagger:0.03 }, 0.18)
+      .to(logoWrap, { rotationY: -90, scale:0.7, duration:0.45, ease:"power2.in" }, 0.22)
+      .to(gloss, { opacity:0, duration:0.35, ease:"power2.in" }, 0);
+
+    // TICKER helper: creates repeating items and animates leftwards
+    let tickerTween = null;
     function startTicker(text){
-      // ensure content
-      tickerText.textContent = text || tickerText.textContent;
-      // Duplicate so ticker is long enough
+      // ensure a default
+      const t = (text && text.trim().length) ? text.trim() : inpTicker.value.trim();
+      // build repeating items
       tickerTrack.innerHTML = '';
-      const t = tickerText.textContent;
-      // repeat the item several times for smooth loop
-      for(let i=0;i<6;i++){
+      const repeatCount = 6;
+      for(let i=0;i<repeatCount;i++){
         const span = document.createElement('span');
-        span.className = 'item';
+        span.className = 'ticker-item';
         span.textContent = t;
         tickerTrack.appendChild(span);
       }
-
-      // measure width and animate
-      const totalWidth = tickerTrack.offsetWidth;
-      const parentW = document.getElementById('ticker').offsetWidth;
-      // move from right to left
+      // measure
       gsap.killTweensOf(tickerTrack);
-      const duration = Math.max(18, totalWidth / 80); // adapt speed
-      gsap.set(tickerTrack, { x: parentW });
-      gsap.to(tickerTrack, { x: -totalWidth, duration: duration, ease: "linear", repeat: -1 });
+      gsap.set(tickerTrack, { x: 0 });
+      const totalWidth = tickerTrack.scrollWidth;
+      const containerW = tickerWrap.clientWidth;
+      const distance = totalWidth + containerW;
+      const baseSpeed = 80; // px/sec
+      const duration = Math.max(18, distance / baseSpeed);
+      tickerTween = gsap.to(tickerTrack, { x: -totalWidth, duration: duration, ease: "linear", repeat: -1 });
     }
 
-    // Show animation (split open then reveal shine and text)
-    const showTL = gsap.timeline({ paused:true });
-    showTL
-      .to([leftPanel, rightPanel], { scaleX: 1, duration: 0.6, ease: "power3.out", stagger: 0.03 }, 0)
-      .to(centerDivider, { scaleY: 1, opacity: 1, duration: 0.4, ease: "power2.out" }, 0)
-      .fromTo(headlineEl, { x: 40, opacity: 0 }, { x:0, opacity:1, duration:0.45, ease:"power3.out" }, "-=0.25")
-      .fromTo(subheadlineEl, { x: 40, opacity: 0 }, { x:0, opacity:1, duration:0.45, ease:"power3.out" }, "-=0.35");
+    // stop ticker
+    function stopTicker(){
+      if(tickerTween) { gsap.killTweensOf(tickerTrack); tickerTween = null; }
+      // optionally keep last position
+    }
 
-    // Hide animation (reverse)
-    const hideTL = gsap.timeline({ paused:true });
-    hideTL
-      .to([headlineEl, subheadlineEl], { x: 40, opacity: 0, duration: 0.32, ease: "power2.in" })
-      .to(centerDivider, { scaleY: 0, opacity: 0, duration: 0.28, ease: "power2.in" }, "-=0.18")
-      .to([rightPanel, leftPanel], { scaleX:0, duration:0.5, ease:"power3.in", stagger:0.03 }, "-=0.12");
-
-    // Bind controls
-    btnShow.addEventListener('click', () => {
-      showTL.restart();
-      startTicker(inputTicker.value || tickerText.textContent);
+    // Public controls
+    btnShow.addEventListener('click', ()=>{
+      openTL.restart();
+      startTicker(inpTicker.value || document.getElementById('tickerTrack').textContent);
     });
 
-    btnHide.addEventListener('click', () => {
-      hideTL.restart();
-      // stop ticker
-      gsap.killTweensOf(tickerTrack);
+    btnHide.addEventListener('click', ()=>{
+      closeTL.restart();
+      stopTicker();
     });
 
-    btnUpdate.addEventListener('click', () => {
-      const h = inputHeadline.value.trim();
-      const s = inputSubheadline.value.trim();
-      const t = inputTicker.value.trim();
-
+    btnUpdate.addEventListener('click', ()=>{
+      const h = inpHeadline.value.trim();
+      const s = inpSub.value.trim();
+      const t = inpTicker.value.trim();
       if(h) headlineEl.textContent = h;
-      if(s) subheadlineEl.textContent = s;
-      if(t){
-        // update single ticker item used for duplication
-        tickerText.textContent = t;
-        startTicker(t);
-      }
+      if(s) subEl.textContent = s;
+      if(t) startTicker(t);
     });
 
-    btnReset.addEventListener('click', () => {
-      inputHeadline.value = "BREAKING: KRA NEWS";
-      inputSubheadline.value = "Live from Manila — Anchored by Kenneth Antonil";
-      inputTicker.value = "KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv";
+    btnReset.addEventListener('click', ()=>{
+      inpHeadline.value = "BREAKING: KRA NEWS";
+      inpSub.value = "Live from Manila — Anchored by Kenneth Antonil";
+      inpTicker.value = "KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv";
       btnUpdate.click();
     });
 
-    // Expose update function to OBS console/interact if needed
+    // Expose update function for OBS console / Interact
     function updateLowerThird(headline, sub, ticker){
-      if(headline) { headlineEl.textContent = headline; inputHeadline.value = headline; }
-      if(sub) { subheadlineEl.textContent = sub; inputSubheadline.value = sub; }
-      if(ticker) { tickerText.textContent = ticker; inputTicker.value = ticker; startTicker(ticker); }
+      if(headline !== undefined && headline !== null){
+        headlineEl.textContent = headline;
+        inpHeadline.value = headline;
+      }
+      if(sub !== undefined && sub !== null){
+        subEl.textContent = sub;
+        inpSub.value = sub;
+      }
+      if(ticker !== undefined && ticker !== null){
+        inpTicker.value = ticker;
+        startTicker(ticker);
+      }
     }
     window.updateLowerThird = updateLowerThird;
 
-    // Auto show once on load for preview
-    window.addEventListener('load', () => {
-      // small delay for nice intro
-      setTimeout(()=>{ btnShow.click(); }, 360);
+    // Auto preview show shortly after load for convenience
+    window.addEventListener('load', ()=>{
+      setTimeout(()=>{ btnShow.click(); }, 420);
+    });
+
+    // Optional: keyboard shortcuts when OBS Interact is focused (useful)
+    window.addEventListener('keydown', (e)=>{
+      // Ctrl+S show, Ctrl+H hide, Ctrl+U update
+      if(e.ctrlKey && e.key.toLowerCase() === 's'){ btnShow.click(); }
+      if(e.ctrlKey && e.key.toLowerCase() === 'h'){ btnHide.click(); }
+      if(e.ctrlKey && e.key.toLowerCase() === 'u'){ btnUpdate.click(); }
+    });
+
+    // Ensure logo image loads; if large, scale to fit
+    kraLogo.addEventListener('load', ()=> {
+      // scale logo if too tall
+      const maxH = 120;
+      if(kraLogo.naturalHeight > maxH){
+        kraLogo.style.height = maxH + 'px';
+      }
     });
   </script>
 </body>
