@@ -1,255 +1,477 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRA NEWS Lower Third v2</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1920, initial-scale=1" />
+<title>OBS Lower Third — DZMM-style (Editable)</title>
 <style>
-  body {
-    margin: 0;
-    background: transparent;
-    overflow: hidden;
-    font-family: "Segoe UI", "Arial", sans-serif;
+  :root{
+    --width:1920px;
+    --height:250px;
+    --bg:#0b4ea2;           /* deep broadcast blue */
+    --panel:#f5c100;        /* yellow accent */
+    --accent:#d62828;       /* red bar */
+    --muted:#0f2b4b;        /* dark blue for panels */
+    --text:#ffffff;
+    --rounded:14px;
+    --right-width:360px;
+    --font-sans: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --ticker-height:56px;
   }
 
-  /* ===== LOWER THIRD ===== */
-  .lowerthird {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1920px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  html,body{
+    margin:0;
+    padding:0;
+    background:transparent;
+    height:100%;
+    font-family:var(--font-sans);
   }
 
-  .banner {
-    position: relative;
-    width: 100%;
-    height: 180px;
-    background: linear-gradient(90deg, #001d3d, #003a88 50%, #b30000 100%);
-    border-radius: 14px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-    overflow: hidden;
+  /* Canvas container sized for OBS */
+  .lower-third{
+    width:var(--width);
+    height:var(--height);
+    box-sizing:border-box;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(90deg,#0b4ea2 0%, #0d5fae 100%);
+    padding:14px;
   }
 
-  .banner::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15), transparent 70%);
-    mix-blend-mode: overlay;
+  /* Main left card (photo + host info) */
+  .main{
+    position:absolute;
+    left:14px;
+    top:14px;
+    bottom:14px;
+    right:calc(var(--right-width) + 28px);
+    background:rgba(255,255,255,0.03);
+    border-radius:var(--rounded);
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:10px 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
   }
 
-  /* Shine sweep */
-  .shine {
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(120deg, rgba(255,255,255,0.4), transparent 70%);
-    transform: skewX(-25deg);
+  /* Photo frame */
+  .photo{
+    width:160px;
+    height:120px;
+    min-width:160px;
+    border-radius:10px;
+    overflow:hidden;
+    background:linear-gradient(#fff,#eee);
+    border:4px solid rgba(0,0,0,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* Info area (labels & red bar) */
+  .info{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-width:280px;
   }
 
-  /* Larger integrated logo */
-  .logo-box {
-    position: absolute;
-    left: 1%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 260px;
-    height: auto;
-    z-index: 3;
+  .segment{
+    background:var(--panel);
+    color:var(--muted);
+    padding:6px 10px;
+    border-radius:8px;
+    font-weight:700;
+    letter-spacing:0.6px;
+    display:inline-block;
+    width:max-content;
+    box-shadow:0 2px 0 rgba(0,0,0,0.12);
   }
 
-  .logo-box img {
-    width: 100%;
-    height: auto;
+  .name-row{
+    margin-top:0px;
+    display:flex;
+    gap:12px;
+    align-items:center;
   }
 
-  .text-content {
-    position: absolute;
-    left: 300px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #fff;
+  .name{
+    font-size:32px;
+    font-weight:800;
+    color:var(--text);
+    text-shadow:0 2px 2px rgba(0,0,0,0.4);
+  }
+  .position{
+    font-size:16px;
+    color:rgba(255,255,255,0.9);
+    margin-top:2px;
   }
 
-  .headline {
-    font-size: 58px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+  .red-bar{
+    margin-top:8px;
+    background:var(--accent);
+    color:white;
+    border-radius:10px;
+    padding:8px 10px;
+    font-weight:700;
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    width:100%;
+    box-sizing:border-box;
   }
 
-  .subheadline {
-    font-size: 30px;
-    font-weight: 500;
-    color: #e0e0e0;
-    text-shadow: 0 0 6px rgba(0,0,0,0.4);
+  .left-small{
+    font-size:13px;
+    opacity:0.95;
   }
 
-  /* ===== TICKER ===== */
-  .ticker {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 55px;
-    background: linear-gradient(90deg, #b30000, #003a88 60%, #001d3d);
-    overflow: hidden;
-    color: #fff;
-    border-top: 3px solid #d00000;
+  /* Right panel */
+  .right{
+    position:absolute;
+    top:14px;
+    right:14px;
+    bottom:14px;
+    width:var(--right-width);
+    background:linear-gradient(180deg,#0f6bbd 0%, #0a4f8f 100%);
+    border-radius:var(--rounded);
+    padding:12px;
+    box-sizing:border-box;
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    justify-content:space-between;
   }
 
-  .ticker span {
-    display: inline-block;
-    padding-right: 100px;
-    animation: tickerMove 25s linear infinite;
-    white-space: nowrap;
-    font-size: 26px;
-    font-weight: 600;
+  .right .title{
+    font-weight:800;
+    font-size:26px;
+    letter-spacing:0.6px;
+  }
+  .right .small{
+    font-size:14px;
+    opacity:0.95;
   }
 
-  @keyframes tickerMove {
-    from { transform: translateX(100%); }
-    to { transform: translateX(-100%); }
+  .rate{
+    background:rgba(255,255,255,0.06);
+    padding:8px;
+    border-radius:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:700;
   }
 
-  /* ===== CONTROL PANEL ===== */
-  .control-panel {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(0,0,0,0.8);
-    color: #fff;
-    padding: 15px 20px;
-    border-radius: 10px;
-    font-size: 14px;
-    z-index: 100;
-    width: 320px;
-    backdrop-filter: blur(10px);
+  /* Ticker area (bottom) */
+  .ticker-wrap{
+    position:absolute;
+    left:14px;
+    right:calc(var(--right-width) + 28px);
+    bottom:14px;
+    height:var(--ticker-height);
+    border-radius:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    border:4px solid rgba(0,0,0,0.12);
+    background:linear-gradient(90deg,#0b2f60,#0b2f60);
   }
 
-  .control-panel input, .control-panel textarea {
-    width: 100%;
-    margin: 5px 0 10px 0;
-    border: none;
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 14px;
-    outline: none;
+  .ticker-left{
+    min-width:260px;
+    padding:12px 16px;
+    background:linear-gradient(90deg,#1a3e78,#16345f);
+    color:var(--panel);
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .ticker-left .bullet{ width:10px; height:10px; border-radius:50%; background:var(--panel); display:inline-block; }
+
+  .ticker{
+    flex:1;
+    overflow:hidden;
+    position:relative;
+    height:100%;
   }
 
-  .control-panel button {
-    width: 48%;
-    margin: 2px 1%;
-    background: linear-gradient(90deg, #007bff, #00bfff);
-    border: none;
-    border-radius: 6px;
-    padding: 8px;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+  .ticker-inner{
+    display:inline-block;
+    white-space:nowrap;
+    padding-left:20px;
+    position:absolute;
+    will-change:transform;
+    font-weight:700;
+    font-size:20px;
+    color:var(--text);
+    top:50%;
+    transform:translateY(-50%);
   }
 
-  .control-panel button:hover {
-    background: linear-gradient(90deg, #00bfff, #007bff);
+  /* Bottom right small sports box and clock */
+  .bottom-right{
+    position:absolute;
+    right:var(--right-width);
+    bottom:14px;
+    transform:translateX(-14px);
+    display:flex;
+    gap:10px;
+    align-items:center;
   }
 
-  .control-title {
-    font-weight: 700;
-    margin-bottom: 8px;
-    text-align: center;
-    color: #00bfff;
+  .sports{
+    width:420px;
+    background:rgba(0,0,0,0.45);
+    padding:10px 14px;
+    border-radius:10px;
+    color:var(--text);
+    font-weight:700;
+  }
+
+  .clock{
+    min-width:140px;
+    background:rgba(255,255,255,0.06);
+    padding:8px 10px;
+    border-radius:10px;
+    text-align:center;
+    font-weight:800;
+    color:var(--panel);
+  }
+
+  /* logo */
+  #logo{
+    position:absolute;
+    bottom:8px;
+    right:8px;
+    width:64px;
+    height:64px;
+    border-radius:12px;
+    overflow:hidden;
+    background:linear-gradient(#fff,#ddd);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.4);
+  }
+  #logo img{ width:100%; height:100%; object-fit:contain; }
+
+  /* Edit toggle (visible only when opened directly) */
+  .edit-toggle{
+    position:absolute;
+    left:8px;
+    top:8px;
+    background:rgba(255,255,255,0.06);
+    color:var(--text);
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    z-index:999;
+    font-weight:700;
+    user-select:none;
+  }
+
+  /* small responsive tweaks if needed */
+  @media (max-width:1600px){
+    :root{ --right-width:300px; }
+    .photo{ width:140px; height:100px; }
   }
 </style>
 </head>
 <body>
+<div class="lower-third" id="root">
 
-<!-- ===== LOWER THIRD ===== -->
-<div class="lowerthird" id="lowerthird">
-  <div class="banner">
-    <div class="shine"></div>
-    <div class="logo-box">
-      <img src="https://i.imgur.com/u3PMIG1.png" alt="KRA NEWS">
+  <div class="edit-toggle" id="editToggle" title="Toggle edit mode (contentEditable)">Edit</div>
+
+  <div class="main" id="mainCard" role="region" aria-label="Main Guest Info">
+    <div class="photo" id="photo">
+      <!-- Replace the src to show guest image -->
+      <img id="photoImg" src="" alt="Guest photo (replace src)">
     </div>
-    <div class="text-content">
-      <div class="headline" id="headline">BREAKING NEWS</div>
-      <div class="subheadline" id="subheadline">Live from Manila | Anchored by Kenneth Antonil</div>
+
+    <div class="info">
+      <div class="segment" id="segmentLabel" contenteditable="false">ON THE PHONE</div>
+
+      <div class="name-row">
+        <div>
+          <div class="name" id="guestName" contenteditable="false">Sec. ROSALINDA BALDOZ</div>
+          <div class="position" id="guestPosition" contenteditable="false">Dept. of Labor and Employment</div>
+        </div>
+      </div>
+
+      <div class="red-bar" id="redBar">
+        <div class="left-small" id="leftSmall" contenteditable="false">ON THE PHONE</div>
+        <div style="flex:1"></div>
+        <div class="left-small" id="leftSmall2" contenteditable="false">LIVE</div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="ticker" id="tickerBar">
-  <span id="tickerText">KRA NEWS UPDATE: President delivers national address | Weather Alert: Storm entering PAR | More updates at kranews.tv</span>
-</div>
+  <div class="right" id="rightPanel" role="complementary" aria-label="Right info panel">
+    <div>
+      <div class="title" id="rightTitle" contenteditable="false">DZMM TeleRadyo</div>
+      <div class="small" id="rightDate" contenteditable="false">1 FEB 2013 FRI</div>
+    </div>
 
-<!-- ===== CONTROL PANEL ===== -->
-<div class="control-panel">
-  <div class="control-title">🎛 KRA NEWS CONTROL</div>
-  <label>Headline:</label>
-  <input type="text" id="inputHeadline" value="BREAKING NEWS">
-  <label>Subheadline:</label>
-  <input type="text" id="inputSubheadline" value="Live from Manila | Anchored by Kenneth Antonil">
-  <label>Ticker:</label>
-  <textarea id="inputTicker" rows="2">KRA NEWS UPDATE: President delivers national address | Weather Alert: Storm entering PAR | More updates at kranews.tv</textarea>
-  <div>
-    <button id="btnShow">Show</button>
-    <button id="btnHide">Hide</button>
+    <div>
+      <div class="rate">
+        <div style="font-size:14px;" id="rateLabel" contenteditable="false">SAUDI ARABIA RIAL</div>
+        <div style="font-size:20px;" id="rateValue" contenteditable="false">PhP 10.840</div>
+      </div>
+      <div style="margin-top:8px;font-size:14px;" id="sportsShort" contenteditable="false">SPORTS: Azkals at Myanmar, maghaharap sa Pebrero 6</div>
+    </div>
   </div>
-  <div>
-    <button id="btnUpdate">Update Text</button>
+
+  <div class="ticker-wrap" aria-hidden="false">
+    <div class="ticker-left"><span class="bullet"></span> <strong> BULLETIN BOARD</strong></div>
+    <div class="ticker" id="ticker">
+      <div class="ticker-inner" id="tickerInner">
+        <!-- ticker items will be injected here -->
+        MAHIGIT 20 PAMILYA, NASUNUGAN SA SAMPALOC, MAYNILA • BBC: HALOS 300, SUGATAN SA SALPUKAN NG 2 TREN SA AFRICA • SAMPLE TICKER ITEM
+      </div>
+    </div>
   </div>
+
+  <div class="bottom-right">
+    <div class="sports" id="sports" contenteditable="false">SPORTS: Azkals at Myanmar, maghaharap sa Pebrero 6</div>
+    <div class="clock" id="clock">8:11 AM</div>
+  </div>
+
+  <div id="logo">
+    <!-- Replace logo.png with your logo -->
+    <img id="logoImg" src="" alt="Logo">
+  </div>
+
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-  const lowerthird = document.getElementById("lowerthird");
-  const banner = document.querySelector(".banner");
-  const shine = document.querySelector(".shine");
-  const tickerBar = document.getElementById("tickerBar");
-  const logo = document.querySelector(".logo-box");
+/*
+  Editable DZMM-style lower third for OBS (1920x250)
+  - Toggle Edit mode with the "Edit" button: makes text areas contentEditable
+  - You can also set values via query parameters in the URL (OBS Browser Source supports ?key=value)
+    Supported params: segment, name, position, leftSmall, leftSmall2, rightTitle, date, rateLabel, rateValue, sports, ticker, photo, logo
+    Ticker supports pipe-delimited items (ticker=One|Two|Three)
+*/
 
-  gsap.set(lowerthird, {y: 200, opacity: 0});
-  gsap.set(tickerBar, {y: 100, opacity: 0});
-  gsap.set(shine, {x: "-150%"});
-
-  // ====== ANIMATION SEQUENCE ======
-  function animateIn() {
-    // Split and slide effect
-    const tl = gsap.timeline();
-    tl.fromTo(banner, {clipPath: "inset(0 50% 0 50%)"}, {duration: 1.2, clipPath: "inset(0 0% 0 0%)", ease: "power4.out"});
-    tl.to(lowerthird, {duration: 0.6, y: 0, opacity: 1, ease: "power3.out"}, "<");
-    tl.from(logo, {duration: 0.8, scale: 0.2, rotationY: 90, opacity: 0, ease: "back.out(1.7)"}, "-=0.3");
-    tl.from(".headline", {duration: 0.7, y: 60, opacity: 0, ease: "back.out(1.5)"}, "-=0.4");
-    tl.from(".subheadline", {duration: 0.7, y: 60, opacity: 0, ease: "back.out(1.5)"}, "-=0.5");
-    tl.to(tickerBar, {duration: 0.8, y: 0, opacity: 1, ease: "power4.out"}, "-=0.4");
-    gsap.to(shine, {duration: 2.5, x: "300%", repeat: -1, ease: "linear", delay: 1});
-  }
-
-  function animateOut() {
-    const tl = gsap.timeline();
-    tl.to([lowerthird, tickerBar], {duration: 1, y: 200, opacity: 0, ease: "power4.in"});
-  }
-
-  // ===== CONTROL PANEL =====
-  document.getElementById("btnShow").onclick = animateIn;
-  document.getElementById("btnHide").onclick = animateOut;
-
-  document.getElementById("btnUpdate").onclick = () => {
-    const h = document.getElementById("inputHeadline").value;
-    const s = document.getElementById("inputSubheadline").value;
-    const t = document.getElementById("inputTicker").value;
-    document.getElementById("headline").textContent = h;
-    document.getElementById("subheadline").textContent = s;
-    document.getElementById("tickerText").textContent = t;
+(function(){
+  const params = Object.fromEntries(new URLSearchParams(location.search));
+  const setText = (id, value) => {
+    if(!value) return;
+    const el = document.getElementById(id);
+    if(el) el.textContent = decodeURIComponent(value);
   };
-</script>
 
+  // Map simple params to elements
+  setText('segmentLabel', params.segment);
+  setText('guestName', params.name);
+  setText('guestPosition', params.position);
+  setText('leftSmall', params.leftSmall);
+  setText('leftSmall2', params.leftSmall2);
+  setText('rightTitle', params.rightTitle);
+  setText('rightDate', params.date);
+  setText('rateLabel', params.rateLabel);
+  setText('rateValue', params.rateValue);
+  setText('sports', params.sports);
+  setText('sportsShort', params.sports);
+
+  // photo and logo
+  if(params.photo){
+    document.getElementById('photoImg').src = decodeURIComponent(params.photo);
+  } else {
+    // default placeholder - a subtle gradient block with initials could be used; keep empty
+    document.getElementById('photoImg').src = '';
+  }
+  if(params.logo){
+    document.getElementById('logoImg').src = decodeURIComponent(params.logo);
+  } else {
+    document.getElementById('logoImg').src = '';
+  }
+
+  // Ticker setup: accepts pipe-separated items or raw string
+  const tickerInner = document.getElementById('tickerInner');
+  if(params.ticker){
+    const raw = decodeURIComponent(params.ticker);
+    // If pipe-delimited, join with separator bullet
+    const items = raw.includes('|') ? raw.split('|').map(s=>s.trim()) : [raw];
+    tickerInner.textContent = items.join(' • ');
+  }
+
+  // Simple scrolling magic
+  function startTicker(){
+    const el = tickerInner;
+    let w = el.offsetWidth;
+    let container = el.parentElement;
+    let containerW = container.offsetWidth;
+    // Starting offset: container width
+    let x = containerW;
+    // speed px per frame
+    const speed = (params.tickerspeed ? Number(params.tickerspeed) : 1.2);
+    function frame(){
+      x -= speed;
+      if(x < -w) x = containerW;
+      el.style.transform = 'translateX('+x+'px)';
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  // Wait for layout then start
+  window.addEventListener('load', startTicker);
+  window.setTimeout(startTicker, 250);
+
+  // Clock
+  function updateClock(){
+    const c = document.getElementById('clock');
+    const now = new Date();
+    // Format e.g. 8:11 AM
+    let hh = now.getHours();
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    hh = hh % 12 || 12;
+    let mm = now.getMinutes();
+    mm = mm < 10 ? '0'+mm : mm;
+    c.textContent = hh + ':' + mm + ' ' + ampm;
+  }
+  updateClock();
+  setInterval(updateClock, 1000*30);
+
+  // Edit toggle to allow contentEditable (useful for quick tweaks)
+  const editToggle = document.getElementById('editToggle');
+  let editable = false;
+  editToggle.addEventListener('click', ()=>{
+    editable = !editable;
+    const els = root.querySelectorAll('[contenteditable]');
+    els.forEach(e => e.contentEditable = editable ? "true" : "false");
+    editToggle.style.background = editable ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.06)';
+    editToggle.textContent = editable ? 'Editing (Click to lock)' : 'Edit';
+  });
+
+  // Double-click to toggle edit on single element (for convenience)
+  document.addEventListener('dblclick', (ev)=>{
+    const t = ev.target;
+    if(t && t.hasAttribute('contenteditable')){
+      const cur = t.getAttribute('contenteditable') === 'true';
+      t.setAttribute('contenteditable', (!cur).toString());
+    }
+  });
+
+  // Prevent accidental drag-drop images into OBS interfering: intercept file drop
+  window.addEventListener('dragover', e=>e.preventDefault());
+  window.addEventListener('drop', e=>{ e.preventDefault(); });
+
+  // Resize handling to re-init ticker measurements if OBS resizes the source
+  let resizeTimeout;
+  new ResizeObserver(()=>{ clearTimeout(resizeTimeout); resizeTimeout = setTimeout(startTicker,120); }).observe(document.getElementById('root'));
+
+  // Accessibility: ensure focus styles are visible
+  document.querySelectorAll('[contenteditable]').forEach(el=>{
+    el.addEventListener('focus', ()=> el.style.outline = '2px dashed rgba(255,255,255,0.14)');
+    el.addEventListener('blur', ()=> el.style.outline = 'none');
+  });
+
+})();
+</script>
 </body>
 </html>
