@@ -3,65 +3,230 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Walang Pasok Rolling Text</title>
+<title>KRA NEWS Lower Third</title>
 <style>
   body {
     margin: 0;
-    background: #111;
-  }
-
-  .ticker-wrap {
-    position: relative;
-    width: 100%;
     overflow: hidden;
-    background: #c00;
+    background: transparent;
+    font-family: "Segoe UI", "Arial", sans-serif;
+  }
+
+  /* ===== LOWER THIRD ===== */
+  .lowerthird {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner {
+    position: relative;
+    background: linear-gradient(90deg, #001d3d, #003a88 60%, #b30000 100%);
     color: #fff;
-    padding: 10px 0;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    white-space: nowrap;
-    box-sizing: border-box;
+    border-radius: 12px;
+    padding: 35px 60px;
+    width: 100%;
+    box-shadow: 0 10px 45px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
   }
 
+  .shine {
+    position: absolute;
+    top: 0;
+    left: -200%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.4), transparent 70%);
+    transform: skewX(-25deg);
+  }
+
+  /* Logo container */
+  .logo-box {
+    position: absolute;
+    left: 2%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 230px;
+    height: auto;
+    z-index: 3;
+  }
+
+  .logo-box img {
+    width: 100%;
+    height: auto;
+  }
+
+  .text-content {
+    margin-left: 270px;
+  }
+
+  .headline {
+    font-size: 54px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .subheadline {
+    font-size: 28px;
+    font-weight: 500;
+    color: #d0d0d0;
+  }
+
+  /* ===== TICKER ===== */
   .ticker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #0d0d0d, #1c1c1c);
+    padding: 10px 0;
+    color: #fff;
+    overflow: hidden;
+    font-size: 26px;
+    font-weight: 500;
+    border-top: 3px solid #0070ff;
+  }
+
+  .ticker span {
     display: inline-block;
-    padding-left: 100%;
-    animation: scroll-left 90s linear infinite;
+    padding-right: 100px;
+    animation: tickerMove 25s linear infinite;
+    white-space: nowrap;
   }
 
-  @keyframes scroll-left {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
+  @keyframes tickerMove {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
   }
 
-  strong {
-    color: #ffeb3b;
+  /* ===== CONTROL PANEL ===== */
+  .control-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    z-index: 100;
+    width: 300px;
+    backdrop-filter: blur(10px);
+  }
+
+  .control-panel input, .control-panel textarea {
+    width: 100%;
+    margin: 5px 0 10px 0;
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .control-panel button {
+    width: 48%;
+    margin: 2px 1%;
+    background: linear-gradient(90deg, #007bff, #00bfff);
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .control-panel button:hover {
+    background: linear-gradient(90deg, #00bfff, #007bff);
+  }
+
+  .control-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+    color: #00bfff;
   }
 </style>
 </head>
 <body>
 
-<div class="ticker-wrap">
-  <div class="ticker">
-    🚨 <strong>WALANG PASOK – NOVEMBER 4, 2025:</strong> 
-    Aklan – Malay (all levels, Nov 3–5); New Washington (all levels until Nov 4); Balete, Ibajay (all levels until Nov 4); Libertad (no face-to-face until Nov 5); Kalibo (face-to-face suspended Nov 4). 
-    Antique – Anini-y, Barbaza, Bugasong, Caluya, Culasi, Hamtic, Pandan, Patnongon, San Jose de Buenavista, Sibalom, Tibiao, Tobias Fornier, Valderrama (no face-to-face until Nov 4–5). 
-    Capiz – Roxas City, Dumarao, Ivisan, Jamindan, Maayon, Panitan, Pontevedra (all levels until Nov 4). 
-    Iloilo – Balasan, Batad, Carles, Concepcion, Estancia, Leon, Oton, Pavia, Pototan, San Dionisio, Sara, Iloilo City (face-to-face suspended until Nov 4–5). 
-    Bohol – all levels, public & private. 
-    Cebu – Alcantara, Alegria, Aloguinsan, Argao, Asturias, Badian, Barili, Carcar City, Carmen, Compostela, Consolacion, Cordova, Daanbantayan, Dalaguete, Ginatilan, Liloan, Malabuyoc, Naga City, Poro, Ronda, San Fernando, San Francisco, Sibonga, Talisay City, Cebu City, Lapu-Lapu City (face-to-face suspended until Nov 4–5). 
-    Biliran – Culaba, Cabucgayan, Almeria, Maripipi, Caibiran, Naval (all levels until Nov 4). 
-    Eastern Samar – all levels until Nov 4. 
-    Leyte – Abuyog, Bato, Burauen, Carigara, Tanauan, Tacloban City (all levels until Nov 4). 
-    Northern Samar, Samar, Southern Leyte – all levels until Nov 4. 
-    Negros Occidental – Bago City, Cadiz City, Don Salvador Benedicto, Enrique B. Magalona, La Carlota City, Manapla, Moises Padilla, Pulupandan, Sagay City, Toboso, Victorias City, Bacolod City, San Carlos City, Calatrava, Silay City, Talisay City, Murcia, Valladolid, Pontevedra, San Enrique, Isabela, Hinigaran, La Castellana, Binalbagan, Himamaylan City, Cauayan, Ilog, Kabankalan City, Candoni, Hinoba-an (all levels until Nov 4–6). 
-    📢 Stay safe everyone!
+<!-- ===== LOWER THIRD DISPLAY ===== -->
+<div class="lowerthird" id="lowerthird">
+  <div class="banner">
+    <div class="shine"></div>
+    <div class="logo-box">
+      <img src="KRA NEWS LOGO.png" alt="KRA NEWS">
+    </div>
+    <div class="text-content">
+      <div class="headline" id="headline">BREAKING NEWS</div>
+      <div class="subheadline" id="subheadline">Live from Manila | Anchored by Kenneth Antonil</div>
+    </div>
   </div>
 </div>
+
+<div class="ticker" id="tickerBar">
+  <span id="tickerText">KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv</span>
+</div>
+
+<!-- ===== CONTROL PANEL ===== -->
+<div class="control-panel">
+  <div class="control-title">🎛 KRA NEWS CONTROL</div>
+  <label>Headline:</label>
+  <input type="text" id="inputHeadline" value="BREAKING NEWS">
+  <label>Subheadline:</label>
+  <input type="text" id="inputSubheadline" value="Live from Manila | Anchored by Kenneth Antonil">
+  <label>Ticker:</label>
+  <textarea id="inputTicker" rows="2">KRA NEWS UPDATE: President delivers new address tonight | Weather Alert: Storm entering PAR | More updates at kranews.tv</textarea>
+  <div>
+    <button id="btnShow">Show</button>
+    <button id="btnHide">Hide</button>
+  </div>
+  <div>
+    <button id="btnUpdate">Update Text</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  const lowerthird = document.getElementById("lowerthird");
+  const banner = document.querySelector(".banner");
+  const shine = document.querySelector(".shine");
+  const tickerBar = document.getElementById("tickerBar");
+
+  function animateIn() {
+    gsap.to(lowerthird, {duration: 1.2, y: 0, opacity: 1, ease: "power4.out"});
+    gsap.to(tickerBar, {duration: 1, y: 0, opacity: 1, ease: "power4.out"});
+  }
+
+  function animateOut() {
+    gsap.to(lowerthird, {duration: 1, y: 200, opacity: 0, ease: "power4.in"});
+    gsap.to(tickerBar, {duration: 1, y: 100, opacity: 0, ease: "power4.in"});
+  }
+
+  gsap.set(lowerthird, {y: 200, opacity: 0});
+  gsap.set(tickerBar, {y: 100, opacity: 0});
+  gsap.to(".shine", {duration: 2, x: "300%", repeat: -1, ease: "linear", delay: 1});
+
+  // Control buttons
+  document.getElementById("btnShow").onclick = animateIn;
+  document.getElementById("btnHide").onclick = animateOut;
+
+  document.getElementById("btnUpdate").onclick = () => {
+    const h = document.getElementById("inputHeadline").value;
+    const s = document.getElementById("inputSubheadline").value;
+    const t = document.getElementById("inputTicker").value;
+    document.getElementById("headline").textContent = h;
+    document.getElementById("subheadline").textContent = s;
+    document.getElementById("tickerText").textContent = t;
+  };
+</script>
 
 </body>
 </html>
