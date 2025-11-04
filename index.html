@@ -1,304 +1,157 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=1920, initial-scale=1" />
-<title>DZMM Lower Third OBS</title>
-
+<meta charset="UTF-8">
+<title>DZMM Lower Third</title>
 <style>
-:root {
-  --width: 1920px;
-  --height: 250px;
-  --bg-main: #0b4ea2;
-  --bg-gradient: linear-gradient(90deg, #0b4ea2, #0d5fae);
-  --yellow: #f5c100;
-  --red: #d62828;
-  --text: #ffffff;
-  --rounded: 16px;
-  --right-width: 360px;
-  --font: "Segoe UI", Arial, sans-serif;
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
 }
 
-/* Reset */
-html, body {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  overflow: hidden;
-  font-family: var(--font);
+#lowerthird {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
-/* MAIN CONTAINER */
-.lowerthird {
-  position: absolute;
-  bottom: -300px; /* hidden before animation */
-  left: 0;
-  width: var(--width);
-  height: var(--height);
-  background: var(--bg-gradient);
-  border-radius: var(--rounded) var(--rounded) 0 0;
-  color: var(--text);
-  padding: 10px 16px;
-  box-sizing: border-box;
-  animation: slideUp 0.8s cubic-bezier(.23,1,.32,1) forwards;
+/* Top card */
+#card {
+    display: flex;
+    width: 100%;
+    height: 120px;
+    background: #004B95; /* DZMM Blue */
+    border-radius: 18px 18px 0 0;
 }
 
-/* Animation */
-@keyframes slideUp {
-  0% { transform: translateY(100%); opacity: 0; }
-  100% { transform: translateY(0%); opacity: 1; }
+/* LEFT SECTION */
+#guest {
+    flex: 1;
+    padding: 12px 20px;
+    color: #fff;
 }
 
-/* Left panel */
-.left {
-  position: absolute;
-  left: 16px;
-  top: 10px;
-  bottom: 60px;
-  right: calc(var(--right-width) + 32px);
-  display: grid;
-  grid-template-columns: 160px auto;
-  grid-gap: 12px;
-  align-items: center;
+#g_name {
+    font-size: 30px;
+    font-weight: bold;
 }
 
-/* Photo box */
-.photo {
-  width: 160px;
-  height: 120px;
-  background: #eee;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 4px solid rgba(0,0,0,0.4);
-}
-.photo img { width: 100%; height: 100%; object-fit: cover; }
-
-/* Title content */
-.info { display: flex; flex-direction: column; }
-
-.segment {
-  background: var(--yellow);
-  color: #0b2b4d;
-  padding: 6px 12px;
-  font-weight: 900;
-  border-radius: 10px;
-  width: fit-content;
+#g_title {
+    font-size: 22px;
+    margin-top: -4px;
+    opacity: 0.9;
 }
 
-.name {
-  font-size: 30px;
-  font-weight: 900;
-  text-shadow: 0 2px 4px #000;
-}
-.position {
-  font-size: 16px;
-  opacity: 0.9;
-}
-
-/* Red bar */
-.red {
-  background: var(--red);
-  padding: 8px 12px;
-  border-radius: 10px;
-  margin-top: 6px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
+#segment {
+    background: #FFC600; /* DZMM Yellow */
+    color: #000;
+    font-weight: bold;
+    padding: 4px 12px;
+    margin-top: 8px;
+    display: inline-block;
+    border-radius: 8px;
+    font-size: 20px;
 }
 
-/* Right panel */
-.right {
-  position: absolute;
-  top: 10px;
-  right: 16px;
-  bottom: 60px;
-  width: var(--right-width);
-  background: linear-gradient(180deg,#0f6bbd,#093f79);
-  border-radius: 12px;
-  padding: 12px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.right .title { font-size: 24px; font-weight: 900; }
-.right .small { font-size: 14px; }
-
-.rate {
-  display: flex;
-  background: rgba(255,255,255,0.1);
-  padding: 8px;
-  border-radius: 8px;
-  justify-content: space-between;
-  font-weight: 900;
+/* RIGHT PANEL */
+#panel {
+    width: 360px;
+    background: #D90000; /* DZMM Red */
+    border-radius: 18px 0 0 0;
+    color: #fff;
+    padding: 10px;
+    font-size: 20px;
+    text-align: center;
 }
 
-/* Ticker */
-.ticker {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 38px;
-  background: #0a2e5c;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
+/* TICKER */
+#ticker {
+    width: 100%;
+    height: 50px;
+    background: #FFD000;
+    color: #000;
+    font-size: 24px;
+    font-weight: bold;
+    overflow: hidden;
+    line-height: 50px;
+    white-space: nowrap;
 }
 
-.ticker-label {
-  background: #142c51;
-  padding: 8px 14px;
-  color: var(--yellow);
-  font-weight: 900;
-  border-radius: 0 var(--rounded) 0 0;
-}
-.ticker-text {
-  white-space: nowrap;
-  display: inline-block;
-  padding-left: 20px;
-  animation: tickerMove 24s linear infinite;
+#scrolltext {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 18s linear infinite;
 }
 
-@keyframes tickerMove {
-  from { transform: translateX(100%); }
-  to { transform: translateX(-100%); }
+@keyframes ticker {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
 }
 
-/* Sports + clock */
-.bottom-right {
-  position: absolute;
-  right: 100px;
-  bottom: 42px;
-  display: flex;
-  gap: 10px;
-}
-.sports {
-  background: rgba(0,0,0,0.45);
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-size: 15px;
-  max-width: 360px;
-}
-.clock {
-  background: rgba(255,255,255,0.1);
-  color: var(--yellow);
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-weight: 900;
+/* BOTTOM RIGHT BOXES */
+#sports {
+    position: absolute;
+    right: 140px;
+    bottom: 55px;
+    background: #004B95;
+    padding: 6px 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 20px;
 }
 
-/* Logo */
+#clock {
+    position: absolute;
+    right: 55px;
+    bottom: 55px;
+    background: #000;
+    padding: 6px 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 20px;
+}
+
+/* LOGO */
 #logo {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 70px;
-  height: 70px;
-}
-#logo img { width: 100%; height: 100%; object-fit: contain; }
-
-/* Edit button */
-.edit-btn {
-  position: absolute;
-  top: -30px;
-  left: 10px;
-  background: rgba(255,255,255,0.2);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor:pointer;
+    position: absolute;
+    right: 10px;
+    bottom: 6px;
+    width: 45px;
+    height: 45px;
+    background: #ccc;
+    border-radius: 6px;
 }
 </style>
 </head>
-
 <body>
 
-<div class="lowerthird" id="lt">
-<button class="edit-btn" id="editToggle">EDIT</button>
+<div id="lowerthird">
 
-<!-- LEFT PANEL -->
-<div class="left">
-  <div class="photo"><img id="guestPhoto" src=""></div>
-  <div class="info">
-    <div class="segment" id="segment" contenteditable="false">ON THE PHONE</div>
-    <div class="name" id="name" contenteditable="false">SEC. SAMPLE NAME</div>
-    <div class="position" id="position" contenteditable="false">Dept. of Something</div>
-    <div class="red">
-      <span id="redLeft" contenteditable="false">BREAKING</span>
-      <span id="redRight" contenteditable="false">LIVE</span>
+    <div id="card">
+        <div id="guest">
+            <div id="g_name">GUEST NAME HERE</div>
+            <div id="g_title">Guest Title / Location</div>
+            <div id="segment">ON THE PHONE</div>
+        </div>
+
+        <div id="panel">
+            DZMM TELE RADYO<br>
+            Headline Info Here<br>
+            Tue | Nov 5
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- RIGHT PANEL -->
-<div class="right">
-  <div>
-    <div class="title" id="rightTitle" contenteditable="false">DZMM TeleRadyo</div>
-    <div class="small" id="rightDate" contenteditable="false">NOV 2025</div>
-  </div>
-  <div class="rate">
-    <span id="rateLabel" contenteditable="false">SAUDI RIAL</span>
-    <span id="rateValue" contenteditable="false">₱10.84</span>
-  </div>
-</div>
+    <div id="ticker">
+        <div id="scrolltext">BREAKING NEWS: Sample ticker text scrolling continuously — Add your headlines here... • More headlines here... • DZMM TeleRadyo style ticker scrolling nonstop...</div>
+    </div>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-label">NEWS UPDATE</div>
-  <div class="ticker-text" id="ticker">Sample headline • Another news item • Breaking news scrolling</div>
-</div>
-
-<!-- SPORTS & CLOCK -->
-<div class="bottom-right">
-  <div class="sports" id="sports" contenteditable="false">SPORTS: Sample sports news here</div>
-  <div class="clock" id="clock">12:00 PM</div>
-</div>
-
-<!-- LOGO -->
-<div id="logo"><img id="logoImg" src=""></div>
+    <div id="sports">UAAP: Sports Headline Here</div>
+    <div id="clock">8:11 AM</div>
+    <div id="logo"></div>
 
 </div>
-
-<script>
-/* Live Clock */
-function updateClock(){
-  let now = new Date();
-  let h = now.getHours();
-  let m = String(now.getMinutes()).padStart(2,"0");
-  let ampm = h>=12?"PM":"AM";
-  h = h%12||12;
-  document.getElementById("clock").innerText = `${h}:${m} ${ampm}`;
-}
-updateClock(); setInterval(updateClock, 10000);
-
-/* Edit toggle */
-const toggle = document.getElementById("editToggle");
-toggle.onclick = () => {
-  const fields = document.querySelectorAll("[contenteditable]");
-  const on = fields[0].getAttribute("contenteditable")==="true";
-  fields.forEach(f=>f.setAttribute("contenteditable",!on));
-  toggle.textContent = on?"EDIT":"LOCK";
-}
-
-/* URL Param Support */
-const q = new URLSearchParams(location.search);
-const map = {
-  name:"name", segment:"segment", position:"position",
-  redLeft:"redLeft", redRight:"redRight",
-  rightTitle:"rightTitle", date:"rightDate",
-  rateLabel:"rateLabel", rateValue:"rateValue",
-  sports:"sports", ticker:"ticker",
-  photo:"guestPhoto", logo:"logoImg"
-}
-Object.keys(map).forEach(k=>{
-  if(q.get(k)){
-    const el = document.getElementById(map[k]);
-    if(el.tagName==="IMG") el.src = decodeURIComponent(q.get(k));
-    else el.textContent = decodeURIComponent(q.get(k));
-  }
-});
-</script>
 
 </body>
 </html>
