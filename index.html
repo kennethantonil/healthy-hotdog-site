@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PH Lower Third — Glass Glow (Push-Up Ticker, Bottom Glow)</title>
+<title>PH Lower Third — Editable (Full UI, Push-Up Ticker, Surround Glow)</title>
 <style>
 :root{
   --accent: #8b1b2a;
@@ -11,14 +11,16 @@
   --corner: 12px;
   --headline-size: 34px;
   --ticker-size: 18px;
-  --push-duration: 600; /* ms for push animation */
+  --push-duration: 600; /* ms */
   --display-duration: 3000; /* ms visible per item */
   --max-width: 1600px;
   --panel-padding: 18px 22px;
+  --glow-alpha: 0.12;
 }
 
 /* base */
 html,body{height:100%;margin:0;background:transparent;font-family:Inter, system-ui, Roboto, Arial, sans-serif;color:#fff}
+*{box-sizing:border-box}
 .stage{
   position:absolute; left:40px; bottom:28px;
   width: min(var(--max-width), calc(100% - 80px));
@@ -67,12 +69,12 @@ html,body{height:100%;margin:0;background:transparent;font-family:Inter, system-
 }
 .headlineSub{font-size:13px; color:rgba(255,255,255,0.92); margin-top:5px; white-space:nowrap}
 
-/* bottom under-glow (Glow Type A) */
+/* surround glow (Glow Type B) */
 .headlineBar::after{
-  content:""; position:absolute; left:10%; right:10%; bottom:-14px; height:28px;
-  border-radius:14px; pointer-events:none;
-  background: radial-gradient(closest-side, rgba(139,27,42,0.14), rgba(111,15,26,0.06) 60%, rgba(0,0,0,0));
-  filter: blur(10px); opacity:0.95;
+  content:""; position:absolute; inset:-6px; border-radius: calc(var(--corner) + 6px); pointer-events:none;
+  box-shadow: 0 0 40px rgba(139,27,42,var(--glow-alpha)), 0 8px 40px rgba(111,15,26,0.06);
+  mix-blend-mode: screen;
+  opacity:0.95;
 }
 
 /* ticker box (separate) */
@@ -106,25 +108,28 @@ html,body{height:100%;margin:0;background:transparent;font-family:Inter, system-
 }
 
 /* controls UI (OBS Interact) */
-.gear{position:absolute; right:18px; top:-54px; background:rgba(255,255,255,0.06); width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:999}
-.controls{position:absolute; right:18px; top:-460px; width:460px; background:rgba(10,10,10,0.78); border-radius:10px; padding:12px; color:#fff; box-shadow:0 12px 36px rgba(0,0,0,0.6); z-index:998; display:none}
+.gear{position:absolute; right:18px; top:-56px; background:rgba(255,255,255,0.06); width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:999}
+.controls{position:absolute; right:18px; top:-520px; width:520px; background:rgba(10,10,10,0.86); border-radius:10px; padding:12px; color:#fff; box-shadow:0 12px 36px rgba(0,0,0,0.6); z-index:998; display:none}
 .controls h4{margin:0 0 8px 0; font-size:14px}
 .ctrl-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
-.ctrl-row label{width:140px; font-size:13px; color:rgba(255,255,255,0.92)}
-.ctrl-row input, .ctrl-row textarea, .ctrl-row select{flex:1; padding:7px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); color:#fff}
-textarea{min-height:90px; resize:vertical}
+.ctrl-row label{width:150px; font-size:13px; color:rgba(255,255,255,0.92)}
+.ctrl-row input, .ctrl-row textarea, .ctrl-row select{flex:1; padding:8px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); color:#fff}
+textarea{min-height:100px; resize:vertical}
 button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); color:#fff; cursor:pointer}
+
+/* small helper */
+.controls .small {font-size:12px; opacity:0.9; margin-top:6px}
 
 /* responsive */
 @media (max-width:1000px){
   :root{ --headline-size:26px; --ticker-size:16px }
   .logo{width:92px;height:92px}
-  .controls{top:-540px; width:360px}
+  .controls{top:-640px; width:420px}
 }
 </style>
 </head>
 <body>
-<div class="stage" id="stage">
+<div class="stage" id="stage" aria-label="Lower third stage">
   <div class="logo" id="logo">
     <img id="logoImg" src="" alt="" style="display:none" />
     <div class="txt" id="logoTxt">NEWS</div>
@@ -152,16 +157,20 @@ button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); 
 
 <!-- gear + controls -->
 <div class="gear" id="gear" title="Toggle Controls">⚙️</div>
-<div class="controls" id="controls">
+<div class="controls" id="controls" aria-hidden="true" role="dialog" aria-label="Lower third controls">
   <h4>Lower-Third Controls</h4>
 
   <div class="ctrl-row"><label>Logo Image URL</label><input id="logoUrl" type="url" placeholder="file:///C:/logo.png or http://..." /></div>
-  <div class="ctrl-row"><label>Logo Text</label><input id="logoTxtInput" type="text" /></div>
+  <div class="ctrl-row"><label>Logo Text</label><input id="logoTxtInput" type="text" placeholder="NEWS" /></div>
 
-  <div class="ctrl-row"><label>Headline</label><input id="headlineInput" type="text" /></div>
-  <div class="ctrl-row" style="align-items:flex-start"><label>Ticker Lines</label><textarea id="tickerInput" placeholder="One headline per line (enter)"></textarea></div>
+  <div class="ctrl-row"><label>Headline</label><input id="headlineInput" type="text" placeholder="BREAKING: ..." /></div>
+  <div class="ctrl-row"><label>Subheadline</label><input id="subInput" type="text" placeholder="Optional subheadline" /></div>
+
+  <div class="ctrl-row" style="align-items:flex-start"><label>Ticker Lines</label><textarea id="tickerInput" placeholder="One headline per line (Enter)"></textarea></div>
 
   <div class="ctrl-row"><label>Accent Color</label><input id="accentInput" type="color" value="#8b1b2a" /></div>
+  <div class="ctrl-row"><label>Corner Radius</label><input id="cornerRadius" type="number" min="0" max="40" value="12" /></div>
+
   <div class="ctrl-row"><label>Headline Size</label><input id="headlineSize" type="number" min="14" max="60" value="34" /></div>
   <div class="ctrl-row"><label>Ticker Size</label><input id="tickerSize" type="number" min="10" max="30" value="18" /></div>
 
@@ -172,18 +181,40 @@ button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); 
     <select id="showTicker"><option value="1" selected>On</option><option value="0">Off</option></select>
   </div>
 
-  <div class="ctrl-row" style="gap:10px">
-    <button id="saveBtn">Save</button>
+  <div class="ctrl-row" style="gap:8px">
+    <button id="applyBtn" title="Apply changes without saving">Apply</button>
+    <button id="saveBtn" title="Save to local machine (persist across sessions)">Save</button>
     <button id="resetBtn" style="background:rgba(255,255,255,0.06)">Reset</button>
   </div>
 
-  <div style="font-size:12px;opacity:0.88;margin-top:6px">Tip: In OBS open Browser Source → Interact to edit text directly. Use file:/// for local logos. Ctrl+S saves.</div>
+  <div class="ctrl-row" style="gap:8px">
+    <button id="exportBtn" style="background:rgba(255,255,255,0.06);color:#fff">Export JSON</button>
+    <input id="importFile" type="file" accept=".json" style="flex:1"/>
+  </div>
+
+  <div class="small">Tip: In OBS open Browser Source → Interact → click the ⚙️ to open this panel. Use file:/// path for local logos. Press <kbd>Ctrl/Cmd+S</kbd> to Save.</div>
 </div>
 
 <script>
-(function(){
-  // helpers
+(() => {
   const $ = id => document.getElementById(id);
+
+  // Elements
+  const logo = $('logo'), logoImg = $('logoImg'), logoTxtEl = $('logoTxt');
+  const logoUrlInput = $('logoUrl'), logoTxtInput = $('logoTxtInput');
+  const headlineText = $('headlineText'), headlineInput = $('headlineInput'), headlineSub = $('headlineSub'), subInput = $('subInput');
+  const tickerInput = $('tickerInput'), tickerInner = $('tickerInner'), tickerViewport = $('tickerViewport');
+  const accentInput = $('accentInput'), accentStrip = $('accentStrip');
+  const headlineSizeEl = $('headlineSize'), tickerSizeEl = $('tickerSize');
+  const pushDurationEl = $('pushDuration'), displayDurationEl = $('displayDuration');
+  const showTickerSel = $('showTicker');
+  const applyBtn = $('applyBtn'), saveBtn = $('saveBtn'), resetBtn = $('resetBtn');
+  const gear = $('gear'), controls = $('controls'), exportBtn = $('exportBtn'), importFile = $('importFile');
+  const headlineBar = $('headlineBar'), tickerBox = $('tickerBox');
+  const cornerRadiusInput = $('cornerRadius');
+
+  // Storage key & defaults
+  const STORAGE_KEY = 'ph_lt_final_ui_v2';
   const defaults = {
     logoUrl: '',
     logoTxt: 'NEWS',
@@ -191,6 +222,7 @@ button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); 
     sub: '',
     tickerLines: ['Ticker sample 1 — details', 'Ticker sample 2 — more', 'Ticker sample 3 — update'],
     accent: '#8b1b2a',
+    cornerRadius: 12,
     headlineSize: 34,
     tickerSize: 18,
     pushDuration: 600,
@@ -198,71 +230,21 @@ button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); 
     showTicker: '1'
   };
 
-  // elements
-  const logo = $('logo'), logoImg = $('logoImg'), logoTxtEl = $('logoTxt');
-  const logoUrlInput = $('logoUrl'), logoTxtInput = $('logoTxtInput');
-  const headlineText = $('headlineText'), headlineInput = $('headlineInput'), headlineSub = $('headlineSub');
-  const tickerInput = $('tickerInput'), tickerInner = $('tickerInner'), tickerViewport = $('tickerViewport');
-  const accentInput = $('accentInput'), accentStrip = $('accentStrip');
-  const headlineSizeEl = $('headlineSize'), tickerSizeEl = $('tickerSize');
-  const pushDurationEl = $('pushDuration'), displayDurationEl = $('displayDuration');
-  const showTicker = $('showTicker');
-  const saveBtn = $('saveBtn'), resetBtn = $('resetBtn');
-  const gear = $('gear'), controls = $('controls');
-  const headlineBar = $('headlineBar'), tickerBox = $('tickerBox');
-
-  // storage
-  const STORAGE_KEY = 'ph_lt_final_v1';
-  function load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? {...defaults, ...JSON.parse(raw)} : defaults;}catch(e){return defaults;} }
-  function save(state){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-
-  let state = load();
-
-  // apply state to UI & DOM
-  function applyState(){
-    // logo
-    logoUrlInput.value = state.logoUrl || '';
-    logoTxtInput.value = state.logoTxt || defaults.logoTxt;
-    if(state.logoUrl){
-      logoImg.src = state.logoUrl; logoImg.style.display='block'; logoTxtEl.style.display='none';
-    } else {
-      logoImg.style.display='none'; logoTxtEl.style.display='block'; logoTxtEl.innerText = state.logoTxt || '';
-    }
-
-    // headline
-    headlineInput.value = state.headline;
-    headlineText.innerText = state.headline;
-    headlineSub.innerText = state.sub || '';
-    headlineSub.style.display = state.sub ? 'block' : 'none';
-
-    // ticker
-    tickerInput.value = (state.tickerLines || []).join('\n');
-
-    // colors & sizes
-    accentInput.value = state.accent || defaults.accent;
-    document.documentElement.style.setProperty('--accent', accentInput.value);
-    document.documentElement.style.setProperty('--maroon', shadeHex(accentInput.value, -34));
-    accentStrip.style.background = `linear-gradient(180deg, ${accentInput.value}, ${shadeHex(accentInput.value,-18)})`;
-
-    headlineSizeEl.value = state.headlineSize;
-    document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px');
-
-    tickerSizeEl.value = state.tickerSize;
-    document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px');
-
-    pushDurationEl.value = state.pushDuration;
-    displayDurationEl.value = state.displayDuration;
-
-    showTicker.value = state.showTicker || '1';
-    tickerBox.style.display = showTicker.value === '1' ? 'flex' : 'none';
-
-    buildTicker();
-    adjustWidth();
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? {...defaults, ...JSON.parse(raw)} : {...defaults};
+    } catch(e){ return {...defaults}; }
+  }
+  function saveState(s){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e){}
   }
 
-  // color shade helper
+  let state = loadState();
+
+  // Utility functions
   function shadeHex(hex, amt){
-    hex = hex.replace('#','');
+    hex = (hex||'#000').replace('#','');
     if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
     const num = parseInt(hex,16);
     let r=(num>>16)+amt, g=(num>>8 & 0x00FF)+amt, b=(num & 0x0000FF)+amt;
@@ -270,74 +252,118 @@ button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); 
     return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
   }
 
-  // build ticker DOM
-  function buildTicker(){
-    // clear
+  // Apply state to DOM (without saving)
+  function applyStateToDOM(s){
+    // logo
+    logoUrlInput.value = s.logoUrl || '';
+    logoTxtInput.value = s.logoTxt || defaults.logoTxt;
+    if(s.logoUrl){
+      logoImg.src = s.logoUrl;
+      logoImg.style.display = 'block';
+      logoTxtEl.style.display = 'none';
+    } else {
+      logoImg.style.display = 'none';
+      logoTxtEl.style.display = 'block';
+      logoTxtEl.innerText = s.logoTxt || '';
+    }
+
+    // headline
+    headlineInput.value = s.headline || '';
+    headlineText.innerText = s.headline || '';
+    subInput.value = s.sub || '';
+    headlineSub.innerText = s.sub || '';
+    headlineSub.style.display = s.sub ? 'block' : 'none';
+
+    // ticker
+    tickerInput.value = (s.tickerLines||[]).join('\n');
+
+    // style values
+    accentInput.value = s.accent || defaults.accent;
+    document.documentElement.style.setProperty('--accent', accentInput.value);
+    document.documentElement.style.setProperty('--maroon', shadeHex(accentInput.value, -34));
+    accentStrip.style.background = `linear-gradient(180deg, ${accentInput.value}, ${shadeHex(accentInput.value,-18)})`;
+
+    cornerRadiusInput.value = s.cornerRadius || defaults.cornerRadius;
+    document.documentElement.style.setProperty('--corner', (s.cornerRadius || defaults.cornerRadius) + 'px');
+
+    headlineSizeEl.value = s.headlineSize || defaults.headlineSize;
+    document.documentElement.style.setProperty('--headline-size', (s.headlineSize || defaults.headlineSize) + 'px');
+
+    tickerSizeEl.value = s.tickerSize || defaults.tickerSize;
+    document.documentElement.style.setProperty('--ticker-size', (s.tickerSize || defaults.tickerSize) + 'px');
+
+    pushDurationEl.value = s.pushDuration || defaults.pushDuration;
+    displayDurationEl.value = s.displayDuration || defaults.displayDuration;
+
+    showTickerSel.value = s.showTicker || '1';
+    tickerBox.style.display = showTickerSel.value === '1' ? 'flex' : 'none';
+
+    buildTickerDOM();
+    adjustWidth();
+  }
+
+  // Build ticker items
+  function buildTickerDOM(){
     while(tickerInner.firstChild) tickerInner.removeChild(tickerInner.firstChild);
-    const lines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const lines = (tickerInput.value||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
     const items = lines.length ? lines : state.tickerLines;
-    // create items (no duplication required for push technique)
-    items.forEach((t)=>{
-      const div = document.createElement('div');
-      div.className = 'tickerItem';
-      div.innerText = t;
-      tickerInner.appendChild(div);
+    items.forEach(t=>{
+      const d = document.createElement('div');
+      d.className = 'tickerItem';
+      d.innerText = t;
+      tickerInner.appendChild(d);
     });
-    // set transform to 0
+    // reset transform and start
     tickerInner.style.transition = 'none';
     tickerInner.style.transform = 'translateY(0)';
-    // start loop
+    ensureTickerHeights();
     startTickerLoop();
   }
 
-  // push-up loop: animate translateY by -itemHeight, then move first to end and reset transform
+  // Ticker push loop
   let tickerTimer = null;
   function startTickerLoop(){
     stopTickerLoop();
     const items = Array.from(tickerInner.children);
-    if(items.length <= 1) return; // nothing to animate
-    const pushMs = parseInt(pushDurationEl.value,10) || 600;
-    const displayMs = parseInt(displayDurationEl.value,10) || 3000;
-    // align heights
-    ensureTickerHeights();
-    // start cycle
+    if(items.length <= 1) return;
+    const pushMs = parseInt(pushDurationEl.value,10) || defaults.pushDuration;
+    const displayMs = parseInt(displayDurationEl.value,10) || defaults.displayDuration;
+
     function scheduleNext(){
       tickerTimer = setTimeout(()=>{
-        // compute item height
+        // compute first item height
         const first = tickerInner.children[0];
-        const itemH = first.getBoundingClientRect().height;
-        // animate push
+        if(!first) return scheduleNext();
+        const itemH = Math.ceil(first.getBoundingClientRect().height);
+        // animate translateY
         tickerInner.style.transition = `transform ${pushMs}ms cubic-bezier(.2,.95,.2,1)`;
         tickerInner.style.transform = `translateY(-${itemH}px)`;
-        // after transition complete, rotate DOM nodes
+        // after animation, move first to end and reset
         setTimeout(()=>{
           tickerInner.style.transition = 'none';
           tickerInner.appendChild(tickerInner.children[0]);
-          tickerInner.style.transform = 'translateY(0)';
-          // small timeout before next cycle
-          scheduleNext();
-        }, pushMs + 16);
+          tickerInner.style.transform = `translateY(0)`;
+          // small delay to avoid visual glitch
+          setTimeout(scheduleNext, 50);
+        }, pushMs + 10);
       }, displayMs);
     }
-    // initial delay then start
+    // start
     scheduleNext();
   }
-  function stopTickerLoop(){ if(tickerTimer){ clearTimeout(tickerTimer); tickerTimer=null; } }
+  function stopTickerLoop(){ if(tickerTimer){ clearTimeout(tickerTimer); tickerTimer = null; } }
 
-  // ensure ticker item heights are consistent and viewport fits one item
+  // Make viewport height equal to a single item
   function ensureTickerHeights(){
     const first = tickerInner.children[0];
     if(!first) return;
-    // measure computed height of item
-    // force font sizes
-    const computedItemH = first.getBoundingClientRect().height;
-    // set tickerViewport height to fit single item (with a tiny padding)
-    tickerViewport.style.height = computedItemH + 'px';
+    const h = Math.ceil(first.getBoundingClientRect().height);
+    tickerViewport.style.height = (h) + 'px';
   }
 
-  // auto width to fit longest headline or ticker item
+  // Auto-width to fit longest headline or ticker item
   function adjustWidth(){
-    // headline width
+    // measure headline width
     const tmp = document.createElement('span');
     tmp.style.visibility='hidden'; tmp.style.position='absolute'; tmp.style.whiteSpace='nowrap';
     tmp.style.fontWeight='900'; tmp.style.fontSize = (headlineSizeEl.value||34) + 'px';
@@ -358,105 +384,214 @@ button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); 
     });
 
     const desired = Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-width')) || 1600,
-                     Math.max(headW + 360, maxTickerW + 300, 520));
-    // set headlineBar width
-    const headlineBar = document.getElementById('headlineBar');
+                     Math.max(headW + 380, maxTickerW + 320, 520));
     headlineBar.style.width = desired + 'px';
   }
 
   // UI wiring
-  gear.addEventListener('click', ()=> controls.style.display = controls.style.display === 'block' ? 'none' : 'block');
-
-  logoUrlInput.addEventListener('input', ()=>{
-    state.logoUrl = logoUrlInput.value.trim();
-    if(state.logoUrl){ logoImg.src = state.logoUrl; logoImg.style.display='block'; logoTxtEl.style.display='none'; } else { logoImg.style.display='none'; logoTxtEl.style.display='block'; }
-    save(state); applyState();
+  gear.addEventListener('click', ()=> {
+    const show = controls.style.display !== 'block';
+    controls.style.display = show ? 'block' : 'none';
+    controls.setAttribute('aria-hidden', show ? 'false' : 'true');
   });
 
-  logoTxtInput.addEventListener('input', ()=>{ state.logoTxt = logoTxtInput.value; logoTxtEl.innerText = state.logoTxt; save(state); });
-
-  headlineInput.addEventListener('input', ()=>{ state.headline = headlineInput.value; headlineText.innerText = state.headline; save(state); adjustWidth(); });
-
-  tickerInput.addEventListener('input', ()=>{
-    state.tickerLines = tickerInput.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    save(state); buildTicker(); adjustWidth();
+  // Input events that only apply to DOM live (not saved until Save pressed)
+  headlineInput.addEventListener('input', ()=> { headlineText.innerText = headlineInput.value; adjustWidth(); });
+  subInput.addEventListener('input', ()=> { headlineSub.innerText = subInput.value; headlineSub.style.display = subInput.value ? 'block' : 'none'; });
+  logoTxtInput.addEventListener('input', ()=> { if(!logoUrlInput.value) logoTxtEl.innerText = logoTxtInput.value; });
+  logoUrlInput.addEventListener('input', ()=> {
+    const v = logoUrlInput.value.trim();
+    if(v){ logoImg.src = v; logoImg.style.display = 'block'; logoTxtEl.style.display = 'none'; } else { logoImg.style.display='none'; logoTxtEl.style.display='block'; }
+  });
+  accentInput.addEventListener('input', ()=> {
+    document.documentElement.style.setProperty('--accent', accentInput.value);
+    document.documentElement.style.setProperty('--maroon', shadeHex(accentInput.value,-34));
+    accentStrip.style.background = `linear-gradient(180deg, ${accentInput.value}, ${shadeHex(accentInput.value,-18)})`;
+  });
+  cornerRadiusInput.addEventListener('input', ()=> {
+    const v = Number(cornerRadiusInput.value) || defaults.cornerRadius;
+    document.documentElement.style.setProperty('--corner', v + 'px');
+  });
+  headlineSizeEl.addEventListener('input', ()=> {
+    const v = Number(headlineSizeEl.value) || defaults.headlineSize;
+    document.documentElement.style.setProperty('--headline-size', v + 'px');
+    adjustWidth();
+  });
+  tickerSizeEl.addEventListener('input', ()=> {
+    const v = Number(tickerSizeEl.value) || defaults.tickerSize;
+    document.documentElement.style.setProperty('--ticker-size', v + 'px');
+    // rebuild so heights align
+    buildTickerDOM();
+    adjustWidth();
   });
 
-  accentInput.addEventListener('input', ()=>{
-    state.accent = accentInput.value;
-    document.documentElement.style.setProperty('--accent', state.accent);
-    document.documentElement.style.setProperty('--maroon', shadeHex(state.accent, -34));
-    accentStrip.style.background = `linear-gradient(180deg, ${state.accent}, ${shadeHex(state.accent,-18)})`;
-    save(state);
+  // Apply: apply changes (live) but don't persist
+  applyBtn.addEventListener('click', ()=>{
+    // update transient state from inputs (but don't save)
+    const tmpState = {
+      ...state,
+      logoUrl: logoUrlInput.value.trim(),
+      logoTxt: logoTxtInput.value.trim(),
+      headline: headlineInput.value,
+      sub: subInput.value,
+      tickerLines: (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean),
+      accent: accentInput.value,
+      cornerRadius: Number(cornerRadiusInput.value) || defaults.cornerRadius,
+      headlineSize: Number(headlineSizeEl.value) || defaults.headlineSize,
+      tickerSize: Number(tickerSizeEl.value) || defaults.tickerSize,
+      pushDuration: Number(pushDurationEl.value) || defaults.pushDuration,
+      displayDuration: Number(displayDurationEl.value) || defaults.displayDuration,
+      showTicker: showTickerSel.value
+    };
+    state = {...state, ...tmpState}; // update runtime state
+    applyStateToDOM(state);
   });
 
-  headlineSizeEl.addEventListener('input', ()=>{
-    state.headlineSize = parseInt(headlineSizeEl.value,10) || 34;
-    document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px'); save(state); adjustWidth();
-  });
-  tickerSizeEl.addEventListener('input', ()=>{
-    state.tickerSize = parseInt(tickerSizeEl.value,10) || 18;
-    document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px'); save(state); adjustWidth();
-  });
-
-  pushDurationEl.addEventListener('input', ()=>{ state.pushDuration = parseInt(pushDurationEl.value,10) || 600; save(state); });
-  displayDurationEl.addEventListener('input', ()=>{ state.displayDuration = parseInt(displayDurationEl.value,10) || 3000; save(state); });
-
-  showTicker.addEventListener('change', ()=>{
-    state.showTicker = showTicker.value; tickerBox.style.display = state.showTicker === '1' ? 'flex' : 'none'; save(state); adjustWidth();
-  });
-
+  // Save: persist and apply
   saveBtn.addEventListener('click', ()=>{
-    // gather and save
     state.logoUrl = logoUrlInput.value.trim();
     state.logoTxt = logoTxtInput.value.trim() || defaults.logoTxt;
     state.headline = headlineInput.value.trim() || defaults.headline;
+    state.sub = subInput.value.trim() || '';
     state.tickerLines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean) || defaults.tickerLines;
     state.accent = accentInput.value;
-    state.headlineSize = parseInt(headlineSizeEl.value,10) || 34;
-    state.tickerSize = parseInt(tickerSizeEl.value,10) || 18;
-    state.pushDuration = parseInt(pushDurationEl.value,10) || 600;
-    state.displayDuration = parseInt(displayDurationEl.value,10) || 3000;
-    state.showTicker = showTicker.value;
-    save(state);
-    applyState();
+    state.cornerRadius = Number(cornerRadiusInput.value) || defaults.cornerRadius;
+    state.headlineSize = Number(headlineSizeEl.value) || defaults.headlineSize;
+    state.tickerSize = Number(tickerSizeEl.value) || defaults.tickerSize;
+    state.pushDuration = Number(pushDurationEl.value) || defaults.pushDuration;
+    state.displayDuration = Number(displayDurationEl.value) || defaults.displayDuration;
+    state.showTicker = showTickerSel.value;
+    saveState(state);
+    applyStateToDOM(state);
     saveBtn.innerText = 'Saved ✔';
     setTimeout(()=> saveBtn.innerText = 'Save', 900);
   });
 
+  // Reset
   resetBtn.addEventListener('click', ()=>{
     localStorage.removeItem(STORAGE_KEY);
-    state = load();
-    applyState();
+    state = {...defaults};
+    applyStateToDOM(state);
   });
 
-  // allow ctrl/cmd+S while Interact open to save
-  window.addEventListener('keydown',(e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); saveBtn.click(); }});
+  // Export / Import
+  exportBtn.addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'lowerthird-settings.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
 
-  // simple URL params for advanced usage: ?headline=...&logo=...&ticker=Line1|Line2
+  importFile.addEventListener('change', (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const parsed = JSON.parse(r.result);
+        state = {...defaults, ...parsed};
+        saveState(state);
+        applyStateToDOM(state);
+        alert('Imported settings applied.');
+      } catch(err){
+        alert('Invalid JSON file.');
+      }
+    };
+    r.readAsText(f);
+  });
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){
+      e.preventDefault();
+      saveBtn.click();
+    }
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='a'){
+      e.preventDefault();
+      applyBtn.click();
+    }
+  });
+
+  // URL params quick API: ?headline=...&logo=...&ticker=Line1|Line2
   (function applyURLParams(){
     try{
       const p = new URLSearchParams(location.search);
-      if(p.has('headline')) state.headline = p.get('headline');
-      if(p.has('logo')){ const v=p.get('logo'); if(v.startsWith('http')||v.startsWith('file://')) state.logoUrl = v; else state.logoTxt = v; }
-      if(p.has('ticker')) state.tickerLines = p.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
-    } catch(e){}
+      const tmp = {};
+      if(p.has('headline')) tmp.headline = p.get('headline');
+      if(p.has('logo')){
+        const v = p.get('logo');
+        if(v.startsWith('http') || v.startsWith('file://')) tmp.logoUrl = v; else tmp.logoTxt = v;
+      }
+      if(p.has('ticker')) tmp.tickerLines = p.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
+      state = {...state, ...tmp};
+      // do not auto-save; just apply
+      applyStateToDOM(state);
+    }catch(e){}
   })();
 
-  // initial
-  state = {...defaults, ...state};
-  applyState();
-
-  // ensure heights and start loop after DOM paint
-  window.addEventListener('load', ()=>{ setTimeout(()=>{ ensureTickerHeights(); startTickerLoop(); },100); });
-  // re-evaluate when window or headlineBar resized
-  window.addEventListener('resize', ()=>{ adjustWidth(); ensureTickerHeights(); });
-  new ResizeObserver(()=>{ adjustWidth(); ensureTickerHeights(); }).observe(document.getElementById('headlineBar'));
-
-  // helpers to start/stop on visibility
+  // Start/Stop ticker on visibility change
   document.addEventListener('visibilitychange', ()=>{
-    if(document.hidden) stopTickerLoop(); else startTickerLoop();
+    if(document.hidden) stopTickerLoop(); else startTickerLoopIfNeeded();
   });
+
+  // Start ticker if needed
+  function startTickerLoopIfNeeded(){ if(tickerInner.children.length>1) startTickerLoop(); }
+
+  // Initialize
+  state = {...defaults, ...state};
+  applyStateToDOM(state);
+
+  // adjust on resize (and observe headlineBar)
+  window.addEventListener('resize', ()=>{ ensureTickerHeights(); adjustWidth(); });
+  new ResizeObserver(()=> { ensureTickerHeights(); adjustWidth(); }).observe(headlineBar);
+
+  // small helpers
+  function ensureTickerHeights(){
+    const first = tickerInner.children[0];
+    if(!first) return;
+    const h = Math.ceil(first.getBoundingClientRect().height);
+    tickerViewport.style.height = h + 'px';
+  }
+
+  // Start loop
+  function startTickerLoop(){
+    // wrapper will rebuild if needed
+    const lines = tickerInner.children.length;
+    if(lines <= 1) return;
+    // ensure consistent sizes
+    ensureTickerHeights();
+    // use existing loop logic from buildTickerDOM
+    // (startTickerLoop is already defined above as used by buildTickerDOM)
+    // implemented in buildTickerDOM via startTickerLoop call - below ensure it's running
+    stopTickerLoop();
+    // trigger the loop by calling buildTickerDOM (which schedules)
+    // but we want no duplication - schedule directly:
+    const pushMs = Number(pushDurationEl.value) || defaults.pushDuration;
+    const displayMs = Number(displayDurationEl.value) || defaults.displayDuration;
+
+    function scheduleNext(){
+      tickerTimer = setTimeout(()=>{
+        const first = tickerInner.children[0];
+        if(!first) return scheduleNext();
+        const itemH = Math.ceil(first.getBoundingClientRect().height);
+        tickerInner.style.transition = `transform ${pushMs}ms cubic-bezier(.2,.95,.2,1)`;
+        tickerInner.style.transform = `translateY(-${itemH}px)`;
+        setTimeout(()=>{
+          tickerInner.style.transition = 'none';
+          tickerInner.appendChild(tickerInner.children[0]);
+          tickerInner.style.transform = 'translateY(0)';
+          setTimeout(scheduleNext, 50);
+        }, pushMs + 10);
+      }, displayMs);
+    }
+    scheduleNext();
+  }
+  function stopTickerLoop(){ if(tickerTimer){ clearTimeout(tickerTimer); tickerTimer=null; } }
+
+  // small poly: ensure loop restarts on buildTickerDOM
+  function startTickerLoop(){ startTickerLoopIfNeeded(); }
 
 })();
 </script>
