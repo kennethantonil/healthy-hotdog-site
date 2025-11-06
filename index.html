@@ -1,219 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Glass & Glow Lower Third (Editable)</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PH Style Lower Third — Glass & Glow (ABS-CBN style)</title>
 <style>
   :root{
     --maroon: #6f0f1a;
     --accent: #8b1b2a;
     --glass-alpha: 0.12;
     --corner: 12px;
-    --headline-size: 28px;
+    --headline-size: 34px;
     --ticker-size: 18px;
-    --anim-speed: 2.5; /* seconds per item */
+    --flip-duration: 700; /* ms */
+    --display-duration: 3000; /* ms per ticker card */
+    --max-width: 1600px;
   }
-
-  html,body{
-    height:100%;
-    margin:0;
-    padding:0;
-    background: transparent; /* important for OBS */
-    font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    user-select:none;
-  }
-
-  /* Container positioned for OBS use */
+  html,body{height:100%;margin:0;background:transparent;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:#fff}
   .stage{
-    position: absolute;
-    left: 40px;
-    bottom: 40px;
+    position:absolute;
+    left:40px;
+    bottom:28px;
     display:flex;
-    align-items:center;
-    gap:14px;
-    pointer-events: auto;
+    align-items:flex-start;
+    gap:16px;
+    pointer-events:auto;
+    width: min(var(--max-width), calc(100% - 80px));
   }
 
-  /* Logo */
-  .logo {
-    min-width: 96px;
-    height: 96px;
-    border-radius: calc(var(--corner) * 0.9);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.85));
-    box-shadow: 0 6px 18px rgba(111,15,26,0.25), inset 0 -2px 6px rgba(0,0,0,0.06);
-    border: 3px solid rgba(255,255,255,0.65);
-    padding:6px;
-    overflow:hidden;
+  /* LOGO */
+  .logo{
+    width:120px;
+    height:120px;
+    border-radius: calc(var(--corner) * 0.8);
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,245,245,0.86));
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    border:3px solid rgba(255,255,255,0.6);
+    box-shadow: 0 8px 28px rgba(111,15,26,0.18), inset 0 -3px 8px rgba(0,0,0,0.06);
+    flex-shrink:0;
   }
-  .logo img{
-    max-width:100%;
-    max-height:100%;
-    display:block;
-    object-fit:contain;
-    border-radius: calc(var(--corner) * 0.6);
-  }
-  .logo .text {
-    font-weight:700;
-    color:var(--maroon);
-    font-size:20px;
-    letter-spacing:0.6px;
-  }
+  .logo img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+  .logo .txt{font-weight:800;color:var(--maroon);font-size:20px}
 
-  /* Glass panel */
-  .panel{
-    display:inline-flex;
+  /* MAIN WRAPPER: headline area + ticker box */
+  .main{
+    display:flex;
     flex-direction:column;
     gap:8px;
-    background: linear-gradient(180deg, rgba(255,255,255,var(--glass-alpha)), rgba(255,255,255,0.04));
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
-    border-radius: var(--corner);
-    padding:14px 18px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 40px rgba(139,27,42,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    min-width: 300px;
-    width: fit-content;
-    max-width: 1100px;
+    width:100%;
   }
 
-  /* Headline bar (glass with accent top border + glow) */
-  .headlineWrap{
+  /* HEADLINE EDGE-TO-EDGE BAR */
+  .headlineBar{
     display:flex;
     align-items:center;
     gap:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,var(--glass-alpha)), rgba(255,255,255,0.03));
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    border-radius: var(--corner);
+    padding: 16px 20px;
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35), 0 0 48px rgba(139,27,42,0.06);
     position:relative;
+    overflow:visible;
   }
 
-  .accentBar{
-    width:8px;
-    height:48px;
+  .accentStrip{
+    width:12px;
+    height:72px;
+    border-radius:6px;
     background: linear-gradient(180deg, var(--accent), var(--maroon));
-    border-radius: 6px;
-    box-shadow: 0 6px 18px rgba(139,27,42,0.28);
+    box-shadow: 0 12px 28px rgba(139,27,42,0.28);
     flex-shrink:0;
   }
 
-  .headline{
-    font-weight:800;
+  .headlineText{
+    font-weight:900;
     font-size: var(--headline-size);
-    color: #fff;
+    color:#fff;
+    text-shadow: 0 4px 14px rgba(0,0,0,0.45);
     white-space:nowrap;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.45);
-    transform-origin:left center;
     display:inline-block;
   }
 
-  /* small subtitle line (optional) */
-  .subtitle{
-    font-size: 13px;
-    opacity:0.9;
-    color: rgba(255,255,255,0.9);
-    margin-top: -6px;
+  .subSmall{
+    font-size:13px;
+    color:rgba(255,255,255,0.92);
+    margin-top:4px;
+    opacity:0.95;
     white-space:nowrap;
   }
 
-  /* Ticker */
-  .tickerWrap{
-    overflow:hidden;
-    height: calc(var(--ticker-size) + 10px);
-    position:relative;
-    border-radius: calc(var(--corner) * 0.75);
-    border: 1px solid rgba(255,255,255,0.06);
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  /* TICKER SEPARATE BOX */
+  .tickerBox{
     display:flex;
     align-items:center;
-    padding:6px 10px;
+    gap:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border-radius: calc(var(--corner) * 0.75);
+    padding:10px 14px;
+    border:1px solid rgba(255,255,255,0.06);
+    min-height: calc(var(--ticker-size) + 18px);
+    overflow:visible;
+  }
+
+  .tickerLabel{
+    min-width:120px;
+    font-weight:800;
+    font-size:14px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.95);
+    letter-spacing:0.8px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .tickerLabel .dot{
+    width:12px;height:12px;border-radius:3px;background:var(--accent);box-shadow:0 6px 14px rgba(139,27,42,0.25)
   }
 
   .tickerViewport{
-    width:100%;
     position:relative;
-    height:100%;
-    overflow:hidden;
+    flex:1;
+    height: calc(var(--ticker-size) + 6px);
+    overflow:visible;
   }
 
-  .tickerList{
+  /* ticker card container where a single card is visible at a time */
+  .tickerCard{
+    position:absolute;
+    left:0; right:0;
     display:flex;
-    flex-direction:column;
-    transform: translateY(0);
-    will-change: transform;
+    align-items:center;
+    height:100%;
+    transform-origin:center bottom;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    will-change: transform, opacity;
+    /* initial hidden */
+    opacity:0;
+    transform: translateY(8px) rotateX(12deg) scale(0.98);
   }
 
-  .tickerItem{
-    height: calc(var(--ticker-size) + 2px);
-    line-height: calc(var(--ticker-size) + 2px);
+  .tickerCard.show{
+    opacity:1;
+    transform: translateY(0) rotateX(0) scale(1);
+  }
+
+  /* flip-in animation */
+  .anim-in{
+    animation: flipIn var(--flip-duration) cubic-bezier(.2,.95,.2,1) both;
+  }
+  .anim-out{
+    animation: flipOut var(--flip-duration) cubic-bezier(.2,.95,.2,1) both;
+  }
+
+  @keyframes flipIn{
+    0% { opacity:0; transform: translateY(18px) rotateX(20deg) scale(0.98); }
+    60% { transform: translateY(-6px) rotateX(-6deg) scale(1.01); opacity:1 }
+    100% { transform: translateY(0) rotateX(0) scale(1); opacity:1; }
+  }
+  @keyframes flipOut{
+    0% { opacity:1; transform: translateY(0) rotateX(0) scale(1); }
+    100% { opacity:0; transform: translateY(-18px) rotateX(-18deg) scale(0.98); }
+  }
+
+  .tickerText{
     font-size: var(--ticker-size);
-    font-weight:600;
-    color: #fff;
+    font-weight:700;
+    color:#fff;
+    letter-spacing:0.2px;
     white-space:nowrap;
-    padding-right:24px;
-    text-shadow: 0 1px 6px rgba(0,0,0,0.45);
   }
 
-  /* Glow under the glass */
-  .panel::after{
+  /* small panel glow */
+  .headlineBar::after{
     content:"";
     position:absolute;
     inset:0;
     border-radius:inherit;
     pointer-events:none;
-    box-shadow: 0 0 30px rgba(139,27,42,0.12);
+    box-shadow: 0 0 36px rgba(139,27,42,0.08);
     mix-blend-mode: screen;
   }
 
-  /* Controls overlay (for OBS Interact) */
-  .controls {
-    position: absolute;
-    right: 10px;
-    top: -260px;
-    width: 380px;
-    background: rgba(12,12,12,0.75);
-    border-radius: 10px;
-    padding:10px;
-    color: #fff;
-    font-size:13px;
-    z-index:9999;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  /* controls (OBS Interact) */
+  .gear{position:absolute;right:20px;top:-48px;background:rgba(255,255,255,0.06);width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999}
+  .controls{
+    position:absolute; right:20px; top:-420px; width:420px; background:rgba(10,10,10,0.78); border-radius:10px; padding:12px; color:#fff; box-shadow:0 12px 36px rgba(0,0,0,0.6); z-index:998; display:none;
   }
-  .controls h4{ margin:0 0 8px 0; font-size:14px;}
-  .ctrl-row{ display:flex; gap:8px; margin-bottom:8px; align-items:center; }
-  .ctrl-row label{ width:110px; font-size:13px; opacity:0.9; }
-  .ctrl-row input[type="text"], .ctrl-row input[type="url"], .ctrl-row input[type="number"], .ctrl-row textarea, .ctrl-row input[type="color"], .ctrl-row select {
-    flex:1; padding:6px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); color:#fff;
-  }
-  .ctrl-row textarea{ min-height:72px; resize:vertical; font-size:13px; }
+  .controls h4{margin:0 0 8px 0;font-size:14px}
+  .ctrl-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .ctrl-row label{width:120px;font-size:13px;color:rgba(255,255,255,0.9)}
+  .ctrl-row input, .ctrl-row textarea, .ctrl-row select{flex:1;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff}
+  textarea{min-height:86px;resize:vertical}
+  button{padding:8px 10px;border-radius:8px;border:0;background:var(--maroon);color:#fff;cursor:pointer}
 
-  .small{
-    font-size:12px; opacity:0.85;
-  }
-
-  /* toggle button to show/hide controls */
-  .gear{
-    position: absolute;
-    right: 10px;
-    top: -40px;
-    width:36px; height:36px;
-    border-radius:8px;
-    background: rgba(255,255,255,0.06);
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;
-    color:#fff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-  }
-  .gear:active{ transform: translateY(1px); }
-
-  /* Responsive fallback for small OBS source sizes */
-  @media (max-width:900px){
-    .stage{ left:18px; bottom:18px; }
-    .logo{ min-width:72px; height:72px; }
-    :root{ --headline-size:22px; --ticker-size:16px; }
-    .controls { top: -320px; width:320px; }
+  @media (max-width:1000px){
+    :root{ --headline-size:26px; --ticker-size:16px }
+    .logo{width:92px;height:92px}
+    .controls{top:-480px;width:340px}
   }
 </style>
 </head>
@@ -221,27 +209,27 @@
 
 <div class="stage" id="stage">
   <div class="logo" id="logo">
-    <!-- either image or text -->
     <img id="logoImg" src="" alt="" style="display:none"/>
-    <div class="text" id="logoText">LOGO</div>
+    <div class="txt" id="logoTxt">NEWS</div>
   </div>
 
-  <div class="panel" id="panel">
-    <div class="headlineWrap">
-      <div class="accentBar" id="accentBar"></div>
+  <div class="main">
+    <div class="headlineBar" id="headlineBar" role="region" aria-label="Headline">
+      <div class="accentStrip" id="accentStrip"></div>
       <div>
-        <div class="headline" id="headline">BREAKING NEWS: PLACEHOLDER HEADLINE</div>
-        <div class="subtitle small" id="subtitle" style="display:none;">Optional subtitle</div>
+        <div class="headlineText" id="headlineText">BREAKING: SAMPLE HEADLINE — PH STYLE LONG BAR</div>
+        <div class="subSmall" id="subText" style="display:none">Optional subheadline or location</div>
       </div>
     </div>
 
-    <div class="tickerWrap" id="tickerWrap" aria-hidden="false">
-      <div class="tickerViewport">
-        <div class="tickerList" id="tickerList">
-          <div class="tickerItem">Ticker item 1 — more details here.</div>
-          <div class="tickerItem">Ticker item 2 — second headline.</div>
-          <div class="tickerItem">Ticker item 3 — updates continue.</div>
-        </div>
+    <div class="tickerBox" id="tickerBox" role="region" aria-label="Ticker">
+      <div class="tickerLabel">
+        <div class="dot"></div>
+        <div>Latest</div>
+      </div>
+
+      <div class="tickerViewport" id="tickerViewport">
+        <!-- ticker cards inserted here by JS -->
       </div>
     </div>
   </div>
@@ -249,451 +237,305 @@
 
 <!-- gear + controls -->
 <div class="gear" id="gear" title="Toggle Controls">⚙️</div>
-
-<div class="controls" id="controls" style="display:none;">
+<div class="controls" id="controls">
   <h4>Lower-Third Controls</h4>
 
-  <div class="ctrl-row">
-    <label>Logo Image URL</label>
-    <input id="logoUrl" type="url" placeholder="http://... or file:///C:/path/logo.png"/>
+  <div class="ctrl-row"><label>Logo Image URL</label><input id="logoUrl" type="url" placeholder="file:///C:/logo.png or http://..."/></div>
+  <div class="ctrl-row"><label>Logo Text</label><input id="logoTxtInput" type="text"/></div>
+  <div class="ctrl-row"><label>Headline</label><input id="headlineInput" type="text"/></div>
+  <div class="ctrl-row" style="align-items:flex-start"><label>Ticker Lines</label><textarea id="tickerInput" placeholder="One headline per line"></textarea></div>
+
+  <div class="ctrl-row"><label>Accent Color</label><input id="accentInput" type="color" value="#8b1b2a"/></div>
+  <div class="ctrl-row"><label>Headline Size</label><input id="headlineSize" type="number" min="14" max="60" value="34"/></div>
+  <div class="ctrl-row"><label>Ticker Size</label><input id="tickerSize" type="number" min="10" max="30" value="18"/></div>
+
+  <div class="ctrl-row"><label>Flip Duration (ms)</label><input id="flipDuration" type="number" min="200" max="2000" value="700"/></div>
+  <div class="ctrl-row"><label>Display (ms)</label><input id="displayDuration" type="number" min="800" max="20000" value="3000"/></div>
+
+  <div class="ctrl-row"><label>Show Ticker</label>
+    <select id="showTicker"><option value="1" selected>On</option><option value="0">Off</option></select>
   </div>
 
-  <div class="ctrl-row">
-    <label>Logo Text</label>
-    <input id="logoTxt" type="text" placeholder="LOGO"/>
+  <div class="ctrl-row" style="gap:10px">
+    <button id="saveBtn">Save</button>
+    <button id="resetBtn" style="background:rgba(255,255,255,0.06)">Reset</button>
   </div>
 
-  <div class="ctrl-row">
-    <label>Headline</label>
-    <input id="headlineInput" type="text" placeholder="BREAKING: ..."/>
-  </div>
-
-  <div class="ctrl-row" style="align-items:flex-start">
-    <label>Ticker Lines</label>
-    <textarea id="tickerInput" placeholder="Line 1&#10;Line 2&#10;Line 3"></textarea>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Accent Color</label>
-    <input id="accent" type="color" value="#8b1b2a"/>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Headline Size</label>
-    <input id="headlineSize" type="number" min="14" max="60" value="28"/>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Ticker Size</label>
-    <input id="tickerSize" type="number" min="10" max="30" value="18"/>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Anim Speed (s)</label>
-    <input id="animSpeed" type="number" min="0.6" max="8" step="0.1" value="2.5"/>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Corner Radius</label>
-    <input id="cornerRadius" type="number" min="0" max="40" value="12"/>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Show Ticker</label>
-    <select id="showTicker">
-      <option value="1" selected>On</option>
-      <option value="0">Off</option>
-    </select>
-  </div>
-
-  <div class="ctrl-row">
-    <label>Save / Reset</label>
-    <button id="saveBtn" style="flex:1;padding:8px;border-radius:8px;background:#6f0f1a;border:0;color:#fff;cursor:pointer">Save</button>
-    <button id="resetBtn" style="flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:0;color:#fff;cursor:pointer">Reset</button>
-  </div>
-
-  <div class="small">Tip: In OBS, open the source → Click "Interact" to edit fields directly, or paste a local file URL into Logo Image URL (example: <span class="small">file:///C:/logo.png</span>).</div>
+  <div style="font-size:12px;opacity:0.88;margin-top:6px">Tip: in OBS click the Browser Source → Interact to open the controls. Use file:// URLs for local logos.</div>
 </div>
 
 <script>
 (function(){
-  // helpers
   const $ = id => document.getElementById(id);
-  const stage = $('stage');
-  const logo = $('logo');
-  const logoImg = $('logoImg');
-  const logoText = $('logoText');
-  const logoUrl = $('logoUrl');
-  const logoTxt = $('logoTxt');
-
-  const panel = $('panel');
-  const headlineEl = $('headline');
-  const subtitleEl = $('subtitle');
-  const tickerWrap = $('tickerWrap');
-  const tickerInput = $('tickerInput');
-  const tickerList = $('tickerList');
-  const headlineInput = $('headlineInput');
-  const accent = $('accent');
-  const accentBar = $('accentBar');
-  const headlineSize = $('headlineSize');
-  const tickerSize = $('tickerSize');
-  const animSpeed = $('animSpeed');
-  const cornerRadius = $('cornerRadius');
-  const showTicker = $('showTicker');
-  const saveBtn = $('saveBtn');
-  const resetBtn = $('resetBtn');
-  const gear = $('gear');
-  const controls = $('controls');
-
-  // Load saved settings or defaults
   const defaults = {
-    logoUrl: '',
-    logoTxt: 'LOGO',
-    headline: 'BREAKING NEWS: PLACEHOLDER HEADLINE',
-    tickerLines: ['Ticker item 1 — more details here.','Ticker item 2 — second headline.','Ticker item 3 — updates continue.'],
-    accent: '#8b1b2a',
-    headlineSize: 28,
-    tickerSize: 18,
-    animSpeed: 2.5,
-    cornerRadius: 12,
-    showTicker: '1'
+    logoUrl:'',
+    logoTxt:'NEWS',
+    headline:'BREAKING: SAMPLE HEADLINE — PH STYLE LONG BAR',
+    sub:'',
+    tickerLines:['Breaking: sample item 1','Update: sample item 2','More: sample item 3'],
+    accent:'#8b1b2a',
+    headlineSize:34,
+    tickerSize:18,
+    flipDuration:700,
+    displayDuration:3000,
+    showTicker:'1'
   };
 
-  function loadSettings(){
-    try {
-      const raw = localStorage.getItem('lt_settings_v1');
-      if(raw){
-        return {...defaults, ...JSON.parse(raw)};
-      }
-    } catch(e){}
-    return defaults;
+  // elements
+  const logo = $('logo'), logoImg=$('logoImg'), logoTxtEl=$('logoTxt');
+  const logoUrlInput = $('logoUrl'), logoTxtInput = $('logoTxtInput');
+  const headlineText = $('headlineText'), headlineInput = $('headlineInput'), subText = $('subText');
+  const tickerViewport = $('tickerViewport'), tickerInput = $('tickerInput');
+  const accentInput = $('accentInput'), accentStrip = $('accentStrip');
+  const headlineSize = $('headlineSize'), tickerSize = $('tickerSize');
+  const flipDurationIn = $('flipDuration'), displayDurationIn = $('displayDuration');
+  const showTicker = $('showTicker');
+  const saveBtn = $('saveBtn'), resetBtn = $('resetBtn');
+  const gear = $('gear'), controls = $('controls');
+  const headlineBar = $('headlineBar'), tickerBox = $('tickerBox');
+
+  // settings
+  function load(){
+    try{
+      const raw = localStorage.getItem('ph_lt_v1');
+      return raw ? {...defaults, ...JSON.parse(raw)} : defaults;
+    }catch(e){ return defaults; }
   }
+  function save(s){ localStorage.setItem('ph_lt_v1', JSON.stringify(s)); }
 
-  function saveSettings(s){
-    localStorage.setItem('lt_settings_v1', JSON.stringify(s));
-  }
+  let state = load();
 
-  // state
-  let state = loadSettings();
-
-  // apply state to UI and page
+  // apply state to UI
   function applyState(){
     // logo
-    logoUrl.value = state.logoUrl || '';
-    logoTxt.value = state.logoTxt || defaults.logoTxt;
+    logoUrlInput.value = state.logoUrl || '';
+    logoTxtInput.value = state.logoTxt || defaults.logoTxt;
     if(state.logoUrl){
       logoImg.src = state.logoUrl;
-      logoImg.style.display = 'block';
-      logoText.style.display = 'none';
+      logoImg.style.display='block';
+      logoTxtEl.style.display='none';
     } else {
-      logoImg.style.display = 'none';
-      logoText.style.display = 'block';
-      logoText.innerText = state.logoTxt || '';
+      logoImg.style.display='none';
+      logoTxtEl.style.display='block';
+      logoTxtEl.innerText = state.logoTxt || '';
     }
 
     // headline
     headlineInput.value = state.headline;
-    headlineEl.innerText = state.headline;
+    headlineText.innerText = state.headline;
+    subText.innerText = state.sub || '';
+    subText.style.display = state.sub ? 'block' : 'none';
 
     // ticker
-    tickerInput.value = (state.tickerLines||[]).join('\n');
-    rebuildTicker();
+    tickerInput.value = (state.tickerLines || []).join('\n');
 
-    // accent
-    accent.value = state.accent || defaults.accent;
-    accentBar.style.background = `linear-gradient(180deg, ${accent.value}, ${shadeColor(accent.value, -18)})`;
-    document.documentElement.style.setProperty('--accent', accent.value);
-    document.documentElement.style.setProperty('--maroon', shadeColor(accent.value, -34));
+    // accent/color
+    accentInput.value = state.accent || defaults.accent;
+    document.documentElement.style.setProperty('--accent', accentInput.value);
+    // simple shade for maroon base
+    document.documentElement.style.setProperty('--maroon', shadeHex(accentInput.value, -34));
+    accentStrip.style.background = `linear-gradient(180deg, ${accentInput.value}, ${shadeHex(accentInput.value,-18)})`;
 
-    // sizes
+    // sizes/durations
     headlineSize.value = state.headlineSize;
-    tickerSize.value = state.tickerSize;
-    animSpeed.value = state.animSpeed;
-    cornerRadius.value = state.cornerRadius;
-    showTicker.value = state.showTicker;
-
     document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px');
+    tickerSize.value = state.tickerSize;
     document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px');
-    document.documentElement.style.setProperty('--anim-speed', state.animSpeed);
-    document.documentElement.style.setProperty('--corner', state.cornerRadius + 'px');
 
-    tickerWrap.style.display = state.showTicker === '1' ? 'flex' : 'none';
+    flipDurationIn.value = state.flipDuration;
+    displayDurationIn.value = state.displayDuration;
+    showTicker.value = state.showTicker || '1';
+    tickerBox.style.display = showTicker.value === '1' ? 'flex' : 'none';
 
-    // auto-resize: measure widest text and set panel width
-    requestAnimationFrame(adjustWidth);
+    // build ticker DOM
+    buildTickerCards();
+    adjustWidth();
   }
 
-  // build ticker DOM
-  function rebuildTicker(){
-    // clear
-    while(tickerList.firstChild) tickerList.removeChild(tickerList.firstChild);
-    const lines = (tickerInput.value || '').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  // helpers
+  function shadeHex(hex, amt){
+    hex = hex.replace('#','');
+    if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+    const num = parseInt(hex,16);
+    let r = (num>>16) + amt, g = (num>>8 & 0x00FF) + amt, b = (num & 0x0000FF) + amt;
+    r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
+    return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+  }
+
+  // build ticker card elements (one visible at a time)
+  function buildTickerCards(){
+    while(tickerViewport.firstChild) tickerViewport.removeChild(tickerViewport.firstChild);
+    const lines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     const items = lines.length ? lines : state.tickerLines;
-    // duplicate once to create continuous feel if more than 1
-    items.forEach(text => {
+    // create divs; position absolute stacked
+    items.forEach((t,i)=>{
       const div = document.createElement('div');
-      div.className = 'tickerItem';
-      div.innerText = text;
-      tickerList.appendChild(div);
+      div.className='tickerCard';
+      div.style.top='0'; div.style.left='0'; div.style.right='0';
+      div.innerHTML = `<div class="tickerText">${escapeHtml(t)}</div>`;
+      tickerViewport.appendChild(div);
     });
-    // add copy of items to allow smooth loop if >1
-    if(items.length > 1){
-      items.forEach(text => {
-        const div = document.createElement('div');
-        div.className = 'tickerItem';
-        div.innerText = text;
-        tickerList.appendChild(div);
-      });
-    }
-    // rebuild dynamic animation for ticker
-    buildTickerAnimation();
+    // start cycling
+    startTickerLoop();
   }
 
-  // create dynamic CSS animation based on number of distinct lines and sizes
-  function buildTickerAnimation(){
-    // remove old style if exists
-    const old = document.getElementById('dynTickerStyle');
-    if(old) old.remove();
+  // ticker loop (flip-up card style)
+  let tickerTimer = null, currentIdx = -1;
+  function startTickerLoop(){
+    stopTickerLoop();
+    const cards = Array.from(tickerViewport.querySelectorAll('.tickerCard'));
+    if(cards.length===0) return;
+    const flipDur = parseInt(flipDurationIn.value,10) || 700;
+    const displayDur = parseInt(displayDurationIn.value,10) || 3000;
+    // ensure CSS variables reflect durations
+    document.documentElement.style.setProperty('--flip-duration', flipDur);
+    document.documentElement.style.setProperty('--display-duration', displayDur);
 
-    const items = Array.from(tickerList.querySelectorAll('.tickerItem'));
-    if(items.length <= 1){
-      tickerList.style.transform = 'translateY(0)';
-      return;
+    // immediate show first
+    currentIdx = -1;
+    function showNext(){
+      const prev = tickerViewport.querySelector('.tickerCard.show');
+      if(prev){
+        prev.classList.remove('show');
+        prev.classList.remove('anim-in');
+        prev.classList.add('anim-out');
+      }
+      // next index
+      currentIdx = (currentIdx + 1) % cards.length;
+      const next = cards[currentIdx];
+      // remove any anim-out then bring in
+      next.classList.remove('anim-out');
+      // force reflow for smoothness
+      void next.offsetWidth;
+      next.classList.add('show','anim-in');
+      // schedule next
+      tickerTimer = setTimeout(showNext, displayDur + flipDur);
     }
+    // show first after short timeout
+    showNext();
+  }
+  function stopTickerLoop(){ if(tickerTimer) { clearTimeout(tickerTimer); tickerTimer = null; } }
 
-    // compute item height (use first)
-    const itemHeight = items[0].getBoundingClientRect().height;
-    const visibleCount = Math.round(tickerWrap.getBoundingClientRect().height / itemHeight) || 1;
-
-    // number of distinct logical lines (first half before duplication)
-    const logicalCount = items.length / 2;
-
-    // total travel needed = itemHeight * logicalCount
-    const travel = itemHeight * logicalCount;
-
-    // speed: animSpeed (seconds per item)
-    const speedPerItem = parseFloat(animSpeed.value) || parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--anim-speed')) || 2.5;
-    const totalDuration = speedPerItem * logicalCount;
-
-    // create keyframes
-    const style = document.createElement('style');
-    style.id = 'dynTickerStyle';
-
-    // We'll create a smooth frames keyframe moving from 0 to -travel
-    style.innerHTML = `
-      @keyframes tickerMove {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-${travel}px); }
-      }
-      .tickerList {
-        animation: tickerMove ${totalDuration}s linear infinite;
-      }
-    `;
-    document.head.appendChild(style);
-
-    // make sure CSS variables set for timing
-    document.documentElement.style.setProperty('--anim-speed', speedPerItem);
+  // escape html
+  function escapeHtml(s){
+    return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   }
 
-  // adjust width so panel fits longest single-line text (headline or longest ticker item)
+  // auto width: ensure headlineBar width fits longest single line (headline or ticker)
   function adjustWidth(){
     // measure headline width
     const tmp = document.createElement('span');
-    tmp.style.visibility='hidden';
-    tmp.style.position='absolute';
-    tmp.style.whiteSpace='nowrap';
-    tmp.style.fontWeight='800';
-    tmp.style.fontSize = (headlineSize.value || 28) + 'px';
-    tmp.innerText = headlineEl.innerText || '';
+    tmp.style.visibility='hidden'; tmp.style.position='absolute'; tmp.style.whiteSpace='nowrap';
+    tmp.style.fontWeight='900'; tmp.style.fontSize = (headlineSize.value||34) + 'px';
+    tmp.innerText = headlineText.innerText || '';
     document.body.appendChild(tmp);
-    const headW = tmp.getBoundingClientRect().width;
-    tmp.remove();
+    const headW = tmp.getBoundingClientRect().width; tmp.remove();
 
     // measure longest ticker item
     let maxTickerW = 0;
-    Array.from(tickerList.querySelectorAll('.tickerItem')).forEach(it=>{
+    Array.from(tickerViewport.querySelectorAll('.tickerCard .tickerText')).forEach(el=>{
       const ttmp = document.createElement('span');
-      ttmp.style.visibility='hidden';
-      ttmp.style.position='absolute';
-      ttmp.style.whiteSpace='nowrap';
-      ttmp.style.fontSize = (tickerSize.value || 18) + 'px';
-      ttmp.style.fontWeight = 600;
-      ttmp.innerText = it.innerText;
+      ttmp.style.visibility='hidden'; ttmp.style.position='absolute'; ttmp.style.whiteSpace='nowrap';
+      ttmp.style.fontSize = (tickerSize.value||18) + 'px'; ttmp.style.fontWeight='700';
+      ttmp.innerText = el.innerText;
       document.body.appendChild(ttmp);
-      const w = ttmp.getBoundingClientRect().width;
-      ttmp.remove();
+      const w = ttmp.getBoundingClientRect().width; ttmp.remove();
       if(w > maxTickerW) maxTickerW = w;
     });
 
-    const desired = Math.max(headW + 140, maxTickerW + 120, 300);
-    panel.style.width = desired + 'px';
-  }
-
-  // utility to shade colors
-  function shadeColor(hex, percent) {
-    // hex -> r,g,b
-    hex = hex.replace('#','');
-    if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
-    const num = parseInt(hex,16);
-    let r = (num>>16) + Math.round(percent);
-    let g = (num>>8 & 0x00FF) + Math.round(percent);
-    let b = (num & 0x0000FF) + Math.round(percent);
-    r = Math.max(0, Math.min(255, r));
-    g = Math.max(0, Math.min(255, g));
-    b = Math.max(0, Math.min(255, b));
-    return '#'+( (1<<24) + (r<<16) + (g<<8) + b ).toString(16).slice(1);
+    // desired min width: headline is priority
+    const desired = Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-width')) || 1600,
+                     Math.max(headW + 360, maxTickerW + 300, 500));
+    // set headlineBar to occupy remaining width of stage (stage width is limited)
+    headlineBar.style.width = desired + 'px';
   }
 
   // wire UI events
-  gear.addEventListener('click', ()=>{
-    controls.style.display = controls.style.display === 'none' ? 'block' : 'none';
+  gear.addEventListener('click', ()=> controls.style.display = controls.style.display === 'block' ? 'none' : 'block');
+
+  // inputs
+  logoUrlInput.addEventListener('input', ()=>{
+    state.logoUrl = logoUrlInput.value.trim();
+    if(state.logoUrl){
+      logoImg.src = state.logoUrl; logoImg.style.display='block'; logoTxtEl.style.display='none';
+    } else { logoImg.style.display='none'; logoTxtEl.style.display='block'; }
+    save(state); applyState();
   });
 
-  logoUrl.addEventListener('change', ()=>{
-    state.logoUrl = logoUrl.value.trim();
-    saveSettings(state);
-    applyState();
-  });
+  logoTxtInput.addEventListener('input', ()=>{ state.logoTxt = logoTxtInput.value; logoTxtEl.innerText = state.logoTxt; save(state); });
 
-  logoTxt.addEventListener('input', ()=>{
-    state.logoTxt = logoTxt.value;
-    saveSettings(state);
-    applyState();
-  });
+  headlineInput.addEventListener('input', ()=>{ state.headline = headlineInput.value; headlineText.innerText = state.headline; save(state); adjustWidth(); });
 
-  headlineInput.addEventListener('input', ()=>{
-    state.headline = headlineInput.value;
-    headlineEl.innerText = state.headline;
-    saveSettings(state);
-    adjustWidth();
-  });
+  tickerInput.addEventListener('input', ()=>{ state.tickerLines = tickerInput.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean); buildTickerCards(); save(state); adjustWidth(); });
 
-  tickerInput.addEventListener('input', ()=>{
-    state.tickerLines = tickerInput.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    rebuildTicker();
-    saveSettings(state);
-    adjustWidth();
-  });
+  accentInput.addEventListener('input', ()=>{ state.accent = accentInput.value; applyState(); save(state); });
 
-  accent.addEventListener('input', ()=>{
-    state.accent = accent.value;
-    saveSettings(state);
-    applyState();
-  });
+  headlineSize.addEventListener('input', ()=>{ state.headlineSize = parseInt(headlineSize.value,10)||34; document.documentElement.style.setProperty('--headline-size', state.headlineSize+'px'); save(state); adjustWidth(); });
 
-  headlineSize.addEventListener('input', ()=>{
-    state.headlineSize = Number(headlineSize.value);
-    document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px');
-    saveSettings(state);
-    adjustWidth();
-  });
+  tickerSize.addEventListener('input', ()=>{ state.tickerSize = parseInt(tickerSize.value,10)||18; document.documentElement.style.setProperty('--ticker-size', state.tickerSize+'px'); save(state); adjustWidth(); });
 
-  tickerSize.addEventListener('input', ()=>{
-    state.tickerSize = Number(tickerSize.value);
-    document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px');
-    saveSettings(state);
-    buildTickerAnimation();
-    adjustWidth();
-  });
+  flipDurationIn.addEventListener('input', ()=>{ state.flipDuration = parseInt(flipDurationIn.value,10)||700; save(state); });
 
-  animSpeed.addEventListener('input', ()=>{
-    state.animSpeed = Number(animSpeed.value);
-    saveSettings(state);
-    buildTickerAnimation();
-  });
+  displayDurationIn.addEventListener('input', ()=>{ state.displayDuration = parseInt(displayDurationIn.value,10)||3000; save(state); });
 
-  cornerRadius.addEventListener('input', ()=>{
-    state.cornerRadius = Number(cornerRadius.value);
-    document.documentElement.style.setProperty('--corner', state.cornerRadius + 'px');
-    saveSettings(state);
-    adjustWidth();
-  });
-
-  showTicker.addEventListener('change', ()=>{
-    state.showTicker = showTicker.value;
-    tickerWrap.style.display = state.showTicker === '1' ? 'flex' : 'none';
-    saveSettings(state);
-    adjustWidth();
-  });
+  showTicker.addEventListener('change', ()=>{ state.showTicker = showTicker.value; tickerBox.style.display = state.showTicker==='1' ? 'flex' : 'none'; save(state); adjustWidth(); });
 
   saveBtn.addEventListener('click', ()=>{
-    // collect and persist
-    state.logoUrl = logoUrl.value.trim();
-    state.logoTxt = logoTxt.value.trim() || defaults.logoTxt;
+    // collect current fields and persist
+    state.logoUrl = logoUrlInput.value.trim();
+    state.logoTxt = logoTxtInput.value.trim() || defaults.logoTxt;
     state.headline = headlineInput.value.trim() || defaults.headline;
-    state.tickerLines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    state.accent = accent.value;
-    state.headlineSize = Number(headlineSize.value);
-    state.tickerSize = Number(tickerSize.value);
-    state.animSpeed = Number(animSpeed.value);
-    state.cornerRadius = Number(cornerRadius.value);
+    state.tickerLines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean) || defaults.tickerLines;
+    state.accent = accentInput.value;
+    state.headlineSize = parseInt(headlineSize.value,10) || 34;
+    state.tickerSize = parseInt(tickerSize.value,10) || 18;
+    state.flipDuration = parseInt(flipDurationIn.value,10) || 700;
+    state.displayDuration = parseInt(displayDurationIn.value,10) || 3000;
     state.showTicker = showTicker.value;
-    saveSettings(state);
+    save(state);
     applyState();
-    // small flash to signal saved
-    saveBtn.innerText = 'Saved ✔';
-    setTimeout(()=>saveBtn.innerText = 'Save', 1200);
+    saveBtn.innerText='Saved ✔';
+    setTimeout(()=>saveBtn.innerText='Save',900);
   });
 
   resetBtn.addEventListener('click', ()=>{
-    localStorage.removeItem('lt_settings_v1');
-    state = loadSettings();
+    localStorage.removeItem('ph_lt_v1');
+    state = load();
     applyState();
   });
 
-  // initial
-  state = loadSettings();
-  applyState();
-
-  // initial rebuild
-  rebuildTicker();
-
-  // observe size changes to re-evaluate width if obs resizes the source
-  const resizeObserver = new ResizeObserver(() => adjustWidth());
-  resizeObserver.observe(panel);
-
-  // if logo URL typed, update
-  logoUrl.addEventListener('input', ()=>{
-    const v = logoUrl.value.trim();
-    if(v){
-      logoImg.src = v;
-      logoImg.style.display = 'block';
-      logoText.style.display = 'none';
-    } else {
-      logoImg.style.display = 'none';
-      logoText.style.display = 'block';
-    }
-  });
-
-  // helper: allow pressing Ctrl+S to save while Interact is open
-  window.addEventListener('keydown',(e)=>{
-    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){
-      e.preventDefault(); saveBtn.click();
-    }
-  });
-
-  // expose a simple API via URL params (for advanced OBS setups)
-  // ?headline=...&logo=...&ticker=Line1|Line2|Line3
+  // persist on load, apply URL params quick API
   (function applyURLParams(){
-    try {
-      const params = new URLSearchParams(location.search);
-      if(params.has('headline')){
-        state.headline = params.get('headline');
-      }
-      if(params.has('logo')){
-        const v = params.get('logo');
-        if(v.startsWith('http') || v.startsWith('file://')) state.logoUrl = v;
+    try{
+      const p = new URLSearchParams(location.search);
+      if(p.has('headline')) state.headline = p.get('headline');
+      if(p.has('logo')){
+        const v = p.get('logo');
+        if(v.startsWith('http')||v.startsWith('file://')) state.logoUrl = v;
         else state.logoTxt = v;
       }
-      if(params.has('ticker')){
-        state.tickerLines = params.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
-      }
-      // apply
-      applyState();
-      rebuildTicker();
-    } catch(e){}
+      if(p.has('ticker')) state.tickerLines = p.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
+    }catch(e){}
   })();
 
+  // initial
+  state = {...defaults, ...state};
+  applyState();
+
+  // re-evaluate width when font/controls change or window resizes
+  window.addEventListener('resize', adjustWidth);
+  new ResizeObserver(adjustWidth).observe(headlineBar);
+
+  // helper to start/stop when visibility changed
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden) stopTickerLoop(); else startTickerLoop();
+  });
+
+  // start loop after content built
+  function startTickerLoop(){ /* wrapper */ 
+    // ensure builder called
+    buildTickerCards();
+  }
 })();
 </script>
 </body>
