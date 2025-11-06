@@ -1,55 +1,700 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>POS — Desktop</title>
-<meta name="theme-color" content="#0b5ed7">
-<link rel="manifest" href="manifest.json" crossorigin>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Glass & Glow Lower Third (Editable)</title>
 <style>
-/* (styles identical to the original POS with small additions for the new UI) */
-:root{ --bg:#f4f6f8; --card:#fff; --accent:#0b5ed7; --ok:#198754; --danger:#dc3545; --muted:#6c757d; --shadow: 0 6px 18px rgba(15,23,42,0.08); }
-*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
-body{margin:0;background:var(--bg);color:#0e1724}
-header{background:linear-gradient(90deg,#0b5ed7,#0a66c2);color:white;padding:12px 16px;display:flex;align-items:center;gap:12px}
-header h1{margin:0;font-size:16px}
-.container{max-width:1200px;margin:12px auto;padding:10px}
-.grid{display:grid;grid-template-columns:1fr 420px;gap:12px}
-.card{background:var(--card);border-radius:10px;padding:12px;box-shadow:var(--shadow)}
-.toolbar{display:flex;gap:8px;margin-bottom:8px}
-.toolbar input, .toolbar select, .toolbar button{padding:8px;border-radius:8px;border:1px solid #e6eef8}
-.inventory-list{max-height:300px;overflow:auto;border:1px solid #eef3fb;border-radius:8px;padding:6px}
-.item-row{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:6px}
-.item-row:nth-child(odd){background:#fbfdff}
-.cart{display:flex;flex-direction:column;gap:8px}
-.cart-items{max-height:340px;overflow:auto;border:1px dashed #e5eefc;padding:6px;border-radius:8px}
-.cart-row{display:flex;gap:8px;align-items:center;padding:8px;border-bottom:1px solid #f0f5fa}
-.cart-row:last-child{border-bottom:none}
-.muted{color:var(--muted)}
-.summary{display:flex;flex-direction:column;gap:8px}
-.summary .row{display:flex;justify-content:space-between;align-items:center}
-.big{font-size:22px;font-weight:800}
-.controls{display:flex;flex-direction:column;gap:8px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:50}
-.modal .box{width:760px;max-width:96%;background:white;padding:12px;border-radius:10px}
-.btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
-.btn.secondary{background:#eef4ff;color:var(--accent)}
-.btn.warn{background:var(--danger)}
-input[type='number']{width:100px}
-.flex{display:flex;align-items:center;gap:8px}
-.right{text-align:right}
-.small{font-size:13px}
-footer{max-width:1200px;margin:12px auto;text-align:center;color:var(--muted);font-size:13px}
-@media(max-width:980px){.grid{grid-template-columns:1fr}.right-col{order:2}}
+  :root{
+    --maroon: #6f0f1a;
+    --accent: #8b1b2a;
+    --glass-alpha: 0.12;
+    --corner: 12px;
+    --headline-size: 28px;
+    --ticker-size: 18px;
+    --anim-speed: 2.5; /* seconds per item */
+  }
 
+  html,body{
+    height:100%;
+    margin:0;
+    padding:0;
+    background: transparent; /* important for OBS */
+    font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    user-select:none;
+  }
 
-/* Receipt template editor */
-.template-area{display:flex;gap:8px}
-.template-preview{border:1px solid #eef3fb;padding:12px;border-radius:8px;background:#fff;min-width:280px}
-.logo-preview{width:120px;height:80px;border:1px dashed #dfeaf7;display:flex;align-items:center;justify-content:center}
+  /* Container positioned for OBS use */
+  .stage{
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    pointer-events: auto;
+  }
+
+  /* Logo */
+  .logo {
+    min-width: 96px;
+    height: 96px;
+    border-radius: calc(var(--corner) * 0.9);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.85));
+    box-shadow: 0 6px 18px rgba(111,15,26,0.25), inset 0 -2px 6px rgba(0,0,0,0.06);
+    border: 3px solid rgba(255,255,255,0.65);
+    padding:6px;
+    overflow:hidden;
+  }
+  .logo img{
+    max-width:100%;
+    max-height:100%;
+    display:block;
+    object-fit:contain;
+    border-radius: calc(var(--corner) * 0.6);
+  }
+  .logo .text {
+    font-weight:700;
+    color:var(--maroon);
+    font-size:20px;
+    letter-spacing:0.6px;
+  }
+
+  /* Glass panel */
+  .panel{
+    display:inline-flex;
+    flex-direction:column;
+    gap:8px;
+    background: linear-gradient(180deg, rgba(255,255,255,var(--glass-alpha)), rgba(255,255,255,0.04));
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    border-radius: var(--corner);
+    padding:14px 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 40px rgba(139,27,42,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    min-width: 300px;
+    width: fit-content;
+    max-width: 1100px;
+  }
+
+  /* Headline bar (glass with accent top border + glow) */
+  .headlineWrap{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    position:relative;
+  }
+
+  .accentBar{
+    width:8px;
+    height:48px;
+    background: linear-gradient(180deg, var(--accent), var(--maroon));
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(139,27,42,0.28);
+    flex-shrink:0;
+  }
+
+  .headline{
+    font-weight:800;
+    font-size: var(--headline-size);
+    color: #fff;
+    white-space:nowrap;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    transform-origin:left center;
+    display:inline-block;
+  }
+
+  /* small subtitle line (optional) */
+  .subtitle{
+    font-size: 13px;
+    opacity:0.9;
+    color: rgba(255,255,255,0.9);
+    margin-top: -6px;
+    white-space:nowrap;
+  }
+
+  /* Ticker */
+  .tickerWrap{
+    overflow:hidden;
+    height: calc(var(--ticker-size) + 10px);
+    position:relative;
+    border-radius: calc(var(--corner) * 0.75);
+    border: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    display:flex;
+    align-items:center;
+    padding:6px 10px;
+  }
+
+  .tickerViewport{
+    width:100%;
+    position:relative;
+    height:100%;
+    overflow:hidden;
+  }
+
+  .tickerList{
+    display:flex;
+    flex-direction:column;
+    transform: translateY(0);
+    will-change: transform;
+  }
+
+  .tickerItem{
+    height: calc(var(--ticker-size) + 2px);
+    line-height: calc(var(--ticker-size) + 2px);
+    font-size: var(--ticker-size);
+    font-weight:600;
+    color: #fff;
+    white-space:nowrap;
+    padding-right:24px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.45);
+  }
+
+  /* Glow under the glass */
+  .panel::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    box-shadow: 0 0 30px rgba(139,27,42,0.12);
+    mix-blend-mode: screen;
+  }
+
+  /* Controls overlay (for OBS Interact) */
+  .controls {
+    position: absolute;
+    right: 10px;
+    top: -260px;
+    width: 380px;
+    background: rgba(12,12,12,0.75);
+    border-radius: 10px;
+    padding:10px;
+    color: #fff;
+    font-size:13px;
+    z-index:9999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
+  .controls h4{ margin:0 0 8px 0; font-size:14px;}
+  .ctrl-row{ display:flex; gap:8px; margin-bottom:8px; align-items:center; }
+  .ctrl-row label{ width:110px; font-size:13px; opacity:0.9; }
+  .ctrl-row input[type="text"], .ctrl-row input[type="url"], .ctrl-row input[type="number"], .ctrl-row textarea, .ctrl-row input[type="color"], .ctrl-row select {
+    flex:1; padding:6px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); color:#fff;
+  }
+  .ctrl-row textarea{ min-height:72px; resize:vertical; font-size:13px; }
+
+  .small{
+    font-size:12px; opacity:0.85;
+  }
+
+  /* toggle button to show/hide controls */
+  .gear{
+    position: absolute;
+    right: 10px;
+    top: -40px;
+    width:36px; height:36px;
+    border-radius:8px;
+    background: rgba(255,255,255,0.06);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    color:#fff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  }
+  .gear:active{ transform: translateY(1px); }
+
+  /* Responsive fallback for small OBS source sizes */
+  @media (max-width:900px){
+    .stage{ left:18px; bottom:18px; }
+    .logo{ min-width:72px; height:72px; }
+    :root{ --headline-size:22px; --ticker-size:16px; }
+    .controls { top: -320px; width:320px; }
+  }
 </style>
 </head>
 <body>
-<header>
-<div style="width:36px;height:36px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;color:#0b5ed7;font-weight:800">POS</div>
+
+<div class="stage" id="stage">
+  <div class="logo" id="logo">
+    <!-- either image or text -->
+    <img id="logoImg" src="" alt="" style="display:none"/>
+    <div class="text" id="logoText">LOGO</div>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="headlineWrap">
+      <div class="accentBar" id="accentBar"></div>
+      <div>
+        <div class="headline" id="headline">BREAKING NEWS: PLACEHOLDER HEADLINE</div>
+        <div class="subtitle small" id="subtitle" style="display:none;">Optional subtitle</div>
+      </div>
+    </div>
+
+    <div class="tickerWrap" id="tickerWrap" aria-hidden="false">
+      <div class="tickerViewport">
+        <div class="tickerList" id="tickerList">
+          <div class="tickerItem">Ticker item 1 — more details here.</div>
+          <div class="tickerItem">Ticker item 2 — second headline.</div>
+          <div class="tickerItem">Ticker item 3 — updates continue.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- gear + controls -->
+<div class="gear" id="gear" title="Toggle Controls">⚙️</div>
+
+<div class="controls" id="controls" style="display:none;">
+  <h4>Lower-Third Controls</h4>
+
+  <div class="ctrl-row">
+    <label>Logo Image URL</label>
+    <input id="logoUrl" type="url" placeholder="http://... or file:///C:/path/logo.png"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Logo Text</label>
+    <input id="logoTxt" type="text" placeholder="LOGO"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Headline</label>
+    <input id="headlineInput" type="text" placeholder="BREAKING: ..."/>
+  </div>
+
+  <div class="ctrl-row" style="align-items:flex-start">
+    <label>Ticker Lines</label>
+    <textarea id="tickerInput" placeholder="Line 1&#10;Line 2&#10;Line 3"></textarea>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Accent Color</label>
+    <input id="accent" type="color" value="#8b1b2a"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Headline Size</label>
+    <input id="headlineSize" type="number" min="14" max="60" value="28"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Ticker Size</label>
+    <input id="tickerSize" type="number" min="10" max="30" value="18"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Anim Speed (s)</label>
+    <input id="animSpeed" type="number" min="0.6" max="8" step="0.1" value="2.5"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Corner Radius</label>
+    <input id="cornerRadius" type="number" min="0" max="40" value="12"/>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Show Ticker</label>
+    <select id="showTicker">
+      <option value="1" selected>On</option>
+      <option value="0">Off</option>
+    </select>
+  </div>
+
+  <div class="ctrl-row">
+    <label>Save / Reset</label>
+    <button id="saveBtn" style="flex:1;padding:8px;border-radius:8px;background:#6f0f1a;border:0;color:#fff;cursor:pointer">Save</button>
+    <button id="resetBtn" style="flex:1;padding:8px;border-radius:8px;background:rgba(255,255,255,0.06);border:0;color:#fff;cursor:pointer">Reset</button>
+  </div>
+
+  <div class="small">Tip: In OBS, open the source → Click "Interact" to edit fields directly, or paste a local file URL into Logo Image URL (example: <span class="small">file:///C:/logo.png</span>).</div>
+</div>
+
+<script>
+(function(){
+  // helpers
+  const $ = id => document.getElementById(id);
+  const stage = $('stage');
+  const logo = $('logo');
+  const logoImg = $('logoImg');
+  const logoText = $('logoText');
+  const logoUrl = $('logoUrl');
+  const logoTxt = $('logoTxt');
+
+  const panel = $('panel');
+  const headlineEl = $('headline');
+  const subtitleEl = $('subtitle');
+  const tickerWrap = $('tickerWrap');
+  const tickerInput = $('tickerInput');
+  const tickerList = $('tickerList');
+  const headlineInput = $('headlineInput');
+  const accent = $('accent');
+  const accentBar = $('accentBar');
+  const headlineSize = $('headlineSize');
+  const tickerSize = $('tickerSize');
+  const animSpeed = $('animSpeed');
+  const cornerRadius = $('cornerRadius');
+  const showTicker = $('showTicker');
+  const saveBtn = $('saveBtn');
+  const resetBtn = $('resetBtn');
+  const gear = $('gear');
+  const controls = $('controls');
+
+  // Load saved settings or defaults
+  const defaults = {
+    logoUrl: '',
+    logoTxt: 'LOGO',
+    headline: 'BREAKING NEWS: PLACEHOLDER HEADLINE',
+    tickerLines: ['Ticker item 1 — more details here.','Ticker item 2 — second headline.','Ticker item 3 — updates continue.'],
+    accent: '#8b1b2a',
+    headlineSize: 28,
+    tickerSize: 18,
+    animSpeed: 2.5,
+    cornerRadius: 12,
+    showTicker: '1'
+  };
+
+  function loadSettings(){
+    try {
+      const raw = localStorage.getItem('lt_settings_v1');
+      if(raw){
+        return {...defaults, ...JSON.parse(raw)};
+      }
+    } catch(e){}
+    return defaults;
+  }
+
+  function saveSettings(s){
+    localStorage.setItem('lt_settings_v1', JSON.stringify(s));
+  }
+
+  // state
+  let state = loadSettings();
+
+  // apply state to UI and page
+  function applyState(){
+    // logo
+    logoUrl.value = state.logoUrl || '';
+    logoTxt.value = state.logoTxt || defaults.logoTxt;
+    if(state.logoUrl){
+      logoImg.src = state.logoUrl;
+      logoImg.style.display = 'block';
+      logoText.style.display = 'none';
+    } else {
+      logoImg.style.display = 'none';
+      logoText.style.display = 'block';
+      logoText.innerText = state.logoTxt || '';
+    }
+
+    // headline
+    headlineInput.value = state.headline;
+    headlineEl.innerText = state.headline;
+
+    // ticker
+    tickerInput.value = (state.tickerLines||[]).join('\n');
+    rebuildTicker();
+
+    // accent
+    accent.value = state.accent || defaults.accent;
+    accentBar.style.background = `linear-gradient(180deg, ${accent.value}, ${shadeColor(accent.value, -18)})`;
+    document.documentElement.style.setProperty('--accent', accent.value);
+    document.documentElement.style.setProperty('--maroon', shadeColor(accent.value, -34));
+
+    // sizes
+    headlineSize.value = state.headlineSize;
+    tickerSize.value = state.tickerSize;
+    animSpeed.value = state.animSpeed;
+    cornerRadius.value = state.cornerRadius;
+    showTicker.value = state.showTicker;
+
+    document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px');
+    document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px');
+    document.documentElement.style.setProperty('--anim-speed', state.animSpeed);
+    document.documentElement.style.setProperty('--corner', state.cornerRadius + 'px');
+
+    tickerWrap.style.display = state.showTicker === '1' ? 'flex' : 'none';
+
+    // auto-resize: measure widest text and set panel width
+    requestAnimationFrame(adjustWidth);
+  }
+
+  // build ticker DOM
+  function rebuildTicker(){
+    // clear
+    while(tickerList.firstChild) tickerList.removeChild(tickerList.firstChild);
+    const lines = (tickerInput.value || '').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    const items = lines.length ? lines : state.tickerLines;
+    // duplicate once to create continuous feel if more than 1
+    items.forEach(text => {
+      const div = document.createElement('div');
+      div.className = 'tickerItem';
+      div.innerText = text;
+      tickerList.appendChild(div);
+    });
+    // add copy of items to allow smooth loop if >1
+    if(items.length > 1){
+      items.forEach(text => {
+        const div = document.createElement('div');
+        div.className = 'tickerItem';
+        div.innerText = text;
+        tickerList.appendChild(div);
+      });
+    }
+    // rebuild dynamic animation for ticker
+    buildTickerAnimation();
+  }
+
+  // create dynamic CSS animation based on number of distinct lines and sizes
+  function buildTickerAnimation(){
+    // remove old style if exists
+    const old = document.getElementById('dynTickerStyle');
+    if(old) old.remove();
+
+    const items = Array.from(tickerList.querySelectorAll('.tickerItem'));
+    if(items.length <= 1){
+      tickerList.style.transform = 'translateY(0)';
+      return;
+    }
+
+    // compute item height (use first)
+    const itemHeight = items[0].getBoundingClientRect().height;
+    const visibleCount = Math.round(tickerWrap.getBoundingClientRect().height / itemHeight) || 1;
+
+    // number of distinct logical lines (first half before duplication)
+    const logicalCount = items.length / 2;
+
+    // total travel needed = itemHeight * logicalCount
+    const travel = itemHeight * logicalCount;
+
+    // speed: animSpeed (seconds per item)
+    const speedPerItem = parseFloat(animSpeed.value) || parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--anim-speed')) || 2.5;
+    const totalDuration = speedPerItem * logicalCount;
+
+    // create keyframes
+    const style = document.createElement('style');
+    style.id = 'dynTickerStyle';
+
+    // We'll create a smooth frames keyframe moving from 0 to -travel
+    style.innerHTML = `
+      @keyframes tickerMove {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-${travel}px); }
+      }
+      .tickerList {
+        animation: tickerMove ${totalDuration}s linear infinite;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // make sure CSS variables set for timing
+    document.documentElement.style.setProperty('--anim-speed', speedPerItem);
+  }
+
+  // adjust width so panel fits longest single-line text (headline or longest ticker item)
+  function adjustWidth(){
+    // measure headline width
+    const tmp = document.createElement('span');
+    tmp.style.visibility='hidden';
+    tmp.style.position='absolute';
+    tmp.style.whiteSpace='nowrap';
+    tmp.style.fontWeight='800';
+    tmp.style.fontSize = (headlineSize.value || 28) + 'px';
+    tmp.innerText = headlineEl.innerText || '';
+    document.body.appendChild(tmp);
+    const headW = tmp.getBoundingClientRect().width;
+    tmp.remove();
+
+    // measure longest ticker item
+    let maxTickerW = 0;
+    Array.from(tickerList.querySelectorAll('.tickerItem')).forEach(it=>{
+      const ttmp = document.createElement('span');
+      ttmp.style.visibility='hidden';
+      ttmp.style.position='absolute';
+      ttmp.style.whiteSpace='nowrap';
+      ttmp.style.fontSize = (tickerSize.value || 18) + 'px';
+      ttmp.style.fontWeight = 600;
+      ttmp.innerText = it.innerText;
+      document.body.appendChild(ttmp);
+      const w = ttmp.getBoundingClientRect().width;
+      ttmp.remove();
+      if(w > maxTickerW) maxTickerW = w;
+    });
+
+    const desired = Math.max(headW + 140, maxTickerW + 120, 300);
+    panel.style.width = desired + 'px';
+  }
+
+  // utility to shade colors
+  function shadeColor(hex, percent) {
+    // hex -> r,g,b
+    hex = hex.replace('#','');
+    if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+    const num = parseInt(hex,16);
+    let r = (num>>16) + Math.round(percent);
+    let g = (num>>8 & 0x00FF) + Math.round(percent);
+    let b = (num & 0x0000FF) + Math.round(percent);
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    return '#'+( (1<<24) + (r<<16) + (g<<8) + b ).toString(16).slice(1);
+  }
+
+  // wire UI events
+  gear.addEventListener('click', ()=>{
+    controls.style.display = controls.style.display === 'none' ? 'block' : 'none';
+  });
+
+  logoUrl.addEventListener('change', ()=>{
+    state.logoUrl = logoUrl.value.trim();
+    saveSettings(state);
+    applyState();
+  });
+
+  logoTxt.addEventListener('input', ()=>{
+    state.logoTxt = logoTxt.value;
+    saveSettings(state);
+    applyState();
+  });
+
+  headlineInput.addEventListener('input', ()=>{
+    state.headline = headlineInput.value;
+    headlineEl.innerText = state.headline;
+    saveSettings(state);
+    adjustWidth();
+  });
+
+  tickerInput.addEventListener('input', ()=>{
+    state.tickerLines = tickerInput.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    rebuildTicker();
+    saveSettings(state);
+    adjustWidth();
+  });
+
+  accent.addEventListener('input', ()=>{
+    state.accent = accent.value;
+    saveSettings(state);
+    applyState();
+  });
+
+  headlineSize.addEventListener('input', ()=>{
+    state.headlineSize = Number(headlineSize.value);
+    document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px');
+    saveSettings(state);
+    adjustWidth();
+  });
+
+  tickerSize.addEventListener('input', ()=>{
+    state.tickerSize = Number(tickerSize.value);
+    document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px');
+    saveSettings(state);
+    buildTickerAnimation();
+    adjustWidth();
+  });
+
+  animSpeed.addEventListener('input', ()=>{
+    state.animSpeed = Number(animSpeed.value);
+    saveSettings(state);
+    buildTickerAnimation();
+  });
+
+  cornerRadius.addEventListener('input', ()=>{
+    state.cornerRadius = Number(cornerRadius.value);
+    document.documentElement.style.setProperty('--corner', state.cornerRadius + 'px');
+    saveSettings(state);
+    adjustWidth();
+  });
+
+  showTicker.addEventListener('change', ()=>{
+    state.showTicker = showTicker.value;
+    tickerWrap.style.display = state.showTicker === '1' ? 'flex' : 'none';
+    saveSettings(state);
+    adjustWidth();
+  });
+
+  saveBtn.addEventListener('click', ()=>{
+    // collect and persist
+    state.logoUrl = logoUrl.value.trim();
+    state.logoTxt = logoTxt.value.trim() || defaults.logoTxt;
+    state.headline = headlineInput.value.trim() || defaults.headline;
+    state.tickerLines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    state.accent = accent.value;
+    state.headlineSize = Number(headlineSize.value);
+    state.tickerSize = Number(tickerSize.value);
+    state.animSpeed = Number(animSpeed.value);
+    state.cornerRadius = Number(cornerRadius.value);
+    state.showTicker = showTicker.value;
+    saveSettings(state);
+    applyState();
+    // small flash to signal saved
+    saveBtn.innerText = 'Saved ✔';
+    setTimeout(()=>saveBtn.innerText = 'Save', 1200);
+  });
+
+  resetBtn.addEventListener('click', ()=>{
+    localStorage.removeItem('lt_settings_v1');
+    state = loadSettings();
+    applyState();
+  });
+
+  // initial
+  state = loadSettings();
+  applyState();
+
+  // initial rebuild
+  rebuildTicker();
+
+  // observe size changes to re-evaluate width if obs resizes the source
+  const resizeObserver = new ResizeObserver(() => adjustWidth());
+  resizeObserver.observe(panel);
+
+  // if logo URL typed, update
+  logoUrl.addEventListener('input', ()=>{
+    const v = logoUrl.value.trim();
+    if(v){
+      logoImg.src = v;
+      logoImg.style.display = 'block';
+      logoText.style.display = 'none';
+    } else {
+      logoImg.style.display = 'none';
+      logoText.style.display = 'block';
+    }
+  });
+
+  // helper: allow pressing Ctrl+S to save while Interact is open
+  window.addEventListener('keydown',(e)=>{
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){
+      e.preventDefault(); saveBtn.click();
+    }
+  });
+
+  // expose a simple API via URL params (for advanced OBS setups)
+  // ?headline=...&logo=...&ticker=Line1|Line2|Line3
+  (function applyURLParams(){
+    try {
+      const params = new URLSearchParams(location.search);
+      if(params.has('headline')){
+        state.headline = params.get('headline');
+      }
+      if(params.has('logo')){
+        const v = params.get('logo');
+        if(v.startsWith('http') || v.startsWith('file://')) state.logoUrl = v;
+        else state.logoTxt = v;
+      }
+      if(params.has('ticker')){
+        state.tickerLines = params.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
+      }
+      // apply
+      applyState();
+      rebuildTicker();
+    } catch(e){}
+  })();
+
+})();
+</script>
+</body>
 </html>
