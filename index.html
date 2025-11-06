@@ -1,235 +1,150 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>PH Style Lower Third — Glass & Glow (ABS-CBN style)</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PH Lower Third — Glass Glow (Push-Up Ticker, Bottom Glow)</title>
 <style>
-  :root{
-    --maroon: #6f0f1a;
-    --accent: #8b1b2a;
-    --glass-alpha: 0.12;
-    --corner: 12px;
-    --headline-size: 34px;
-    --ticker-size: 18px;
-    --flip-duration: 700; /* ms */
-    --display-duration: 3000; /* ms per ticker card */
-    --max-width: 1600px;
-  }
-  html,body{height:100%;margin:0;background:transparent;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:#fff}
-  .stage{
-    position:absolute;
-    left:40px;
-    bottom:28px;
-    display:flex;
-    align-items:flex-start;
-    gap:16px;
-    pointer-events:auto;
-    width: min(var(--max-width), calc(100% - 80px));
-  }
+:root{
+  --accent: #8b1b2a;
+  --maroon: #6f0f1a;
+  --corner: 12px;
+  --headline-size: 34px;
+  --ticker-size: 18px;
+  --push-duration: 600; /* ms for push animation */
+  --display-duration: 3000; /* ms visible per item */
+  --max-width: 1600px;
+  --panel-padding: 18px 22px;
+}
 
-  /* LOGO */
-  .logo{
-    width:120px;
-    height:120px;
-    border-radius: calc(var(--corner) * 0.8);
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,245,245,0.86));
-    display:flex;align-items:center;justify-content:center;overflow:hidden;
-    border:3px solid rgba(255,255,255,0.6);
-    box-shadow: 0 8px 28px rgba(111,15,26,0.18), inset 0 -3px 8px rgba(0,0,0,0.06);
-    flex-shrink:0;
-  }
-  .logo img{max-width:100%;max-height:100%;object-fit:contain;display:block}
-  .logo .txt{font-weight:800;color:var(--maroon);font-size:20px}
+/* base */
+html,body{height:100%;margin:0;background:transparent;font-family:Inter, system-ui, Roboto, Arial, sans-serif;color:#fff}
+.stage{
+  position:absolute; left:40px; bottom:28px;
+  width: min(var(--max-width), calc(100% - 80px));
+  display:flex; align-items:flex-start; gap:16px; pointer-events:auto;
+}
 
-  /* MAIN WRAPPER: headline area + ticker box */
-  .main{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    width:100%;
-  }
+/* logo */
+.logo{
+  width:120px; height:120px; flex-shrink:0;
+  border-radius: calc(var(--corner) * 0.8);
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(245,245,245,0.86));
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  border:3px solid rgba(255,255,255,0.6);
+  box-shadow: 0 8px 28px rgba(111,15,26,0.18), inset 0 -3px 8px rgba(0,0,0,0.06);
+}
+.logo img{max-width:100%; max-height:100%; object-fit:contain; display:block}
+.logo .txt{font-weight:800; color:var(--maroon); font-size:20px}
 
-  /* HEADLINE EDGE-TO-EDGE BAR */
-  .headlineBar{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background: linear-gradient(180deg, rgba(255,255,255,var(--glass-alpha)), rgba(255,255,255,0.03));
-    backdrop-filter: blur(8px) saturate(120%);
-    -webkit-backdrop-filter: blur(8px) saturate(120%);
-    border-radius: var(--corner);
-    padding: 16px 20px;
-    border: 1px solid rgba(255,255,255,0.10);
-    box-shadow: 0 14px 40px rgba(0,0,0,0.35), 0 0 48px rgba(139,27,42,0.06);
-    position:relative;
-    overflow:visible;
-  }
+/* main column */
+.main{display:flex; flex-direction:column; gap:10px; width:100%}
 
-  .accentStrip{
-    width:12px;
-    height:72px;
-    border-radius:6px;
-    background: linear-gradient(180deg, var(--accent), var(--maroon));
-    box-shadow: 0 12px 28px rgba(139,27,42,0.28);
-    flex-shrink:0;
-  }
+/* headline bar */
+.headlineBar{
+  display:flex; align-items:center; gap:14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+  backdrop-filter: blur(8px) saturate(120%); -webkit-backdrop-filter: blur(8px) saturate(120%);
+  border-radius: var(--corner); padding: var(--panel-padding);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.32);
+  position:relative; overflow:visible;
+}
 
-  .headlineText{
-    font-weight:900;
-    font-size: var(--headline-size);
-    color:#fff;
-    text-shadow: 0 4px 14px rgba(0,0,0,0.45);
-    white-space:nowrap;
-    display:inline-block;
-  }
+/* accent strip */
+.accentStrip{
+  width:14px; height:72px; border-radius:6px;
+  background: linear-gradient(180deg, var(--accent), var(--maroon));
+  box-shadow: 0 12px 28px rgba(139,27,42,0.28);
+  flex-shrink:0;
+}
 
-  .subSmall{
-    font-size:13px;
-    color:rgba(255,255,255,0.92);
-    margin-top:4px;
-    opacity:0.95;
-    white-space:nowrap;
-  }
+/* headline text */
+.headlineWrap{display:flex; flex-direction:column}
+.headlineText{
+  font-weight:900; font-size:var(--headline-size); color:#fff; white-space:nowrap;
+  text-shadow: 0 4px 14px rgba(0,0,0,0.45); display:inline-block;
+}
+.headlineSub{font-size:13px; color:rgba(255,255,255,0.92); margin-top:5px; white-space:nowrap}
 
-  /* TICKER SEPARATE BOX */
-  .tickerBox{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border-radius: calc(var(--corner) * 0.75);
-    padding:10px 14px;
-    border:1px solid rgba(255,255,255,0.06);
-    min-height: calc(var(--ticker-size) + 18px);
-    overflow:visible;
-  }
+/* bottom under-glow (Glow Type A) */
+.headlineBar::after{
+  content:""; position:absolute; left:10%; right:10%; bottom:-14px; height:28px;
+  border-radius:14px; pointer-events:none;
+  background: radial-gradient(closest-side, rgba(139,27,42,0.14), rgba(111,15,26,0.06) 60%, rgba(0,0,0,0));
+  filter: blur(10px); opacity:0.95;
+}
 
-  .tickerLabel{
-    min-width:120px;
-    font-weight:800;
-    font-size:14px;
-    text-transform:uppercase;
-    color:rgba(255,255,255,0.95);
-    letter-spacing:0.8px;
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .tickerLabel .dot{
-    width:12px;height:12px;border-radius:3px;background:var(--accent);box-shadow:0 6px 14px rgba(139,27,42,0.25)
-  }
+/* ticker box (separate) */
+.tickerBox{
+  display:flex; align-items:center; gap:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border-radius: calc(var(--corner) * 0.75); padding:10px 12px; border:1px solid rgba(255,255,255,0.06);
+  min-height: calc(var(--ticker-size) + 18px); overflow:visible; position:relative;
+}
 
-  .tickerViewport{
-    position:relative;
-    flex:1;
-    height: calc(var(--ticker-size) + 6px);
-    overflow:visible;
-  }
+/* ticker label */
+.tickerLabel{min-width:120px; font-weight:800; font-size:14px; text-transform:uppercase; color:rgba(255,255,255,0.95); display:flex; align-items:center; gap:8px; flex-shrink:0}
+.tickerLabel .dot{width:12px;height:12px;border-radius:3px;background:var(--accent);box-shadow:0 6px 14px rgba(139,27,42,0.25)}
 
-  /* ticker card container where a single card is visible at a time */
-  .tickerCard{
-    position:absolute;
-    left:0; right:0;
-    display:flex;
-    align-items:center;
-    height:100%;
-    transform-origin:center bottom;
-    backface-visibility:hidden;
-    -webkit-backface-visibility:hidden;
-    will-change: transform, opacity;
-    /* initial hidden */
-    opacity:0;
-    transform: translateY(8px) rotateX(12deg) scale(0.98);
-  }
+/* ticker viewport and masked area */
+.tickerViewport{position:relative; flex:1; height: calc(var(--ticker-size) + 6px); overflow:hidden}
+.tickerInner{
+  position:absolute; left:0; right:0; top:0;
+  display:flex; flex-direction:column;
+  transform: translateY(0);
+  will-change: transform;
+}
 
-  .tickerCard.show{
-    opacity:1;
-    transform: translateY(0) rotateX(0) scale(1);
-  }
+/* single ticker line item (stacked vertically) */
+.tickerItem{
+  height: calc(var(--ticker-size) + 2px);
+  line-height: calc(var(--ticker-size) + 2px);
+  font-size: var(--ticker-size); font-weight:700; color:#fff;
+  white-space:nowrap; padding-right:30px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.45);
+}
 
-  /* flip-in animation */
-  .anim-in{
-    animation: flipIn var(--flip-duration) cubic-bezier(.2,.95,.2,1) both;
-  }
-  .anim-out{
-    animation: flipOut var(--flip-duration) cubic-bezier(.2,.95,.2,1) both;
-  }
+/* controls UI (OBS Interact) */
+.gear{position:absolute; right:18px; top:-54px; background:rgba(255,255,255,0.06); width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:999}
+.controls{position:absolute; right:18px; top:-460px; width:460px; background:rgba(10,10,10,0.78); border-radius:10px; padding:12px; color:#fff; box-shadow:0 12px 36px rgba(0,0,0,0.6); z-index:998; display:none}
+.controls h4{margin:0 0 8px 0; font-size:14px}
+.ctrl-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+.ctrl-row label{width:140px; font-size:13px; color:rgba(255,255,255,0.92)}
+.ctrl-row input, .ctrl-row textarea, .ctrl-row select{flex:1; padding:7px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); color:#fff}
+textarea{min-height:90px; resize:vertical}
+button{padding:8px 10px; border-radius:8px; border:0; background:var(--maroon); color:#fff; cursor:pointer}
 
-  @keyframes flipIn{
-    0% { opacity:0; transform: translateY(18px) rotateX(20deg) scale(0.98); }
-    60% { transform: translateY(-6px) rotateX(-6deg) scale(1.01); opacity:1 }
-    100% { transform: translateY(0) rotateX(0) scale(1); opacity:1; }
-  }
-  @keyframes flipOut{
-    0% { opacity:1; transform: translateY(0) rotateX(0) scale(1); }
-    100% { opacity:0; transform: translateY(-18px) rotateX(-18deg) scale(0.98); }
-  }
-
-  .tickerText{
-    font-size: var(--ticker-size);
-    font-weight:700;
-    color:#fff;
-    letter-spacing:0.2px;
-    white-space:nowrap;
-  }
-
-  /* small panel glow */
-  .headlineBar::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:inherit;
-    pointer-events:none;
-    box-shadow: 0 0 36px rgba(139,27,42,0.08);
-    mix-blend-mode: screen;
-  }
-
-  /* controls (OBS Interact) */
-  .gear{position:absolute;right:20px;top:-48px;background:rgba(255,255,255,0.06);width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999}
-  .controls{
-    position:absolute; right:20px; top:-420px; width:420px; background:rgba(10,10,10,0.78); border-radius:10px; padding:12px; color:#fff; box-shadow:0 12px 36px rgba(0,0,0,0.6); z-index:998; display:none;
-  }
-  .controls h4{margin:0 0 8px 0;font-size:14px}
-  .ctrl-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-  .ctrl-row label{width:120px;font-size:13px;color:rgba(255,255,255,0.9)}
-  .ctrl-row input, .ctrl-row textarea, .ctrl-row select{flex:1;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff}
-  textarea{min-height:86px;resize:vertical}
-  button{padding:8px 10px;border-radius:8px;border:0;background:var(--maroon);color:#fff;cursor:pointer}
-
-  @media (max-width:1000px){
-    :root{ --headline-size:26px; --ticker-size:16px }
-    .logo{width:92px;height:92px}
-    .controls{top:-480px;width:340px}
-  }
+/* responsive */
+@media (max-width:1000px){
+  :root{ --headline-size:26px; --ticker-size:16px }
+  .logo{width:92px;height:92px}
+  .controls{top:-540px; width:360px}
+}
 </style>
 </head>
 <body>
-
 <div class="stage" id="stage">
   <div class="logo" id="logo">
-    <img id="logoImg" src="" alt="" style="display:none"/>
+    <img id="logoImg" src="" alt="" style="display:none" />
     <div class="txt" id="logoTxt">NEWS</div>
   </div>
 
   <div class="main">
     <div class="headlineBar" id="headlineBar" role="region" aria-label="Headline">
       <div class="accentStrip" id="accentStrip"></div>
-      <div>
-        <div class="headlineText" id="headlineText">BREAKING: SAMPLE HEADLINE — PH STYLE LONG BAR</div>
-        <div class="subSmall" id="subText" style="display:none">Optional subheadline or location</div>
+      <div class="headlineWrap">
+        <div class="headlineText" id="headlineText">BREAKING: SAMPLE LONG PHILIPPINE-STYLE HEADLINE</div>
+        <div class="headlineSub" id="headlineSub" style="display:none">Optional subheadline/location</div>
       </div>
     </div>
 
     <div class="tickerBox" id="tickerBox" role="region" aria-label="Ticker">
-      <div class="tickerLabel">
-        <div class="dot"></div>
-        <div>Latest</div>
-      </div>
-
+      <div class="tickerLabel"><div class="dot"></div><div>Latest</div></div>
       <div class="tickerViewport" id="tickerViewport">
-        <!-- ticker cards inserted here by JS -->
+        <div class="tickerInner" id="tickerInner">
+          <!-- .tickerItem elements injected here -->
+        </div>
       </div>
     </div>
   </div>
@@ -240,17 +155,18 @@
 <div class="controls" id="controls">
   <h4>Lower-Third Controls</h4>
 
-  <div class="ctrl-row"><label>Logo Image URL</label><input id="logoUrl" type="url" placeholder="file:///C:/logo.png or http://..."/></div>
-  <div class="ctrl-row"><label>Logo Text</label><input id="logoTxtInput" type="text"/></div>
-  <div class="ctrl-row"><label>Headline</label><input id="headlineInput" type="text"/></div>
-  <div class="ctrl-row" style="align-items:flex-start"><label>Ticker Lines</label><textarea id="tickerInput" placeholder="One headline per line"></textarea></div>
+  <div class="ctrl-row"><label>Logo Image URL</label><input id="logoUrl" type="url" placeholder="file:///C:/logo.png or http://..." /></div>
+  <div class="ctrl-row"><label>Logo Text</label><input id="logoTxtInput" type="text" /></div>
 
-  <div class="ctrl-row"><label>Accent Color</label><input id="accentInput" type="color" value="#8b1b2a"/></div>
-  <div class="ctrl-row"><label>Headline Size</label><input id="headlineSize" type="number" min="14" max="60" value="34"/></div>
-  <div class="ctrl-row"><label>Ticker Size</label><input id="tickerSize" type="number" min="10" max="30" value="18"/></div>
+  <div class="ctrl-row"><label>Headline</label><input id="headlineInput" type="text" /></div>
+  <div class="ctrl-row" style="align-items:flex-start"><label>Ticker Lines</label><textarea id="tickerInput" placeholder="One headline per line (enter)"></textarea></div>
 
-  <div class="ctrl-row"><label>Flip Duration (ms)</label><input id="flipDuration" type="number" min="200" max="2000" value="700"/></div>
-  <div class="ctrl-row"><label>Display (ms)</label><input id="displayDuration" type="number" min="800" max="20000" value="3000"/></div>
+  <div class="ctrl-row"><label>Accent Color</label><input id="accentInput" type="color" value="#8b1b2a" /></div>
+  <div class="ctrl-row"><label>Headline Size</label><input id="headlineSize" type="number" min="14" max="60" value="34" /></div>
+  <div class="ctrl-row"><label>Ticker Size</label><input id="tickerSize" type="number" min="10" max="30" value="18" /></div>
+
+  <div class="ctrl-row"><label>Push Duration (ms)</label><input id="pushDuration" type="number" min="100" max="2000" value="600" /></div>
+  <div class="ctrl-row"><label>Display (ms)</label><input id="displayDuration" type="number" min="500" max="20000" value="3000" /></div>
 
   <div class="ctrl-row"><label>Show Ticker</label>
     <select id="showTicker"><option value="1" selected>On</option><option value="0">Off</option></select>
@@ -261,204 +177,199 @@
     <button id="resetBtn" style="background:rgba(255,255,255,0.06)">Reset</button>
   </div>
 
-  <div style="font-size:12px;opacity:0.88;margin-top:6px">Tip: in OBS click the Browser Source → Interact to open the controls. Use file:// URLs for local logos.</div>
+  <div style="font-size:12px;opacity:0.88;margin-top:6px">Tip: In OBS open Browser Source → Interact to edit text directly. Use file:/// for local logos. Ctrl+S saves.</div>
 </div>
 
 <script>
 (function(){
+  // helpers
   const $ = id => document.getElementById(id);
   const defaults = {
-    logoUrl:'',
-    logoTxt:'NEWS',
-    headline:'BREAKING: SAMPLE HEADLINE — PH STYLE LONG BAR',
-    sub:'',
-    tickerLines:['Breaking: sample item 1','Update: sample item 2','More: sample item 3'],
-    accent:'#8b1b2a',
-    headlineSize:34,
-    tickerSize:18,
-    flipDuration:700,
-    displayDuration:3000,
-    showTicker:'1'
+    logoUrl: '',
+    logoTxt: 'NEWS',
+    headline: 'BREAKING: SAMPLE LONG PHILIPPINE-STYLE HEADLINE',
+    sub: '',
+    tickerLines: ['Ticker sample 1 — details', 'Ticker sample 2 — more', 'Ticker sample 3 — update'],
+    accent: '#8b1b2a',
+    headlineSize: 34,
+    tickerSize: 18,
+    pushDuration: 600,
+    displayDuration: 3000,
+    showTicker: '1'
   };
 
   // elements
-  const logo = $('logo'), logoImg=$('logoImg'), logoTxtEl=$('logoTxt');
+  const logo = $('logo'), logoImg = $('logoImg'), logoTxtEl = $('logoTxt');
   const logoUrlInput = $('logoUrl'), logoTxtInput = $('logoTxtInput');
-  const headlineText = $('headlineText'), headlineInput = $('headlineInput'), subText = $('subText');
-  const tickerViewport = $('tickerViewport'), tickerInput = $('tickerInput');
+  const headlineText = $('headlineText'), headlineInput = $('headlineInput'), headlineSub = $('headlineSub');
+  const tickerInput = $('tickerInput'), tickerInner = $('tickerInner'), tickerViewport = $('tickerViewport');
   const accentInput = $('accentInput'), accentStrip = $('accentStrip');
-  const headlineSize = $('headlineSize'), tickerSize = $('tickerSize');
-  const flipDurationIn = $('flipDuration'), displayDurationIn = $('displayDuration');
+  const headlineSizeEl = $('headlineSize'), tickerSizeEl = $('tickerSize');
+  const pushDurationEl = $('pushDuration'), displayDurationEl = $('displayDuration');
   const showTicker = $('showTicker');
   const saveBtn = $('saveBtn'), resetBtn = $('resetBtn');
   const gear = $('gear'), controls = $('controls');
   const headlineBar = $('headlineBar'), tickerBox = $('tickerBox');
 
-  // settings
-  function load(){
-    try{
-      const raw = localStorage.getItem('ph_lt_v1');
-      return raw ? {...defaults, ...JSON.parse(raw)} : defaults;
-    }catch(e){ return defaults; }
-  }
-  function save(s){ localStorage.setItem('ph_lt_v1', JSON.stringify(s)); }
+  // storage
+  const STORAGE_KEY = 'ph_lt_final_v1';
+  function load(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? {...defaults, ...JSON.parse(raw)} : defaults;}catch(e){return defaults;} }
+  function save(state){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
   let state = load();
 
-  // apply state to UI
+  // apply state to UI & DOM
   function applyState(){
     // logo
     logoUrlInput.value = state.logoUrl || '';
     logoTxtInput.value = state.logoTxt || defaults.logoTxt;
     if(state.logoUrl){
-      logoImg.src = state.logoUrl;
-      logoImg.style.display='block';
-      logoTxtEl.style.display='none';
+      logoImg.src = state.logoUrl; logoImg.style.display='block'; logoTxtEl.style.display='none';
     } else {
-      logoImg.style.display='none';
-      logoTxtEl.style.display='block';
-      logoTxtEl.innerText = state.logoTxt || '';
+      logoImg.style.display='none'; logoTxtEl.style.display='block'; logoTxtEl.innerText = state.logoTxt || '';
     }
 
     // headline
     headlineInput.value = state.headline;
     headlineText.innerText = state.headline;
-    subText.innerText = state.sub || '';
-    subText.style.display = state.sub ? 'block' : 'none';
+    headlineSub.innerText = state.sub || '';
+    headlineSub.style.display = state.sub ? 'block' : 'none';
 
     // ticker
     tickerInput.value = (state.tickerLines || []).join('\n');
 
-    // accent/color
+    // colors & sizes
     accentInput.value = state.accent || defaults.accent;
     document.documentElement.style.setProperty('--accent', accentInput.value);
-    // simple shade for maroon base
     document.documentElement.style.setProperty('--maroon', shadeHex(accentInput.value, -34));
     accentStrip.style.background = `linear-gradient(180deg, ${accentInput.value}, ${shadeHex(accentInput.value,-18)})`;
 
-    // sizes/durations
-    headlineSize.value = state.headlineSize;
+    headlineSizeEl.value = state.headlineSize;
     document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px');
-    tickerSize.value = state.tickerSize;
+
+    tickerSizeEl.value = state.tickerSize;
     document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px');
 
-    flipDurationIn.value = state.flipDuration;
-    displayDurationIn.value = state.displayDuration;
+    pushDurationEl.value = state.pushDuration;
+    displayDurationEl.value = state.displayDuration;
+
     showTicker.value = state.showTicker || '1';
     tickerBox.style.display = showTicker.value === '1' ? 'flex' : 'none';
 
-    // build ticker DOM
-    buildTickerCards();
+    buildTicker();
     adjustWidth();
   }
 
-  // helpers
+  // color shade helper
   function shadeHex(hex, amt){
     hex = hex.replace('#','');
-    if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+    if(hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
     const num = parseInt(hex,16);
-    let r = (num>>16) + amt, g = (num>>8 & 0x00FF) + amt, b = (num & 0x0000FF) + amt;
+    let r=(num>>16)+amt, g=(num>>8 & 0x00FF)+amt, b=(num & 0x0000FF)+amt;
     r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
     return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
   }
 
-  // build ticker card elements (one visible at a time)
-  function buildTickerCards(){
-    while(tickerViewport.firstChild) tickerViewport.removeChild(tickerViewport.firstChild);
+  // build ticker DOM
+  function buildTicker(){
+    // clear
+    while(tickerInner.firstChild) tickerInner.removeChild(tickerInner.firstChild);
     const lines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
     const items = lines.length ? lines : state.tickerLines;
-    // create divs; position absolute stacked
-    items.forEach((t,i)=>{
+    // create items (no duplication required for push technique)
+    items.forEach((t)=>{
       const div = document.createElement('div');
-      div.className='tickerCard';
-      div.style.top='0'; div.style.left='0'; div.style.right='0';
-      div.innerHTML = `<div class="tickerText">${escapeHtml(t)}</div>`;
-      tickerViewport.appendChild(div);
+      div.className = 'tickerItem';
+      div.innerText = t;
+      tickerInner.appendChild(div);
     });
-    // start cycling
+    // set transform to 0
+    tickerInner.style.transition = 'none';
+    tickerInner.style.transform = 'translateY(0)';
+    // start loop
     startTickerLoop();
   }
 
-  // ticker loop (flip-up card style)
-  let tickerTimer = null, currentIdx = -1;
+  // push-up loop: animate translateY by -itemHeight, then move first to end and reset transform
+  let tickerTimer = null;
   function startTickerLoop(){
     stopTickerLoop();
-    const cards = Array.from(tickerViewport.querySelectorAll('.tickerCard'));
-    if(cards.length===0) return;
-    const flipDur = parseInt(flipDurationIn.value,10) || 700;
-    const displayDur = parseInt(displayDurationIn.value,10) || 3000;
-    // ensure CSS variables reflect durations
-    document.documentElement.style.setProperty('--flip-duration', flipDur);
-    document.documentElement.style.setProperty('--display-duration', displayDur);
-
-    // immediate show first
-    currentIdx = -1;
-    function showNext(){
-      const prev = tickerViewport.querySelector('.tickerCard.show');
-      if(prev){
-        prev.classList.remove('show');
-        prev.classList.remove('anim-in');
-        prev.classList.add('anim-out');
-      }
-      // next index
-      currentIdx = (currentIdx + 1) % cards.length;
-      const next = cards[currentIdx];
-      // remove any anim-out then bring in
-      next.classList.remove('anim-out');
-      // force reflow for smoothness
-      void next.offsetWidth;
-      next.classList.add('show','anim-in');
-      // schedule next
-      tickerTimer = setTimeout(showNext, displayDur + flipDur);
+    const items = Array.from(tickerInner.children);
+    if(items.length <= 1) return; // nothing to animate
+    const pushMs = parseInt(pushDurationEl.value,10) || 600;
+    const displayMs = parseInt(displayDurationEl.value,10) || 3000;
+    // align heights
+    ensureTickerHeights();
+    // start cycle
+    function scheduleNext(){
+      tickerTimer = setTimeout(()=>{
+        // compute item height
+        const first = tickerInner.children[0];
+        const itemH = first.getBoundingClientRect().height;
+        // animate push
+        tickerInner.style.transition = `transform ${pushMs}ms cubic-bezier(.2,.95,.2,1)`;
+        tickerInner.style.transform = `translateY(-${itemH}px)`;
+        // after transition complete, rotate DOM nodes
+        setTimeout(()=>{
+          tickerInner.style.transition = 'none';
+          tickerInner.appendChild(tickerInner.children[0]);
+          tickerInner.style.transform = 'translateY(0)';
+          // small timeout before next cycle
+          scheduleNext();
+        }, pushMs + 16);
+      }, displayMs);
     }
-    // show first after short timeout
-    showNext();
+    // initial delay then start
+    scheduleNext();
   }
-  function stopTickerLoop(){ if(tickerTimer) { clearTimeout(tickerTimer); tickerTimer = null; } }
+  function stopTickerLoop(){ if(tickerTimer){ clearTimeout(tickerTimer); tickerTimer=null; } }
 
-  // escape html
-  function escapeHtml(s){
-    return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // ensure ticker item heights are consistent and viewport fits one item
+  function ensureTickerHeights(){
+    const first = tickerInner.children[0];
+    if(!first) return;
+    // measure computed height of item
+    // force font sizes
+    const computedItemH = first.getBoundingClientRect().height;
+    // set tickerViewport height to fit single item (with a tiny padding)
+    tickerViewport.style.height = computedItemH + 'px';
   }
 
-  // auto width: ensure headlineBar width fits longest single line (headline or ticker)
+  // auto width to fit longest headline or ticker item
   function adjustWidth(){
-    // measure headline width
+    // headline width
     const tmp = document.createElement('span');
     tmp.style.visibility='hidden'; tmp.style.position='absolute'; tmp.style.whiteSpace='nowrap';
-    tmp.style.fontWeight='900'; tmp.style.fontSize = (headlineSize.value||34) + 'px';
+    tmp.style.fontWeight='900'; tmp.style.fontSize = (headlineSizeEl.value||34) + 'px';
     tmp.innerText = headlineText.innerText || '';
     document.body.appendChild(tmp);
     const headW = tmp.getBoundingClientRect().width; tmp.remove();
 
-    // measure longest ticker item
+    // longest ticker item
     let maxTickerW = 0;
-    Array.from(tickerViewport.querySelectorAll('.tickerCard .tickerText')).forEach(el=>{
+    Array.from(tickerInner.children).forEach(it=>{
       const ttmp = document.createElement('span');
       ttmp.style.visibility='hidden'; ttmp.style.position='absolute'; ttmp.style.whiteSpace='nowrap';
-      ttmp.style.fontSize = (tickerSize.value||18) + 'px'; ttmp.style.fontWeight='700';
-      ttmp.innerText = el.innerText;
+      ttmp.style.fontSize = (tickerSizeEl.value||18) + 'px'; ttmp.style.fontWeight='700';
+      ttmp.innerText = it.innerText;
       document.body.appendChild(ttmp);
       const w = ttmp.getBoundingClientRect().width; ttmp.remove();
       if(w > maxTickerW) maxTickerW = w;
     });
 
-    // desired min width: headline is priority
     const desired = Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-width')) || 1600,
-                     Math.max(headW + 360, maxTickerW + 300, 500));
-    // set headlineBar to occupy remaining width of stage (stage width is limited)
+                     Math.max(headW + 360, maxTickerW + 300, 520));
+    // set headlineBar width
+    const headlineBar = document.getElementById('headlineBar');
     headlineBar.style.width = desired + 'px';
   }
 
-  // wire UI events
+  // UI wiring
   gear.addEventListener('click', ()=> controls.style.display = controls.style.display === 'block' ? 'none' : 'block');
 
-  // inputs
   logoUrlInput.addEventListener('input', ()=>{
     state.logoUrl = logoUrlInput.value.trim();
-    if(state.logoUrl){
-      logoImg.src = state.logoUrl; logoImg.style.display='block'; logoTxtEl.style.display='none';
-    } else { logoImg.style.display='none'; logoTxtEl.style.display='block'; }
+    if(state.logoUrl){ logoImg.src = state.logoUrl; logoImg.style.display='block'; logoTxtEl.style.display='none'; } else { logoImg.style.display='none'; logoTxtEl.style.display='block'; }
     save(state); applyState();
   });
 
@@ -466,76 +377,87 @@
 
   headlineInput.addEventListener('input', ()=>{ state.headline = headlineInput.value; headlineText.innerText = state.headline; save(state); adjustWidth(); });
 
-  tickerInput.addEventListener('input', ()=>{ state.tickerLines = tickerInput.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean); buildTickerCards(); save(state); adjustWidth(); });
+  tickerInput.addEventListener('input', ()=>{
+    state.tickerLines = tickerInput.value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    save(state); buildTicker(); adjustWidth();
+  });
 
-  accentInput.addEventListener('input', ()=>{ state.accent = accentInput.value; applyState(); save(state); });
+  accentInput.addEventListener('input', ()=>{
+    state.accent = accentInput.value;
+    document.documentElement.style.setProperty('--accent', state.accent);
+    document.documentElement.style.setProperty('--maroon', shadeHex(state.accent, -34));
+    accentStrip.style.background = `linear-gradient(180deg, ${state.accent}, ${shadeHex(state.accent,-18)})`;
+    save(state);
+  });
 
-  headlineSize.addEventListener('input', ()=>{ state.headlineSize = parseInt(headlineSize.value,10)||34; document.documentElement.style.setProperty('--headline-size', state.headlineSize+'px'); save(state); adjustWidth(); });
+  headlineSizeEl.addEventListener('input', ()=>{
+    state.headlineSize = parseInt(headlineSizeEl.value,10) || 34;
+    document.documentElement.style.setProperty('--headline-size', state.headlineSize + 'px'); save(state); adjustWidth();
+  });
+  tickerSizeEl.addEventListener('input', ()=>{
+    state.tickerSize = parseInt(tickerSizeEl.value,10) || 18;
+    document.documentElement.style.setProperty('--ticker-size', state.tickerSize + 'px'); save(state); adjustWidth();
+  });
 
-  tickerSize.addEventListener('input', ()=>{ state.tickerSize = parseInt(tickerSize.value,10)||18; document.documentElement.style.setProperty('--ticker-size', state.tickerSize+'px'); save(state); adjustWidth(); });
+  pushDurationEl.addEventListener('input', ()=>{ state.pushDuration = parseInt(pushDurationEl.value,10) || 600; save(state); });
+  displayDurationEl.addEventListener('input', ()=>{ state.displayDuration = parseInt(displayDurationEl.value,10) || 3000; save(state); });
 
-  flipDurationIn.addEventListener('input', ()=>{ state.flipDuration = parseInt(flipDurationIn.value,10)||700; save(state); });
-
-  displayDurationIn.addEventListener('input', ()=>{ state.displayDuration = parseInt(displayDurationIn.value,10)||3000; save(state); });
-
-  showTicker.addEventListener('change', ()=>{ state.showTicker = showTicker.value; tickerBox.style.display = state.showTicker==='1' ? 'flex' : 'none'; save(state); adjustWidth(); });
+  showTicker.addEventListener('change', ()=>{
+    state.showTicker = showTicker.value; tickerBox.style.display = state.showTicker === '1' ? 'flex' : 'none'; save(state); adjustWidth();
+  });
 
   saveBtn.addEventListener('click', ()=>{
-    // collect current fields and persist
+    // gather and save
     state.logoUrl = logoUrlInput.value.trim();
     state.logoTxt = logoTxtInput.value.trim() || defaults.logoTxt;
     state.headline = headlineInput.value.trim() || defaults.headline;
     state.tickerLines = (tickerInput.value||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean) || defaults.tickerLines;
     state.accent = accentInput.value;
-    state.headlineSize = parseInt(headlineSize.value,10) || 34;
-    state.tickerSize = parseInt(tickerSize.value,10) || 18;
-    state.flipDuration = parseInt(flipDurationIn.value,10) || 700;
-    state.displayDuration = parseInt(displayDurationIn.value,10) || 3000;
+    state.headlineSize = parseInt(headlineSizeEl.value,10) || 34;
+    state.tickerSize = parseInt(tickerSizeEl.value,10) || 18;
+    state.pushDuration = parseInt(pushDurationEl.value,10) || 600;
+    state.displayDuration = parseInt(displayDurationEl.value,10) || 3000;
     state.showTicker = showTicker.value;
     save(state);
     applyState();
-    saveBtn.innerText='Saved ✔';
-    setTimeout(()=>saveBtn.innerText='Save',900);
+    saveBtn.innerText = 'Saved ✔';
+    setTimeout(()=> saveBtn.innerText = 'Save', 900);
   });
 
   resetBtn.addEventListener('click', ()=>{
-    localStorage.removeItem('ph_lt_v1');
+    localStorage.removeItem(STORAGE_KEY);
     state = load();
     applyState();
   });
 
-  // persist on load, apply URL params quick API
+  // allow ctrl/cmd+S while Interact open to save
+  window.addEventListener('keydown',(e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); saveBtn.click(); }});
+
+  // simple URL params for advanced usage: ?headline=...&logo=...&ticker=Line1|Line2
   (function applyURLParams(){
     try{
       const p = new URLSearchParams(location.search);
       if(p.has('headline')) state.headline = p.get('headline');
-      if(p.has('logo')){
-        const v = p.get('logo');
-        if(v.startsWith('http')||v.startsWith('file://')) state.logoUrl = v;
-        else state.logoTxt = v;
-      }
+      if(p.has('logo')){ const v=p.get('logo'); if(v.startsWith('http')||v.startsWith('file://')) state.logoUrl = v; else state.logoTxt = v; }
       if(p.has('ticker')) state.tickerLines = p.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
-    }catch(e){}
+    } catch(e){}
   })();
 
   // initial
   state = {...defaults, ...state};
   applyState();
 
-  // re-evaluate width when font/controls change or window resizes
-  window.addEventListener('resize', adjustWidth);
-  new ResizeObserver(adjustWidth).observe(headlineBar);
+  // ensure heights and start loop after DOM paint
+  window.addEventListener('load', ()=>{ setTimeout(()=>{ ensureTickerHeights(); startTickerLoop(); },100); });
+  // re-evaluate when window or headlineBar resized
+  window.addEventListener('resize', ()=>{ adjustWidth(); ensureTickerHeights(); });
+  new ResizeObserver(()=>{ adjustWidth(); ensureTickerHeights(); }).observe(document.getElementById('headlineBar'));
 
-  // helper to start/stop when visibility changed
+  // helpers to start/stop on visibility
   document.addEventListener('visibilitychange', ()=>{
     if(document.hidden) stopTickerLoop(); else startTickerLoop();
   });
 
-  // start loop after content built
-  function startTickerLoop(){ /* wrapper */ 
-    // ensure builder called
-    buildTickerCards();
-  }
 })();
 </script>
 </body>
