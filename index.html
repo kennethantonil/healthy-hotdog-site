@@ -1,641 +1,384 @@
-<!doctype html>
+<!-- ULTRA PRO Philippine Style Lowerthird (A+B+C+D) -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PH News Lower Third — Broadcast Style (Editable for OBS)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PH Lower Third ULTRA PRO</title>
 <style>
-  :root{
-    --bg-dark: #071018;
-    --blue-main: #0b4ea3;      /* main headline bar */
-    --blue-deep: #06366f;      /* darker gradient */
-    --secondary-gray: #dfe6ea; /* secondary bar text background */
-    --ribbon-red: #c92b2b;     /* breaking ribbon */
-    --white: #ffffff;
-    --corner: 10px;
-    --headline-size: 34px;
-    --subtitle-size: 16px;
-    --secondary-size: 14px;
-    --ticker-size: 18px;
-    --ticker-speed: 20s; /* duration for one loop */
-  }
-
-  html,body{
-    height:100%;
-    margin:0;
-    background: transparent; /* OBS transparent */
-    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-    -webkit-font-smoothing:antialiased;
-    color:var(--white);
-  }
-
-  /* Stage: position where to put lower third */
-  .stage{
-    position:absolute;
-    left:40px;
-    bottom:40px;
-    width: 1840px; /* typical broadcast width inside 1920 */
-    pointer-events: auto;
-  }
-
-  /* Container for entire lower third */
-  .lt-container{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    transform-origin:left bottom;
-  }
-
-  /* Breaking ribbon top center */
-  .ribbon {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    width: 480px;
-    padding:6px 16px;
-    background: linear-gradient(180deg, var(--ribbon-red), #8e1a1a);
-    border-radius: 22px;
-    color:var(--white);
-    font-weight:800;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    font-size:14px;
-    box-shadow: 0 6px 20px rgba(201,43,43,0.32);
-    margin-left: auto;
-    margin-right: auto;
-    transform: translateY(-26px); /* overlaps headline */
-  }
-
-  /* Main bar: logo + text area */
-  .main-bar{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    background: linear-gradient(90deg, var(--blue-main), var(--blue-deep));
-    padding:18px 22px;
-    border-radius: var(--corner);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    min-height: 88px;
-    overflow:hidden;
-  }
-
-  .logo-box{
-    flex: 0 0 140px;
-    height: 88px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background: linear-gradient(180deg,#fff,#f0f0f0);
-    border-radius: calc(var(--corner) * 0.6);
-    padding:6px;
-    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.08);
-    border: 3px solid rgba(255,255,255,0.65);
-  }
-  .logo-box img{ max-width:100%; max-height:100%; display:block; object-fit:contain; }
-  .logo-text { font-weight:800; color:var(--blue-main); font-size:20px; letter-spacing:0.6px; }
-
-  .headline-wrap{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    flex:1;
-    min-width: 300px;
-  }
-
-  .headline{
-    font-weight:900;
-    font-size: var(--headline-size);
-    color: var(--white);
-    text-shadow: 0 6px 20px rgba(0,0,0,0.55);
-    white-space: nowrap;
+  body {
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-    text-overflow: ellipsis;
+    font-family: "Arial Black", Arial, sans-serif;
   }
 
-  .subtitle{
-    font-weight:700;
-    font-size: var(--subtitle-size);
-    color: rgba(255,255,255,0.92);
-    opacity:0.95;
-    white-space: nowrap;
+  :root {
+    --theme-primary: #0038a8;
+    --theme-secondary: #ce1126;
+    --ticker-bg: #000;
   }
 
-  /* Secondary info bar under main headline */
-  .secondary-bar {
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background: linear-gradient(90deg,#eef3f6,#e3eaee);
-    color: #0b2a44;
-    padding:8px 14px;
-    border-radius: calc(var(--corner) * 0.6);
-    font-weight:700;
-    font-size: var(--secondary-size);
-    box-shadow: 0 8px 28px rgba(3,22,35,0.14), inset 0 -2px 8px rgba(255,255,255,0.6);
+  .lowerthird {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    transform: translateY(100%);
+    animation: slideUp 0.8s ease forwards;
+    display: flex;
+    flex-direction: column;
   }
 
-  .secondary-left { min-width: 200px; opacity:0.95; }
-  .secondary-right { flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-  /* Lower ticker area (separate bar) */
-  .ticker-bar{
-    margin-top:6px;
-    overflow:hidden;
-    position:relative;
-    width:100%;
-    border-radius: calc(var(--corner) * 0.8);
-    background: rgba(0,0,0,0.45);
-    border: 1px solid rgba(255,255,255,0.06);
-    height: 48px;
-    display:flex;
-    align-items:center;
+  .top-row {
+    display: flex;
+    align-items: center;
   }
 
-  /* ticker mask and moving track */
-  .ticker-mask{
-    overflow:hidden;
-    width: calc(100% - 180px);
-    margin-left: 14px;
+  /* Breaking Bar */
+  .breaking {
+    background: var(--theme-secondary);
+    padding: 6px 20px;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
+    flex: 1;
+    text-transform: uppercase;
+    filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.8));
+  }
+
+  /* Logo */
+  .logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-left: 10px;
+  }
+
+  /* Main */
+  .main {
+    background: linear-gradient(to right, var(--theme-primary), var(--theme-secondary));
+    color: #fff;
+    padding: 10px 20px;
+    filter: drop-shadow(3px 3px 8px rgba(0,0,0,0.8));
+    display: flex;
+    align-items: center;
+  }
+
+  .flag {
+    width: 55px;
+    height: 32px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg');
+    background-size: cover;
     margin-right: 14px;
   }
 
-  .ticker-track{
-    display:inline-block;
-    white-space:nowrap;
-    will-change: transform;
-    animation: tickerCrawl var(--ticker-speed) linear infinite;
-    /* start offscreen to left so left->right motion visible; we will reverse direction when needed by CSS var toggle */
+  .name { font-size: 28px; font-weight: bold; text-shadow: 0 0 8px rgba(0,0,0,0.9); }
+  .position { font-size: 18px; opacity: 0.95; margin-top: -3px; }
+
+  /* Time */
+  .time-box {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: auto;
   }
 
-  /* The continuous left->right effect: we make two copies of the content and move translateX from -50% to 50% etc. Simpler: duplicate track content. */
-  .ticker-item{
-    display:inline-block;
-    color: #fff;
-    font-weight:700;
-    font-size: var(--ticker-size);
-    padding: 0 28px;
-    display:flex;
-    align-items:center;
-    height:48px;
+  /* Auto Font Scale */
+  @media (max-width: 1200px) {
+    .name { font-size: 22px; }
+    .position { font-size: 16px; }
   }
 
-  /* animation keyframes for left->right continuous: start with -50% and move to 50% (we duplicate content) */
-  @keyframes tickerCrawl {
-    0% { transform: translateX(-50%); }
-    100% { transform: translateX(0%); } /* we position duplicates so it reads continuously L→R */
+  /* Ticker */
+  .ticker-container {
+    background: var(--ticker-bg);
+    overflow: hidden;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.8));
   }
 
-  /* small label left of ticker (channel/time etc) */
-  .ticker-left-label{
-    width:160px;
-    padding-left:14px;
-    color: rgba(255,255,255,0.95);
-    font-weight:800;
-    font-size:14px;
+  .ticker-text {
+    white-space: nowrap;
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 12s linear infinite;
+    font-size: 18px;
   }
 
-  /* control UI (toggleable) */
-  .ui-gear {
-    position: absolute;
-    top: -56px;
-    right: 0;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    border-radius:8px;
-    padding:6px 8px;
-    cursor:pointer;
-    z-index: 999;
-    font-weight:700;
-  }
-  .controls-panel {
-    position:absolute;
-    right: 0;
-    top: -420px;
-    width:420px;
-    background: rgba(12,12,12,0.92);
-    color:#fff;
-    padding:12px;
-    border-radius:10px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.6);
-    z-index:999;
-    display:none;
-  }
-  .controls-panel h4 { margin:0 0 8px 0; font-size:16px }
-  .ctrl-row { display:flex; gap:8px; align-items:center; margin-bottom:8px }
-  .ctrl-row label { width:130px; font-size:13px; }
-  .ctrl-row input[type="text"], .ctrl-row input[type="url"], .ctrl-row textarea, .ctrl-row select, .ctrl-row input[type="number"], .ctrl-row input[type="color"] {
-    flex:1;
-    padding:8px;
-    background: rgba(255,255,255,0.04);
-    color:#fff;
-    border:1px solid rgba(255,255,255,0.06);
-    border-radius:6px;
-    font-size:13px;
-  }
-  textarea { min-height:100px; resize:vertical; }
-  .control-actions { display:flex; gap:8px; margin-top:10px }
-  .btn { flex:1; padding:8px; border-radius:8px; background: #0b4ea3; color:#fff; border:0; cursor:pointer; font-weight:700; }
-  .btn.save { background: #6f0f1a; }
-  .small-note { font-size:12px; opacity:0.85; margin-top:8px; }
+  .paused { animation-play-state: paused !important; }
 
-  /* responsiveness smaller OBS windows */
-  @media (max-width:1400px){
-    .stage{ left:20px; bottom:20px; width: calc(100% - 40px); }
-    .headline { font-size: 28px; }
-    .headline-container { width: 100%; }
+  /* Themes */
+  .theme-breaking { --theme-primary:#ce1126; --theme-secondary:#000; }
+  .theme-weather { --theme-primary:#0074ff; --theme-secondary:#2dd4ff; }
+  .theme-live { --theme-primary:#ff0000; --theme-secondary:#770000; }
+  .theme-sports { --theme-primary:#008f39; --theme-secondary:#00491c; }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
   }
 </style>
 </head>
 <body>
-  <div class="stage" id="stage">
 
-    <!-- controls UI gear -->
-    <div class="ui-gear" id="gear">⚙️</div>
+<div id="lowerthird" class="lowerthird">
 
-    <div class="controls-panel" id="controls">
-      <h4>Lower-Third Controls</h4>
-
-      <div class="ctrl-row">
-        <label>Breaking ribbon</label>
-        <input id="ribbonText" type="text" placeholder="BREAKING NEWS" />
-      </div>
-
-      <div class="ctrl-row">
-        <label>Logo Image URL</label>
-        <input id="logoURL" type="url" placeholder="file:///C:/logo.png or http://..." />
-      </div>
-      <div class="ctrl-row">
-        <label>Logo Text</label>
-        <input id="logoText" type="text" placeholder="NEWS" />
-      </div>
-
-      <div class="ctrl-row">
-        <label>Main Headline</label>
-        <input id="headlineInput" type="text" placeholder="Main Title Text" />
-      </div>
-
-      <div class="ctrl-row">
-        <label>Subtitle</label>
-        <input id="subtitleInput" type="text" placeholder="Sub title text" />
-      </div>
-
-      <div class="ctrl-row">
-        <label>Secondary left</label>
-        <input id="secondaryLeft" type="text" placeholder="12:53 PM" />
-      </div>
-      <div class="ctrl-row">
-        <label>Secondary text</label>
-        <input id="secondaryText" type="text" placeholder="Secondary bar for additional information" />
-      </div>
-
-      <div class="ctrl-row" style="align-items:flex-start">
-        <label>Ticker Lines</label>
-        <textarea id="tickerInput" placeholder="One line per headline"></textarea>
-      </div>
-
-      <div class="ctrl-row">
-        <label>Ticker speed (s)</label>
-        <input id="tickerSpeed" type="number" min="5" max="120" value="20" />
-      </div>
-
-      <div class="ctrl-row">
-        <label>Corner radius</label>
-        <input id="cornerInput" type="number" min="0" max="50" value="10" />
-      </div>
-
-      <div class="ctrl-row">
-        <label>Headline size</label>
-        <input id="headlineSize" type="number" min="18" max="64" value="34" />
-      </div>
-
-      <div class="control-actions">
-        <button id="applyBtn" class="btn">Apply</button>
-        <button id="saveBtn" class="btn save">Save</button>
-      </div>
-
-      <div class="small-note">Tip: Open this via OBS → Browser Source → Interact. Use <code>file:///</code> to load local logos.</div>
-    </div>
-
-    <!-- Lower third layout -->
-    <div class="lt-container" id="lt">
-      <div class="ribbon" id="ribbon">BREAKING NEWS</div>
-
-      <div class="main-bar" id="mainBar">
-        <div class="logo-box" id="logoBox">
-          <img id="logoImg" src="" alt="" style="display:none" />
-          <div class="logo-text" id="logoTxt">NEWS</div>
-        </div>
-
-        <div class="headline-wrap">
-          <div class="headline" id="headline">MAIN TITLE TEXT</div>
-          <div class="subtitle" id="subtitle">SUB TITLE TEXT</div>
-        </div>
-      </div>
-
-      <div class="secondary-bar" id="secondaryBar">
-        <div class="secondary-left" id="secondaryLeft">12:53 PM</div>
-        <div class="secondary-right" id="secondaryRight">SECONDARY BAR FOR ADDITIONAL INFORMATION</div>
-      </div>
-
-      <div class="ticker-bar">
-        <div class="ticker-left-label" id="tickerLabel">LIVE</div>
-
-        <!-- mask area + track -->
-        <div class="ticker-mask" id="tickerMask" aria-hidden="false">
-          <div class="ticker-track" id="tickerTrack">
-            <!-- JS will duplicate content to achieve seamless loop -->
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="top-row">
+    <div class="breaking" id="breakingText">BREAKING NEWS</div>
+    <img id="logoImg" class="logo" src="" alt="" style="display:none;">
   </div>
 
+  <div class="main">
+    <div class="flag"></div>
+    <div>
+      <div class="name" id="nameText">JUAN DELA CRUZ</div>
+      <div class="position" id="positionText">News Correspondent</div>
+    </div>
+    <div class="time-box" id="timeBox"></div>
+  </div>
+
+  <div class="ticker-container">
+    <div class="ticker-text" id="tickerText">Scrolling ticker here... Uwan Updates • PH News • Fully Dynamic!</div>
+  </div>
+</div>
+
 <script>
-(function(){
-  // Helper $
-  const $ = id => document.getElementById(id);
+// ✅ Dynamic Time
+function updateClock() {
+  const d = new Date();
+  document.getElementById('timeBox').innerText = d.toLocaleTimeString('en-PH', { hour12: true });
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-  // Elements
-  const gear = $('gear'), controls = $('controls');
-  const ribbon = $('ribbon');
-  const logoBox = $('logoBox'), logoImg = $('logoImg'), logoTxt = $('logoTxt');
-  const logoURL = $('logoURL'), logoText = $('logoText');
-  const headline = $('headline'), headlineInput = $('headlineInput');
-  const subtitle = $('subtitle'), subtitleInput = $('subtitleInput');
-  const secondaryLeft = $('secondaryLeft'), secondaryLeftInput = $('secondaryLeft');
-  const secondaryRight = $('secondaryRight'), secondaryTextInput = $('secondaryText');
-  const tickerMask = $('tickerMask'), tickerTrack = $('tickerTrack'), tickerInput = $('tickerInput');
-  const tickerSpeed = $('tickerSpeed');
-  const cornerInput = $('cornerInput');
-  const headlineSizeInput = $('headlineSize');
-  const applyBtn = $('applyBtn'), saveBtn = $('saveBtn');
+// ✅ URL Editing
+const params = new URLSearchParams(window.location.search);
+function setParam(id, key) {
+  if(params.has(key)) document.getElementById(id).innerText = params.get(key);
+}
 
-  // Storage key
-  const KEY = 'ph_final_lt_settings_v1';
+setParam('breakingText','breaking');
+setParam('nameText','name');
+setParam('positionText','position');
+setParam('tickerText','ticker');
 
-  // Defaults
-  const defaults = {
-    ribbonText: 'BREAKING NEWS',
-    logoUrl: '',
-    logoText: 'NEWS',
-    headline: 'MAIN TITLE TEXT',
-    subtitle: 'SUB TITLE TEXT',
-    secondaryLeft: '12:53 PM',
-    secondaryText: 'SECONDARY BAR FOR ADDITIONAL INFORMATION',
-    tickerLines: ['Update 1', 'Update 2', 'Update 3', 'Update 4'],
-    tickerSpeedSec: 20,
-    corner: 10,
-    headlineSize: 34
-  };
+// ✅ Logo Support
+if(params.has('logo')) {
+  const logo = document.getElementById('logoImg');
+  logo.src = params.get('logo');
+  logo.style.display = 'block';
+}
 
-  // load
-  function load(){
-    try{
-      const raw = localStorage.getItem(KEY);
-      if(raw) return {...defaults, ...JSON.parse(raw)};
-    }catch(e){}
-    return {...defaults};
-  }
+// ✅ Animation Control
+if(params.get('animate') === 'off') {
+  document.getElementById('tickerText').classList.add('paused');
+}
 
-  let state = load();
-
-  // apply to UI inputs
-  function populateControls(){
-    $('ribbonText')?.remove?.(); // (in case)
-    // set inputs
-    $('ribbonText') ? $('ribbonText').value = state.ribbonText : null;
-    // but we don't have element with id ribbonText; use element above by id 'ribbonText' - ensure it's defined
-  }
-
-  // Fill controls initial values
-  (function initControls(){
-    // populate fields
-    $('ribbonText')?.value !== undefined ? $('ribbonText').value = state.ribbonText : (function(){ /* nothing */ })();
-    logoURL.value = state.logoUrl || '';
-    logoText.value = state.logoText || state.logoText || defaults.logoText;
-    headlineInput.value = state.headline || '';
-    subtitleInput.value = state.subtitle || '';
-    $('secondaryLeft') ? $('secondaryLeft').value = state.secondaryLeft : null;
-    // note: our control uses id secondaryLeft and element with same id for display; to avoid confusion we used earlier names; correctly map inputs:
-    // We actually have inputs: secondaryLeft (input id equals display id) — fix by referencing elements directly
-  })();
-
-  // Because of name collisions between control inputs and display elements, rebind properly:
-  const ribbonInput = (() => {
-    // create reference for ribbon input: there is a control with id ribbonText above. If not found, create and use a fallback.
-    return document.getElementById('ribbonText') || null;
-  })();
-
-  const secondaryLeftInputEl = document.getElementById('secondaryLeft') && document.getElementById('secondaryLeft').tagName === 'INPUT' ? document.getElementById('secondaryLeft') : null;
-  const secondaryTextInputEl = document.getElementById('secondaryText') || null;
-  // But control IDs in controls-html were: secondaryLeft (input), secondaryText (input). However earlier we used same ids for display elements; to avoid confusion we'll refer to control elements by querySelector within controls panel by label order.
-  // Simpler approach: grab control inputs by searching controls panel for inputs with placeholder or name.
-  // We'll directly get by input elements in the controls panel:
-  const ctrlPanel = controls;
-  const inputs = ctrlPanel.querySelectorAll('input, textarea');
-  // Map by input placeholder to corresponding fields (reliable)
-  function findControlByPlaceholder(ph){
-    if(!ctrlPanel) return null;
-    const all = ctrlPanel.querySelectorAll('input, textarea');
-    for(const el of all){
-      if((el.placeholder||'').toLowerCase().includes(ph.toLowerCase())) return el;
-    }
-    return null;
-  }
-
-  // Instead of relying on collisions, we'll bind by explicit ids we set earlier in the markup:
-  // Available control element IDs: ribbonText, logoURL, logoText, headlineInput, subtitleInput, secondaryLeft, secondaryText, tickerInput, tickerSpeed, cornerInput, headlineSize
-  // But earlier we accidentally created display elements with same id "secondaryLeft" and "secondaryRight".
-  // To handle this robustly: rename display vars to different references and use document.querySelector with role/class for display. We'll just re-select display elements by their original IDs used above (they exist), and control inputs by IDs in controls section also exist — even if same ID used twice, getElementById returns first match; because of risk, let's target controls by searching inside controls panel.
-
-  const ctrl = controls;
-  const ctl_ribbon = ctrl.querySelector('input[placeholder="BREAKING NEWS"], input[id="ribbonText"]') || ctrl.querySelector('input');
-  const ctl_logoURL = ctrl.querySelector('input[id="logoURL"]');
-  const ctl_logoText = ctrl.querySelector('input[id="logoText"]');
-  const ctl_headline = ctrl.querySelector('input[id="headlineInput"]');
-  const ctl_subtitle = ctrl.querySelector('input[id="subtitleInput"]');
-  const ctl_secondaryLeft = ctrl.querySelector('input[id="secondaryLeft"]');
-  const ctl_secondaryText = ctrl.querySelector('input[id="secondaryText"]');
-  const ctl_ticker = ctrl.querySelector('textarea[id="tickerInput"]');
-  const ctl_tickerSpeed = ctrl.querySelector('input[id="tickerSpeed"]');
-  const ctl_corner = ctrl.querySelector('input[id="cornerInput"]');
-  const ctl_headlineSize = ctrl.querySelector('input[id="headlineSize"]');
-
-  // fallback if some not found
-  const safeVal = (v, d) => v === undefined || v === null ? d : v;
-
-  function applyStateToDOM(s){
-    // ribbon
-    ribbon.textContent = s.ribbonText || defaults.ribbonText;
-
-    // logo
-    if(s.logoUrl){
-      logoImg.src = s.logoUrl;
-      logoImg.style.display = 'block';
-      logoTxt.style.display = 'none';
-    } else {
-      logoImg.style.display = 'none';
-      logoTxt.style.display = 'block';
-      logoTxt.textContent = s.logoText || defaults.logoText;
-    }
-
-    headline.textContent = s.headline || defaults.headline;
-    subtitle.textContent = s.subtitle || '';
-    subtitle.style.display = s.subtitle ? 'block' : 'none';
-
-    // secondary
-    // the display elements were defined as ids secondaryLeft (element) and secondaryRight
-    document.getElementById('secondaryLeft') && (document.getElementById('secondaryLeft').textContent = s.secondaryLeft || defaults.secondaryLeft);
-    document.getElementById('secondaryRight') && (document.getElementById('secondaryRight').textContent = s.secondaryText || defaults.secondaryText);
-
-    // corner radius and sizes
-    document.documentElement.style.setProperty('--corner', (s.corner || defaults.corner) + 'px');
-    document.documentElement.style.setProperty('--headline-size', (s.headlineSize || defaults.headlineSize) + 'px');
-
-    // ticker speed
-    document.documentElement.style.setProperty('--ticker-speed', (s.tickerSpeedSec || defaults.tickerSpeedSec) + 's');
-
-    // rebuild ticker track (duplicate content for smooth continuous loop)
-    buildTickerTrack(s.tickerLines || defaults.tickerLines, s.tickerSpeedSec || defaults.tickerSpeedSec);
-  }
-
-  function buildTickerTrack(lines, speedSec){
-    // clear
-    tickerTrack.innerHTML = '';
-    // sanitize
-    const items = (lines && lines.length) ? lines : defaults.tickerLines;
-    // Build one sequence and duplicate it to avoid jumps.
-    const seq = document.createElement('span');
-    seq.style.display = 'inline-block';
-    seq.style.whiteSpace = 'nowrap';
-    // create items with separators (dot)
-    items.forEach((t, i) => {
-      const span = document.createElement('div');
-      span.className = 'ticker-item';
-      // include separator bullet between items (except first)
-      span.innerHTML = `<span style="opacity:0.95; padding-right:6px;">${i>0?'<span style="opacity:0.6">•</span>':''}</span><span>${t}</span>`;
-      seq.appendChild(span);
-    });
-    // duplicate twice for seamless scroll
-    tickerTrack.appendChild(seq.cloneNode(true));
-    tickerTrack.appendChild(seq.cloneNode(true));
-    // Set animation duration based on speedSec
-    const totalDuration = (parseFloat(speedSec) || defaults.tickerSpeedSec) + 's';
-    tickerTrack.style.animationDuration = totalDuration;
-    // Ensure track starts left offset for left->right motion we implement below by reversing translate direction via CSS trick:
-    // But simpler: CSS defined animation moves from translateX(-50%) to 0%, so duplicate content width must be >= mask width. If not, animation still loops.
-  }
-
-  // Save/load
-  function saveState(){
-    try{
-      localStorage.setItem(KEY, JSON.stringify(state));
-    }catch(e){ console.warn('save failed', e); }
-  }
-
-  function loadState(){
-    try{
-      const raw = localStorage.getItem(KEY);
-      if(raw) state = {...defaults, ...JSON.parse(raw)};
-    }catch(e){}
-  }
-
-  // apply controls -> state
-  function readControlsToState(){
-    state.ribbonText = safeVal(ctl_ribbon && ctl_ribbon.value, state.ribbonText);
-    state.logoUrl = safeVal(ctl_logoURL && ctl_logoURL.value, state.logoUrl);
-    state.logoText = safeVal(ctl_logoText && ctl_logoText.value, state.logoText);
-    state.headline = safeVal(ctl_headline && ctl_headline.value, state.headline);
-    state.subtitle = safeVal(ctl_subtitle && ctl_subtitle.value, state.subtitle);
-    state.secondaryLeft = safeVal(ctl_secondaryLeft && ctl_secondaryLeft.value, state.secondaryLeft);
-    state.secondaryText = safeVal(ctl_secondaryText && ctl_secondaryText.value, state.secondaryText);
-    const rawTicker = safeVal(ctl_ticker && ctl_ticker.value, (state.tickerLines || []).join('\n'));
-    state.tickerLines = rawTicker.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    state.tickerSpeedSec = parseFloat(safeVal(ctl_tickerSpeed && ctl_tickerSpeed.value, state.tickerSpeedSec)) || defaults.tickerSpeedSec;
-    state.corner = parseInt(safeVal(ctl_corner && ctl_corner.value, state.corner),10) || defaults.corner;
-    state.headlineSize = parseInt(safeVal(ctl_headlineSize && ctl_headlineSize.value, state.headlineSize),10) || defaults.headlineSize;
-  }
-
-  // wire UI
-  gear.addEventListener('click', ()=> {
-    controls.style.display = controls.style.display === 'block' ? 'none' : 'block';
-  });
-
-  // Apply button: read inputs, apply to DOM (but not save)
-  applyBtn.addEventListener('click', ()=>{
-    readControlsToState();
-    applyStateToDOM(state);
-  });
-
-  // Save: read inputs, apply and save to localStorage
-  saveBtn.addEventListener('click', ()=>{
-    readControlsToState();
-    applyStateToDOM(state);
-    saveState();
-    saveBtn.textContent = 'Saved ✓';
-    setTimeout(()=> saveBtn.textContent = 'Save', 900);
-  });
-
-  // initialize control input values from state
-  function fillControlInputs(){
-    if(ctl_ribbon) ctl_ribbon.value = state.ribbonText || '';
-    if(ctl_logoURL) ctl_logoURL.value = state.logoUrl || '';
-    if(ctl_logoText) ctl_logoText.value = state.logoText || '';
-    if(ctl_headline) ctl_headline.value = state.headline || '';
-    if(ctl_subtitle) ctl_subtitle.value = state.subtitle || '';
-    if(ctl_secondaryLeft) ctl_secondaryLeft.value = state.secondaryLeft || '';
-    if(ctl_secondaryText) ctl_secondaryText.value = state.secondaryText || '';
-    if(ctl_ticker) ctl_ticker.value = (state.tickerLines || []).join('\n');
-    if(ctl_tickerSpeed) ctl_tickerSpeed.value = state.tickerSpeedSec || defaults.tickerSpeedSec;
-    if(ctl_corner) ctl_corner.value = state.corner || defaults.corner;
-    if(ctl_headlineSize) ctl_headlineSize.value = state.headlineSize || defaults.headlineSize;
-  }
-
-  // initial load
-  loadState();
-  fillControlInputs();
-  applyStateToDOM(state);
-
-  // make sure CSS variable for ticker speed is updated when user changes numeric input quickly
-  ctl_tickerSpeed && ctl_tickerSpeed.addEventListener('input', ()=>{
-    const s = Number(ctl_tickerSpeed.value) || defaults.tickerSpeedSec;
-    document.documentElement.style.setProperty('--ticker-speed', s + 's');
-    // update animation duration
-    tickerTrack.style.animationDuration = s + 's';
-  });
-
-  // Support Ctrl+S to save while Interact is open
-  window.addEventListener('keydown', (e)=>{
-    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 's'){
-      e.preventDefault();
-      saveBtn.click();
-    }
-  });
-
-  // Keep ticker loop seamless on resize: rebuild track
-  window.addEventListener('resize', ()=> {
-    buildTickerTrack(state.tickerLines || defaults.tickerLines, state.tickerSpeedSec || defaults.tickerSpeedSec);
-  });
-
-  // Expose a small API: quick update via URL params
-  (function applyURLParams(){
-    try{
-      const p = new URLSearchParams(location.search);
-      if(p.has('headline')) state.headline = p.get('headline');
-      if(p.has('subtitle')) state.subtitle = p.get('subtitle');
-      if(p.has('ribbon')) state.ribbonText = p.get('ribbon');
-      if(p.has('logo')) {
-        const v = p.get('logo');
-        if(v.startsWith('http') || v.startsWith('file://')) state.logoUrl = v; else state.logoText = v;
-      }
-      if(p.has('ticker')) state.tickerLines = p.get('ticker').split('|').map(s=>s.trim()).filter(Boolean);
-      if(p.has('speed')) state.tickerSpeedSec = parseFloat(p.get('speed')) || state.tickerSpeedSec;
-      applyStateToDOM(state);
-    }catch(e){}
-  })();
-
-})();
+// ✅ Theme Swap
+if(params.get('theme')) {
+  document.getElementById('lowerthird').classList.add('theme-' + params.get('theme'));
+}
 </script>
+
+</body>
+</html>
+<!-- ULTRA PRO Philippine Style Lowerthird (A+B+C+D) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PH Lower Third ULTRA PRO</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: "Arial Black", Arial, sans-serif;
+  }
+
+  :root {
+    --theme-primary: #0038a8;
+    --theme-secondary: #ce1126;
+    --ticker-bg: #000;
+  }
+
+  .lowerthird {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    transform: translateY(100%);
+    animation: slideUp 0.8s ease forwards;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Breaking Bar */
+  .breaking {
+    background: var(--theme-secondary);
+    padding: 6px 20px;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
+    flex: 1;
+    text-transform: uppercase;
+    filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.8));
+  }
+
+  /* Logo */
+  .logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-left: 10px;
+  }
+
+  /* Main */
+  .main {
+    background: linear-gradient(to right, var(--theme-primary), var(--theme-secondary));
+    color: #fff;
+    padding: 10px 20px;
+    filter: drop-shadow(3px 3px 8px rgba(0,0,0,0.8));
+    display: flex;
+    align-items: center;
+  }
+
+  .flag {
+    width: 55px;
+    height: 32px;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg');
+    background-size: cover;
+    margin-right: 14px;
+  }
+
+  .name { font-size: 28px; font-weight: bold; text-shadow: 0 0 8px rgba(0,0,0,0.9); }
+  .position { font-size: 18px; opacity: 0.95; margin-top: -3px; }
+
+  /* Time */
+  .time-box {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: auto;
+  }
+
+  /* Auto Font Scale */
+  @media (max-width: 1200px) {
+    .name { font-size: 22px; }
+    .position { font-size: 16px; }
+  }
+
+  /* Ticker */
+  .ticker-container {
+    background: var(--ticker-bg);
+    overflow: hidden;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.8));
+  }
+
+  .ticker-text {
+    white-space: nowrap;
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 12s linear infinite;
+    font-size: 18px;
+  }
+
+  .paused { animation-play-state: paused !important; }
+
+  /* Themes */
+  .theme-breaking { --theme-primary:#ce1126; --theme-secondary:#000; }
+  .theme-weather { --theme-primary:#0074ff; --theme-secondary:#2dd4ff; }
+  .theme-live { --theme-primary:#ff0000; --theme-secondary:#770000; }
+  .theme-sports { --theme-primary:#008f39; --theme-secondary:#00491c; }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div id="lowerthird" class="lowerthird">
+
+  <div class="top-row">
+    <div class="breaking" id="breakingText">BREAKING NEWS</div>
+    <img id="logoImg" class="logo" src="" alt="" style="display:none;">
+  </div>
+
+  <div class="main">
+    <div class="flag"></div>
+    <div>
+      <div class="name" id="nameText">JUAN DELA CRUZ</div>
+      <div class="position" id="positionText">News Correspondent</div>
+    </div>
+    <div class="time-box" id="timeBox"></div>
+  </div>
+
+  <div class="ticker-container">
+    <div class="ticker-text" id="tickerText">Scrolling ticker here... Uwan Updates • PH News • Fully Dynamic!</div>
+  </div>
+</div>
+
+<script>
+// ✅ Dynamic Time
+function updateClock() {
+  const d = new Date();
+  document.getElementById('timeBox').innerText = d.toLocaleTimeString('en-PH', { hour12: true });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ✅ URL Editing
+const params = new URLSearchParams(window.location.search);
+function setParam(id, key) {
+  if(params.has(key)) document.getElementById(id).innerText = params.get(key);
+}
+
+setParam('breakingText','breaking');
+setParam('nameText','name');
+setParam('positionText','position');
+setParam('tickerText','ticker');
+
+// ✅ Logo Support
+if(params.has('logo')) {
+  const logo = document.getElementById('logoImg');
+  logo.src = params.get('logo');
+  logo.style.display = 'block';
+}
+
+// ✅ Animation Control
+if(params.get('animate') === 'off') {
+  document.getElementById('tickerText').classList.add('paused');
+}
+
+// ✅ Theme Swap
+if(params.get('theme')) {
+  document.getElementById('lowerthird').classList.add('theme-' + params.get('theme'));
+}
+</script>
+
 </body>
 </html>
