@@ -188,6 +188,103 @@ if(params.get('theme')) {
 }
 </script>
 
+<!-- ✅ ULTRA CONTROL PANEL -->
+<div id="editPanel" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.85); color: #fff; padding: 14px; border-radius: 12px; font-family: Arial; width: 260px; z-index:9999; cursor: move;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <h3 style="font-size:16px; margin:0;">Control Panel</h3>
+    <button onclick="togglePanel()" style="background:#ce1126; border:none; color:#fff; padding:4px 6px; cursor:pointer; font-weight:bold;">✖</button>
+  </div>
+
+  <label>Breaking:</label>
+  <input type="text" id="editBreaking" style="width:100%; margin-bottom:6px;"><br>
+
+  <label>Name:</label>
+  <input type="text" id="editName" style="width:100%; margin-bottom:6px;"><br>
+
+  <label>Position:</label>
+  <input type="text" id="editPosition" style="width:100%; margin-bottom:6px;"><br>
+
+  <label>Ticker:</label>
+  <input type="text" id="editTicker" style="width:100%; margin-bottom:10px;"><br>
+
+  <button onclick="applyEdits()" style="width:100%; padding:7px; font-weight:bold; margin-bottom:10px;">✔ Apply</button>
+
+  <!-- Theme Buttons -->
+  <label>Theme:</label>
+  <div style="display:flex; gap:6px; margin-bottom:10px;">
+    <button onclick="setTheme('breaking')">🔴</button>
+    <button onclick="setTheme('weather')">🌧️</button>
+    <button onclick="setTheme('live')">📺</button>
+    <button onclick="setTheme('sports')">🏆</button>
+  </div>
+
+  <!-- Animation Toggle -->
+  <button onclick="toggleAnimate()" style="width:100%; padding:6px; margin-bottom:10px;">⏯ Animation</button>
+
+  <!-- Minimize -->
+  <button onclick="minimizePanel()" style="width:100%; padding:6px; background:#555; color:#fff;">➖ Minimize</button>
+</div>
+
+<style>
+  #editPanel button { border:none; background:#222; color:#fff; padding:4px; border-radius:6px; cursor:pointer; }
+  #editPanel button:hover { background:#444; }
+</style>
+
+<script>
+// ✅ Fill defaults with saved/local or current text
+function loadDefaults(){
+  editBreaking.value = localStorage.getItem('breaking') || breakingText.innerText;
+  editName.value = localStorage.getItem('name') || nameText.innerText;
+  editPosition.value = localStorage.getItem('position') || positionText.innerText;
+  editTicker.value = localStorage.getItem('ticker') || tickerText.innerText;
+}
+loadDefaults();
+
+// ✅ Apply and Save
+function applyEdits(){
+  breakingText.innerText = editBreaking.value;
+  nameText.innerText = editName.value;
+  positionText.innerText = editPosition.value;
+  tickerText.innerText = editTicker.value;
+
+  localStorage.setItem('breaking', editBreaking.value);
+  localStorage.setItem('name', editName.value);
+  localStorage.setItem('position', editPosition.value);
+  localStorage.setItem('ticker', editTicker.value);
+}
+
+// ✅ Theme Control
+function setTheme(theme){
+  const box = document.getElementById('lowerthird');
+  box.className = 'lowerthird';
+  box.classList.add('theme-' + theme);
+  localStorage.setItem('theme', theme);
+}
+if(localStorage.getItem('theme')) setTheme(localStorage.getItem('theme'));
+
+// ✅ Animation Pause / Resume
+function toggleAnimate(){
+  const t = document.getElementById('tickerText');
+  t.classList.toggle('paused');
+}
+
+// ✅ Drag Panel
+let offsetX, offsetY;
+editPanel.onmousedown = e => {
+  offsetX = e.clientX - editPanel.offsetLeft;
+  offsetY = e.clientY - editPanel.offsetTop;
+  document.onmousemove = e2 => {
+    editPanel.style.left = (e2.clientX - offsetX) + 'px';
+    editPanel.style.top = (e2.clientY - offsetY) + 'px';
+  }
+}
+editPanel.onmouseup = ()=> document.onmousemove=null;
+
+// ✅ Minimize
+function minimizePanel(){ editPanel.style.height='28px'; editPanel.style.overflow='hidden'; }
+function togglePanel(){ editPanel.style.display = editPanel.style.display==='none' ? 'block' : 'none'; }
+</script>
+
 </body>
 </html>
 <!-- ULTRA PRO Philippine Style Lowerthird (A+B+C+D) -->
